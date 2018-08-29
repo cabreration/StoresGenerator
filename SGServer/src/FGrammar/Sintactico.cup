@@ -1,1 +1,212 @@
 
+package FGrammar;
+
+import java_cup.runtime.Symbol;
+import java.util.ArrayList;
+
+parser code  
+{:
+    //public ArrayList<ErrorC> errores = new ArrayList<>();
+
+    public void syntax_error(Symbol s)
+    {   
+        /* if (s == null) 
+        {
+            errores.add(new ErrorC("Error Sintactico", "null", 0, 0, "ultimo token de finalizacion perdido"));
+            System.out.println("Gramatica irreducible");
+            return;
+        } */
+
+        String lexema = s.value.toString();
+        int fila = s.right + 1;
+        int columna = s.left + 1;
+       
+        //errores.add(new ErrorC("Error Sintactico", lexema, fila, columna, "Error Recuperable"));
+    }
+
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception
+    {    
+       /* if (s == null) 
+        {
+            errores.add(new ErrorC("Error Sintactico", "null", 0, 0, "ultimo token de finalizacion perdido"));
+            System.out.println("Gramatica irreducible");
+            return;
+        } */
+        
+        String lexema = s.value.toString();
+        int fila = s.right + 1;
+        int columna = s.left + 1;
+       
+        //errores.add(new ErrorC("Error Sintactico", lexema, fila, columna, "Error No Recuperable"));
+    }
+
+    public void semantic(Symbol cur_token, String n) 
+    {
+        System.out.println("error semantico ");
+    }
+
+    public void semantic(String msg, Object obj) {}
+:}
+
+action code 
+{:
+         
+:}
+
+terminal dolar, peticion, inicioUsuario, id, password, menos, mas, por, sobre, crearUsuario, nombre, apellido, telefono, email, direccion;
+terminal tienda, tipo, codigo, propietario, img, raizCuadrada, potencia, cantidad, marca, color, sucursal, size, coma, llaveA, llaveC;
+terminal parentesisA, parentesisC;
+terminal String cadena, numero, clave, correo; 
+
+non terminal INICIO, ACCION, OTRA_ACCION;
+non terminal LOGIN, O_PETICION, O_INGRESO, O_ID, O_PASSWORD, C_PASSWORD, C_ID, C_INGRESO, C_PETICION, G_ID, G_PASSWORD;
+non terminal REGISTRO, O_CREAR, O_NOMBRE, O_APELLIDO, O_TELEFONO, O_DIRECCION, O_EMAIL, C_CREAR, C_NOMBRE, C_APELLIDO, C_TELEFONO, C_DIRECCION;
+non terminal C_EMAIL, G_NOMBRE, G_APELLIDO, G_TELEFONO, G_DIRECCION, G_EMAIL, CAMPO_REGISTRO, OTRO_CAMPOR;
+non terminal TIENDA O_TIENDA, C_TIENDA, O_CODIGO, C_CODIGO, O_PROPIETARIO, C_PROPIETARIO, O_IMAGEN, C_IMAGEN, G_CODIGO, G_PROPIETARIO, G_IMAGEN;
+non terminal CAMPO_TIENDA, OTRO_CAMPOT;
+non terminal MOD_TIENDA, TIPO, NOMBRE, PROP, CODIGO, DIRECCION, TELEFONO, CAMPO_MOD, OTRO_CAMPOMOD, MODT, OTRA_MODT;
+non terminal DELETE_TIENDA, DEL_T, DEL_OT;
+
+start with INICIO;
+
+INICIO::= ACCION OTRA_ACCION;
+
+O_PETICION::= dolar peticion dolar;
+
+O_INGRESO::= dolar inicioUsuario dolar;
+
+O_ID::= dolar id dolar;
+
+O_PASSWORD::= dolar password dolar;
+
+C_PASSWORD::= dolar password menos dolar;
+
+C_ID::= dolar id menos dolar;
+
+C_INGRESO::= dolar inicioUsuario menos dolar;
+
+C_PETICION::= dolar peticion menos dolar;
+
+G_ID::= O_ID numero C_ID;
+
+G_PASSWORD::= O_PASSWORD clave C_PASSWORD;
+
+LOGIN::= O_PETICION O_INGRESO G_ID G_PASSWORD C_INGRESO C_PETICION
+|        O_PETICION O_INGRESO G_PASSWORD G_ID C_INGRESO C_PETICION
+;
+
+O_CREAR::= dolar crearUsuario dolar;
+
+O_NOMBRE::= dolar nombre dolar;
+
+O_APELLIDO::= dolar apellido dolar;
+
+O_TELEFONO::= dolar telefono dolar;
+
+O_DIRECCION::= dolar direccion dolar;
+
+O_EMAIL::= dolar email dolar;
+
+C_CREAR::= dolar crearUsuario menos dolar;
+
+C_NOMBRE::= dolar nombre menos dolar;
+
+C_APELLIDO::= dolar apellido menos dolar;
+
+C_TELEFONO::= dolar telefono menos dolar;
+
+C_DIRECCION::= dolar direccion menos dolar;
+
+C_EMAIL::= dolar email menos dolar;
+
+G_NOMBRE::= O_NOMBRE cadena C_NOMBRE;
+
+G_APELLIDO::= O_APELLIDO cadena C_APELLIDO;
+
+G_TELEFONO::= O_TELEFONO numero C_TELEFONO;
+
+G_DIRECCION::= O_DIRECCION cadena C_DIRECCION;
+
+G_EMAIL::= O_EMAIL correo C_EMAIL;
+
+CAMPO_REGISTRO::= G_ID | G_NOMBRE | G_APELLIDO | G_PASSWORD | G_TELEFONO | G_EMAIL | G_DIRECCION;
+
+OTRO_CAMPOR::= CAMPO_REGISTRO OTRO_CAMPOR
+|
+;
+
+REGISTRO::= O_PETICION O_CREAR CAMPO_REGISTRO OTRO_CAMPOR C_CREAR C_PETICION;
+
+O_TIENDA::= dolar tienda tipo asignacion cadena dolar;
+
+C_TIENDA::= dolar tienda menos dolar; 
+
+O_CODIGO::= dolar codigo dolar;
+
+C_CODIGO::= dolar codigo menos dolar;
+
+O_PROPIETARIO::= dolar propietario dolar;
+
+C_PROPIETARIO::= dolar propietario menos dolar;
+
+O_IMAGEN::= dolar img dolar;
+
+C_IMAGEN::= dolar img menos dolar; 
+
+G_CODIGO::= O_CODIGO numero C_CODIGO;
+
+G_PROPIETARIO::= O_PROPIETARIO numero C_PROPIETARIO;
+
+G_IMAGEN::= O_IMAGEN cadena C_IMAGEN; 
+
+CAMPO_TIENDA::= G_CODIGO | G_PROPIETARIO | G_NOMBRE | G_DIRECCION | G_TELEFONO | G_IMAGEN;
+
+OTRO_CAMPOT::= CAMPO_TIENDA OTRO_CAMPOT
+|
+;
+
+TIENDA::= O_PETICION O_TIENDA CAMPO_TIENDA OTRO_CAMPOT C_TIENDA C_PETICION;
+
+TIPO::= tipo asignacion cadena;
+
+CODIGO::= codigo asignacion numero;
+
+NOMBRE::= nombre asignacion cadena;
+
+PROP::= propietario asignacion numero;
+
+DIRECCION::= direccion asignacion cadena;
+
+TELEFONO::= telefono asignacion numero;
+
+CAMPO_MOD::= TIPO | CODIGO | NOMBRE | PROP | DIRECCION | TELEFONO;
+
+OTRO_CAMPOMOD::= CAMPO_MOD OTRO_CAMPOMOD
+|
+;
+
+MOD_TIENDA::= O_PETICION MODT OTRA_MODT C_PETICION;
+
+MODT::= dolar tienda CAMPO_MOD OTRO_CAMPOMOD menos dolar;
+
+OTRA_MODT::= MODT OTRA_MODT
+|
+;
+
+/* DEL_T::= dolar tienda CODIGO PROPIETARIO TIPO menos dolar
+|        dolar tienda CODIGO TIPO PROPIETARIO menos dolar
+|        dolar tienda PROPIETARIO CODIGO TIPO menos dolar
+|        dolar tienda PROPIETARIO TIPO CODIGO menos dolar
+|        dolar tienda TIPO PROPIETARIO CODIGO menos dolar
+|        dolar tienda TIPO CODIGO PROPIETARIO menos dolar
+;
+
+DEL_OT::= DEL_T DEL_OT
+|
+;
+
+DELETE_TIENDA  */
+
+
+
+

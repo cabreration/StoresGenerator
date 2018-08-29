@@ -24,7 +24,8 @@ digito = [0-9]
 numero = {digito}+("." {digito}+)?
 cadena = "\"" ~"\""
 letra = [a-zA-ZñÑ]
-identificador = ({letra}|"_")({letra}|{digito}|"_")*
+clave = {letra}({letra}|{digito}|"_")({letra}|{digito}|"_")({letra}|{digito}|"_")({letra}|{digito}|"_")*{letra}
+correo = ({letra}|{digito})+"@compiladores1.com"
 
 %%
 
@@ -60,8 +61,11 @@ identificador = ({letra}|"_")({letra}|{digito}|"_")*
 <YYINITIAL> "}"                        {return new Symbol(SimbolosF.llaveC, yycolumn, yyline, yytext());}
 <YYINITIAL> "("                        {return new Symbol(SimbolosF.parentesisA, yycolumn, yyline, yytext());}
 <YYINITIAL> ")"                        {return new Symbol(SimbolosF.parentesisC, yycolumn, yyline, yytext());}
+<YYINITIAL> "="                        {return new Symbol(SimbolosF.asignacion, yycolumn, yyline, yytext());}
 <YYINITIAL> {cadena}                   {return new Symbol(SimbolosF.cadena, yycolumn, yyline, yytext());}
 <YYINITIAL> {numero}                   {return new Symbol(SimbolosF.numero, yycolumn, yyline, yytext());}
+<YYINITIAL> {clave}                    {return new Symbol(SimbolosF.clave, yycolumn, yyline, yytext());}
+<YYINITIAL> {correo}                   {return new Symbol(SimbolosF.correo, yycolumn, yyline, yytext());}
 
 <YYINITIAL> [ \t\r\f\n]                      {}
 
