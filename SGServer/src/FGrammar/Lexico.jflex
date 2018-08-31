@@ -10,8 +10,8 @@ import java.util.ArrayList;
 %}
 
 %public
-%class LexicoSG
-%cupsym SimbolosSG
+%class Lexico
+%cupsym SimbolosF
 %cup
 %char
 %column
@@ -38,9 +38,9 @@ correo = ({letra}|{digito})+"@compiladores1.com"
 <YYINITIAL> "+"                        {return new Symbol(SimbolosF.mas, yycolumn, yyline, "+");}
 <YYINITIAL> "*"                        {return new Symbol(SimbolosF.por, yycolumn, yyline, "*");}
 <YYINITIAL> "/"                        {return new Symbol(SimbolosF.sobre, yycolumn, yyline, yytext());}
-<YYINITIAL> "crearUsuario"             {return new Symbol(SimbolosF.crearUsuario, yycolumn, yyline "crearUsuario");}
+<YYINITIAL> "crearUsuario"             {return new Symbol(SimbolosF.crearUsuario, yycolumn, yyline, "crearUsuario");}
 <YYINITIAL> "nombre"                   {return new Symbol(SimbolosF.nombre, yycolumn, yyline, "nombre");}
-<YYINITIAL> "apellido"                 {return new Symbol(SimbolosF.apellido, yycolumn, yyline "apellido");}
+<YYINITIAL> "apellido"                 {return new Symbol(SimbolosF.apellido, yycolumn, yyline, "apellido");}
 <YYINITIAL> "telefono"                 {return new Symbol(SimbolosF.telefono, yycolumn, yyline, "telefono");}
 <YYINITIAL> "email"                    {return new Symbol(SimbolosF.email, yycolumn, yyline, "email");}
 <YYINITIAL> "direccion"                {return new Symbol(SimbolosF.direccion, yycolumn, yyline, "direccion");}
@@ -49,13 +49,14 @@ correo = ({letra}|{digito})+"@compiladores1.com"
 <YYINITIAL> "codigo"                   {return new Symbol(SimbolosF.codigo, yycolumn, yyline, "codigo");}
 <YYINITIAL> "propietario"              {return new Symbol(SimbolosF.propietario, yycolumn, yyline, "propietario");}
 <YYINITIAL> "img"                      {return new Symbol(SimbolosF.img, yycolumn, yyline, "img");}
-<YYINITIAL> "Rq"                       {return new Symbol(SimbolosF.raizCuadrada, yycolumn, yline, "Rq");}
+<YYINITIAL> "Rq"                       {return new Symbol(SimbolosF.raizCuadrada, yycolumn, yyline, "Rq");}
 <YYINITIAL> "Ptn"                      {return new Symbol(SimbolosF.potencia, yycolumn, yyline, "Ptn");}
 <YYINITIAL> "cantidad"                 {return new Symbol(SimbolosF.cantidad, yycolumn, yyline, "cantidad");}
 <YYINITIAL> "marca"                    {return new Symbol(SimbolosF.marca, yycolumn, yyline, "marca");}
 <YYINITIAL> "color"                    {return new Symbol(SimbolosF.color, yycolumn, yyline, "color");}
 <YYINITIAL> "sucursal"                 {return new Symbol(SimbolosF.sucursal, yycolumn, yyline, "sucursal");}
 <YYINITIAL> "tamaño"                   {return new Symbol(SimbolosF.size, yycolumn, yyline, "tamanio");}
+<YYINITIAL> "producto"                 {return new Symbol(SimbolosF.producto, yycolumn, yyline, "producto");}
 <YYINITIAL> ","                        {return new Symbol(SimbolosF.coma, yycolumn, yyline, yytext());}
 <YYINITIAL> "{"                        {return new Symbol(SimbolosF.llaveA, yycolumn, yyline, yytext());}
 <YYINITIAL> "}"                        {return new Symbol(SimbolosF.llaveC, yycolumn, yyline, yytext());}
