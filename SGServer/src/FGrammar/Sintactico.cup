@@ -66,6 +66,14 @@ non terminal TIENDA O_TIENDA, C_TIENDA, O_CODIGO, C_CODIGO, O_PROPIETARIO, C_PRO
 non terminal CAMPO_TIENDA, OTRO_CAMPOT;
 non terminal MOD_TIENDA, TIPO, NOMBRE, PROP, CODIGO, DIRECCION, TELEFONO, CAMPO_MOD, OTRO_CAMPOMOD, MODT, OTRA_MODT;
 non terminal DELETE_TIENDA, DEL_T, DEL_OT;
+non terminal CREAR_PRODUCTO, O_PRODUCTO, C_PRODUCTO, CAMPO_CREARPRODUCTO, OTRO_CAMPOCP, C_CANTIDAD, O_CANTIDAD, O_MARCA, C_MARCA, O_COLOR, C_COLOR;
+non terminal O_SIZE, C_SIZE, O_SUCURSAL, C_SUCURSAL, G_CANTIDAD, G_MARCA, G_COLOR, G_SIZE, G_SUCURSAL, OPERACION_ARITMETICA;
+non terminal BC_PRODUCTO, BC_ESTANDAR, OTRO_BC, CANTIDAD, MARCA, COLOR, SIZE, SUCURSAL, CAMPOS_BC, OTRO_CAMPOBC;
+non terminal EXPRESION;
+
+precedence left mas, menos;
+precedence left por, sobre;
+precedence rigth raizCuadrada, potencia;
 
 start with INICIO;
 
@@ -193,20 +201,72 @@ OTRA_MODT::= MODT OTRA_MODT
 |
 ;
 
-/* DEL_T::= dolar tienda CODIGO PROPIETARIO TIPO menos dolar
-|        dolar tienda CODIGO TIPO PROPIETARIO menos dolar
-|        dolar tienda PROPIETARIO CODIGO TIPO menos dolar
-|        dolar tienda PROPIETARIO TIPO CODIGO menos dolar
-|        dolar tienda TIPO PROPIETARIO CODIGO menos dolar
-|        dolar tienda TIPO CODIGO PROPIETARIO menos dolar
-;
+O_PRODUCTO::= dolar producto tipo asignacion cadena dolar;
 
-DEL_OT::= DEL_T DEL_OT
+C_PRODUCTO::= dolar producto menos dolar;
+
+CAMPO_CREARPRODUCTO::= G_CODIGO | G_NOMBRE | G_IMAGEN | G_CANTIDAD | G_MARCA | G_COLOR | G_SIZE | G_SUCURSAL;
+
+OTRO_CAMPOCP::= CAMPO_CREARPRODUCTO OTRO_CAMPOCP
 |
 ;
 
-DELETE_TIENDA  */
+O_CANTIDAD::= dolar cantidad dolar;
 
+C_CANTIDAD::= dolar cantidad menos dolar;
 
+O_MARCA::= dolar marca dolar;
 
+C_MARCA::= dolar marca menos dolar;
+
+O_COLOR::= dolar color dolar;
+
+C_COLOR::= dolar color menos dolar;
+
+C_SIZE::= dolar size menos dolar;
+
+O_SIZE::= dolar size dolar;
+
+O_SUCURSAL::= dolar sucursal dolar;
+
+C_SUCURSAL::= dolar sucursal menos dolar;
+
+G_CANTIDAD::= O_CANTIDAD OPERACION_ARITMETICA C_CANTIDAD;
+
+G_MARCA::= O_MARCA cadena C_MARCA;
+
+G_COLOR::= O_COLOR cadena C_COLOR;
+
+G_SIZE::= O_SIZE OPERACION_ARITMETICA C_SIZE;
+
+G_SUCURSAL::= O_SUCURSAL numero C_SUCURSAL;
+
+CREAR_PRODUCTO::= O_PETICION O_PRODUCTO CAMPO_CREARPRODUCTO OTRO_CAMPOCP C_PRODUCTO C_PETICION;
+
+CANTIDAD::= cantidad asignacion OPERACION_ARITMETICA;
+
+MARCA::= marca asignacion cadena;
+
+COLOR::= color asignacion cadena;
+
+SIZE::= size asignacion OPERACION_ARITMETICA;
+
+BC_PRODUCTO::= O_PETICION BC_ESTANDAR OTRO_BC C_PETICION
+|              O_PETICION dolar tienda id asignacion numero dolar BC_ESTANDAR OTRO_BC C_TIENDA C_PETICION;
+
+BC_ESTANDAR::= dolar producto CAMPOS_BC OTRO_CAMPOBC menos dolar;
+
+OTRO_BC::= BC_ESTANDAR OTRO_BC 
+|
+;
+
+EXPRESION::= EXPRESION mas EXPRESION
+|            EXPRESION menos EXPRESION
+|            EXPRESION por EXPRESION
+|            EXPRESION sobre EXPRESION
+|            raizCuadrada EXPRESION
+|            potencia EXPRESION
+|            parentesisA EXPRESION parentesisC
+|            numero
+;
 
