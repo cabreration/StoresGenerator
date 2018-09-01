@@ -6,7 +6,7 @@ import java.util.ArrayList;
 %%
 
 %{
-    //public ArrayList<ErrorC> errores = new ArrayList<>();
+    public ArrayList<ErrorC> errores = new ArrayList<>();
 %}
 
 %public
@@ -68,8 +68,8 @@ correo = ({letra}|{digito})+"@compiladores1.com"
 <YYINITIAL> {clave}                    {return new Symbol(SimbolosF.clave, yycolumn, yyline, yytext());}
 <YYINITIAL> {correo}                   {return new Symbol(SimbolosF.correo, yycolumn, yyline, yytext());}
 
-<YYINITIAL> [ \t\r\f\n]                      {}
+<YYINITIAL> [ \t\r\f\n]                {}
 
-<YYINITIAL> .                                {/*errores.add(new ErrorC("Error Lexico", yytext(), yyline, yycolumn, "No pertenece al lenguaje"));*/}
+<YYINITIAL> .                          {errores.add(new ErrorC("Error Lexico", yytext(), yyline, yycolumn, "No pertenece al lenguaje"));}
 
 

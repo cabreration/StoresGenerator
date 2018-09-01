@@ -588,7 +588,7 @@ public class Lexico implements java_cup.runtime.Scanner {
   private int zzFinalHighSurrogate = 0;
 
   /* user code: */
-    //public ArrayList<ErrorC> errores = new ArrayList<>();
+    public ArrayList<ErrorC> errores = new ArrayList<>();
 
 
   /**
@@ -959,7 +959,7 @@ public class Lexico implements java_cup.runtime.Scanner {
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
-            { /*errores.add(new ErrorC("Error Lexico", yytext(), yyline, yycolumn, "No pertenece al lenguaje"));*/
+            { errores.add(new ErrorC("Error Lexico", yytext(), yyline, yycolumn, "No pertenece al lenguaje"));
             }
           case 41: break;
           case 2: 

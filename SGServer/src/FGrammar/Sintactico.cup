@@ -6,38 +6,38 @@ import java.util.ArrayList;
 
 parser code  
 {:
-    //public ArrayList<ErrorC> errores = new ArrayList<>();
+    public ArrayList<ErrorC> errores = new ArrayList<>();
 
     public void syntax_error(Symbol s)
     {   
-        /* if (s == null) 
+         if (s == null) 
         {
             errores.add(new ErrorC("Error Sintactico", "null", 0, 0, "ultimo token de finalizacion perdido"));
             System.out.println("Gramatica irreducible");
             return;
-        } */
+        } 
 
         String lexema = s.value.toString();
         int fila = s.right + 1;
         int columna = s.left + 1;
        
-        //errores.add(new ErrorC("Error Sintactico", lexema, fila, columna, "Error Recuperable"));
+        errores.add(new ErrorC("Error Sintactico", lexema, fila, columna, "Error Recuperable"));
     }
 
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception
     {    
-       /* if (s == null) 
+        if (s == null) 
         {
             errores.add(new ErrorC("Error Sintactico", "null", 0, 0, "ultimo token de finalizacion perdido"));
             System.out.println("Gramatica irreducible");
             return;
-        } */
+        } 
         
         String lexema = s.value.toString();
         int fila = s.right + 1;
         int columna = s.left + 1;
        
-        //errores.add(new ErrorC("Error Sintactico", lexema, fila, columna, "Error No Recuperable"));
+        errores.add(new ErrorC("Error Sintactico", lexema, fila, columna, "Error No Recuperable"));
     }
 
     public void semantic(Symbol cur_token, String n) 
@@ -77,7 +77,10 @@ precedence right raizCuadrada, potencia;
 
 start with INICIO;
 
-INICIO::= ACCION OTRA_ACCION;
+INICIO::= ACCION OTRA_ACCION
+| error INICIO
+|
+;
 
 ACCION::= LOGIN
 |         REGISTRO
