@@ -55,10 +55,10 @@ action code
 
 terminal dolar, peticion, inicioUsuario, id, password, menos, mas, por, sobre, crearUsuario, nombre, apellido, telefono, email, direccion;
 terminal tienda, tipo, codigo, propietario, img, raizCuadrada, potencia, cantidad, marca, color, sucursal, size, coma, llaveA, llaveC;
-terminal parentesisA, parentesisC, asignacion, producto;
+terminal parentesisA, parentesisC, asignacion, producto, obtener;
 terminal String cadena, numero, clave, correo; 
 
-non terminal INICIO, ACCION, OTRA_ACCION;
+non terminal INICIO, ACCION, OTRA_ACCION, LISTA, LISTA2;
 non terminal LOGIN, O_PETICION, O_INGRESO, O_ID, O_PASSWORD, C_PASSWORD, C_ID, C_INGRESO, C_PETICION, G_ID, G_PASSWORD;
 non terminal REGISTRO, O_CREAR, O_NOMBRE, O_APELLIDO, O_TELEFONO, O_DIRECCION, O_EMAIL, C_CREAR, C_NOMBRE, C_APELLIDO, C_TELEFONO, C_DIRECCION;
 non terminal C_EMAIL, G_NOMBRE, G_APELLIDO, G_TELEFONO, G_DIRECCION, G_EMAIL, CAMPO_REGISTRO, OTRO_CAMPOR;
@@ -68,7 +68,7 @@ non terminal MOD_TIENDA, TIPO, NOMBRE, PROP, CODIGO, DIRECCION, TELEFONO, CAMPO_
 non terminal CREAR_PRODUCTO, O_PRODUCTO, C_PRODUCTO, CAMPO_CREARPRODUCTO, OTRO_CAMPOCP, C_CANTIDAD, O_CANTIDAD, O_MARCA, C_MARCA, O_COLOR, C_COLOR;
 non terminal O_SIZE, C_SIZE, O_SUCURSAL, C_SUCURSAL, G_CANTIDAD, G_MARCA, G_COLOR, G_SIZE, G_SUCURSAL, OPERACION_ARITMETICA;
 non terminal BC_PRODUCTO, BC_ESTANDAR, OTRO_BC, CANTIDAD, MARCA, COLOR, SIZE, SUCURSAL, CAMPOS_BC, OTRO_CAMPOBC;
-non terminal EXPRESION, IMAGEN;
+non terminal EXPRESION, IMAGEN, GET;
 
 precedence left mas, menos;
 precedence left por, sobre;
@@ -77,21 +77,28 @@ precedence right raizCuadrada, potencia;
 
 start with INICIO;
 
-INICIO::= ACCION OTRA_ACCION
+INICIO::= LISTA2
 | error INICIO
 |
+;
+
+LISTA::= O_PETICION OTRA_ACCION C_PETICION;
+
+LISTA2::= LISTA2 LISTA
+| LISTA
 ;
 
 ACCION::= LOGIN
 |         REGISTRO
 |         TIENDA
-|         MOD_TIENDA
+|         MODT
 |         CREAR_PRODUCTO
 |         BC_PRODUCTO
+|         GET
 ;
 
-OTRA_ACCION::= ACCION OTRA_ACCION
-|
+OTRA_ACCION::= OTRA_ACCION ACCION
+| ACCION
 ;
 
 O_PETICION::= dolar peticion dolar;
@@ -114,8 +121,8 @@ G_ID::= O_ID numero C_ID;
 
 G_PASSWORD::= O_PASSWORD clave C_PASSWORD;
 
-LOGIN::= O_PETICION O_INGRESO G_ID G_PASSWORD C_INGRESO C_PETICION
-|        O_PETICION O_INGRESO G_PASSWORD G_ID C_INGRESO C_PETICION
+LOGIN::= O_INGRESO G_ID G_PASSWORD C_INGRESO 
+|        O_INGRESO G_PASSWORD G_ID C_INGRESO
 ;
 
 O_CREAR::= dolar crearUsuario dolar;
@@ -165,7 +172,7 @@ OTRO_CAMPOR::= OTRO_CAMPOR CAMPO_REGISTRO
 | CAMPO_REGISTRO
 ;
 
-REGISTRO::= O_PETICION O_CREAR OTRO_CAMPOR C_CREAR C_PETICION;
+REGISTRO::= O_CREAR OTRO_CAMPOR C_CREAR;
 
 O_TIENDA::= dolar tienda tipo asignacion cadena dolar;
 
@@ -195,7 +202,7 @@ OTRO_CAMPOT::= OTRO_CAMPOT CAMPO_TIENDA
 | CAMPO_TIENDA
 ;
 
-TIENDA::= O_PETICION O_TIENDA OTRO_CAMPOT C_TIENDA C_PETICION;
+TIENDA::= O_TIENDA OTRO_CAMPOT C_TIENDA;
 
 TIPO::= tipo asignacion cadena;
 
@@ -215,13 +222,13 @@ OTRO_CAMPOMOD::= coma CAMPO_MOD OTRO_CAMPOMOD
 |
 ;
 
-MOD_TIENDA::= O_PETICION OTRA_MODT C_PETICION;
+//MOD_TIENDA::= OTRA_MODT;
 
 MODT::= dolar tienda CAMPO_MOD OTRO_CAMPOMOD menos dolar;
 
-OTRA_MODT::= OTRA_MODT MODT
-| MODT
-;
+//OTRA_MODT::= OTRA_MODT MODT
+//| MODT
+
 
 O_PRODUCTO::= dolar producto tipo asignacion cadena dolar;
 
@@ -263,7 +270,7 @@ G_SIZE::= O_SIZE OPERACION_ARITMETICA C_SIZE;
 
 G_SUCURSAL::= O_SUCURSAL numero C_SUCURSAL;
 
-CREAR_PRODUCTO::= O_PETICION O_PRODUCTO OTRO_CAMPOCP C_PRODUCTO C_PETICION;
+CREAR_PRODUCTO::= O_PRODUCTO OTRO_CAMPOCP C_PRODUCTO;
 
 CANTIDAD::= cantidad asignacion OPERACION_ARITMETICA;
 
@@ -275,14 +282,14 @@ SIZE::= size asignacion OPERACION_ARITMETICA;
 
 SUCURSAL::= sucursal asignacion numero;
 
-BC_PRODUCTO::= O_PETICION OTRO_BC C_PETICION
-|              O_PETICION dolar tienda id asignacion numero dolar OTRO_BC C_TIENDA C_PETICION;
+BC_PRODUCTO::= BC_ESTANDAR
+|              dolar tienda id asignacion numero dolar BC_ESTANDAR C_TIENDA;
 
 BC_ESTANDAR::= dolar producto CAMPOS_BC OTRO_CAMPOBC menos dolar;
 
-OTRO_BC::= OTRO_BC BC_ESTANDAR
-| BC_ESTANDAR
-;
+//OTRO_BC::= OTRO_BC BC_ESTANDAR
+//| BC_ESTANDAR
+
 
 CAMPOS_BC::= CODIGO | NOMBRE | IMAGEN | CANTIDAD | MARCA | COLOR | SIZE | SUCURSAL | TIPO;
 
@@ -303,3 +310,13 @@ EXPRESION::= EXPRESION mas EXPRESION
 OPERACION_ARITMETICA::= numero
 |                       llaveA EXPRESION llaveC;
 
+
+GET::= dolar obtener tipo asignacion cadena propietario asignacion numero menos dolar
+|      dolar obtener propietario asignacion numero tipo asignacion cadena menos dolar
+|      dolar obtener tipo asignacion cadena propietario asignacion numero sucursal asignacion numero menos dolar
+|      dolar obtener tipo asignacion cadena sucursal asignacion numero propietario asignacion numero menos dolar
+|      dolar obtener sucursal asignacion numero tipo asignacion cadena propietario asignacion numero menos dolar
+|      dolar obtener sucursal asignacion numero propietario asignacion numero tipo asignacion cadena menos dolar
+|      dolar obtener propietario asignacion numero sucursal asignacion numero tipo asignacion cadena menos dolar
+|      dolar obtener propietario asignacion numero tipo asignacion cadena sucursal asignacion numero menos dolar
+;

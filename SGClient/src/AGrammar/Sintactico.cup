@@ -1,1 +1,136 @@
 
+package AGrammar;
+
+import java_cup.runtime.Symbol;
+import java.util.ArrayList;
+
+parser code  
+{:
+    public ArrayList<ErrorC> errores = new ArrayList<>();
+
+    public void syntax_error(Symbol s)
+    {   
+         if (s == null) 
+        {
+            errores.add(new ErrorC("Error Sintactico", "null", 0, 0, "ultimo token de finalizacion perdido"));
+            System.out.println("Gramatica irreducible");
+            return;
+        } 
+
+        String lexema = s.value.toString();
+        int fila = s.right + 1;
+        int columna = s.left + 1;
+       
+        errores.add(new ErrorC("Error Sintactico", lexema, fila, columna, "Error Recuperable"));
+    }
+
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception
+    {    
+        if (s == null) 
+        {
+            errores.add(new ErrorC("Error Sintactico", "null", 0, 0, "ultimo token de finalizacion perdido"));
+            System.out.println("Gramatica irreducible");
+            return;
+        } 
+        
+        String lexema = s.value.toString();
+        int fila = s.right + 1;
+        int columna = s.left + 1;
+       
+        errores.add(new ErrorC("Error Sintactico", lexema, fila, columna, "Error No Recuperable"));
+    }
+
+    public void semantic(Symbol cur_token, String n) 
+    {
+        System.out.println("error semantico ");
+    }
+
+    public void semantic(String msg, Object obj) {}
+:}
+
+action code 
+{:
+         
+:}
+
+terminal dolar, respuesta, usuario, id, acceso, menos, verdadero, falso, registro, asignacion, tienda, modificar, eliminar, producto, sucursal, error;
+terminal error, descripcion, lista, propietario, codigo, nombre, telefono, marca, color, size, cantidad;
+terminal String cadena, numero; 
+
+non terminal INICIO, RESPUESTAS, BOOL;
+non terminal O_REPLY, C_REPLY, O_USUARIO, C_USUARIO, O_ID, C_ID, O_ACCESO, C_ACCESO, LOGIN;
+non terminal SIGNUP, O_REGISTRO, C_REGISTRO;
+non terminal SIGNUPT, O_TIENDA, C_TIENDA;
+non terminal MODT, O_MOD, C_MOD;
+non terminal DELT, O_DEL, C_DEL;
+non terminal REG_PROD, O_PROD, O_PRODUCTO, C_PRODUCTO;
+
+
+start with INICIO;
+
+INICIO::= RESPUESTAS
+| error INICIO
+|
+;
+
+RESPUESTAS::= LOGIN
+|             SIGNUP
+|             SIGNUPT
+|             MODT
+|             DELT
+;
+
+O_REPLY::= dolar respuesta dolar;
+
+C_REPLY::= dolar respuestas menos dolar;
+
+O_USUARIO::= dolar usuario dolar;
+
+C_USUARIO::= dolar usuario menos dolar;
+
+O_ID::= dolar id dolar;
+
+C_ID::= dolar id menos dolar;
+
+O_ACCESO::= dolar acceso dolar;
+
+C_ACCESO::= dolar acceso menos dolar;
+
+BOOL::= verdadero | falso;
+
+LOGIN::= O_REPLY O_USUARIO O_ID numero C_ID O_ACCESO BOOL C_ACCESO C_USUARIO C_REPLY
+|        O_REPLY O_USUARIO O_ACCESO BOOL C_ACCESO O_ID numero C_ID C_USUARIO C_REPLY
+;
+
+O_REGISTRO::= dolar registro id asignacion numero dolar;
+
+C_REGISTRO::= dolar registro menos dolar;
+
+SIGNUP::= O_REPLY O_USUARIO O_REGISTRO BOOL C_REGISTRO C_USUARIO C_REPLY;
+
+O_TIENDA::= dolar tienda dolar;
+
+C_TIENDA::= dolar tienda menos dolar;
+
+SIGNUPT::= O_REPLY O_TIENDA O_REGISTRO BOOL C_REGISTRO C_TIENDA C_REPLY;
+
+O_MOD::= dolar modificar id asignacion numero dolar;
+
+C_MOD::= dolar modificar menos dolar;
+
+MODT::= O_REPLY O_TIENDA O_MOD BOOL C_MOD C_TIENDA C_REPLY;
+
+O_DEL::= dolar eliminar id asignacion numero dolar;
+
+C_DEL::= dolar eliminar menos dolar;
+
+DELT::= O_REPLY O_TIENDA O_DEL BOOL C_DEL C_TIENDA C_REPLY;
+
+O_PROD::= dolar registro id asignacion numero sucursal asignacion numero dolar;
+
+O_PRODUCTO::= dolar producto dolar;
+
+C_PRODUCTO::= dolar producto menos dolar;
+
+REG_PROD::= O_REPLY O_PRODUCTO O_PROD BOOL C_REGISTRO C_PRODUCTO C_REPLY;
+

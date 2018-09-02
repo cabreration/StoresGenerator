@@ -44,7 +44,6 @@ correo = ({letra}|{digito})+"@compiladores1.com"
 <YYINITIAL> "modificar"                {return new Symbol(SimbolosA.modificar, yycolumn, yyline, "modificar");}
 <YYINITIAL> "eliminar"                 {return new Symbol(SimbolosA.eliminar, yycolumn, yyline, "eliminar");}
 <YYINITIAL> "producto"                 {return new Symbol(SimbolosA.producto, yycolumn, yyline, "producto");}
-<YYINITIAL> "sucursal"                 {return new Symbol(SimbolosA.sucursal, yycolumn, yyline, "sucursal");}
 <YYINITIAL> "error"                    {return new Symbol(SimbolosA.error, yycolumn, yyline, "error");}
 <YYINITIAL> "descripcion"              {return new Symbol(SimbolosA.descripcion, yycolumn, yyline, "descripcion");}
 <YYINITIAL> "lista"                    {return new Symbol(SimbolosA.lista, yycolumn, yyline, "lista");}
@@ -57,7 +56,7 @@ correo = ({letra}|{digito})+"@compiladores1.com"
 <YYINITIAL> "color"                    {return new Symbol(SimbolosA.color, yycolumn, yyline, "color");}
 <YYINITIAL> "sucursal"                 {return new Symbol(SimbolosA.sucursal, yycolumn, yyline, "sucursal");}
 <YYINITIAL> "tamaño"                   {return new Symbol(SimbolosA.size, yycolumn, yyline, "tamanio");}
-<YYINITIAL> "cantidad"                 {return new Symbol(SimbolosA.producto, yycolumn, yyline, "producto");}
+<YYINITIAL> "cantidad"                 {return new Symbol(SimbolosA.cantidad, yycolumn, yyline, "cantidad");}
 <YYINITIAL> {cadena}                   {return new Symbol(SimbolosA.cadena, yycolumn, yyline, yytext());}
 <YYINITIAL> {numero}                   {return new Symbol(SimbolosA.numero, yycolumn, yyline, yytext());}
 

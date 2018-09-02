@@ -67,6 +67,7 @@ correo = ({letra}|{digito})+"@compiladores1.com"
 <YYINITIAL> {numero}                   {return new Symbol(SimbolosF.numero, yycolumn, yyline, yytext());}
 <YYINITIAL> {clave}                    {return new Symbol(SimbolosF.clave, yycolumn, yyline, yytext());}
 <YYINITIAL> {correo}                   {return new Symbol(SimbolosF.correo, yycolumn, yyline, yytext());}
+<YYINITIAL> "get"                      {return new Symbol(SimbolosF.obtener, yycolumn, yyline, "get");}
 
 <YYINITIAL> [ \t\r\f\n]                {}
 
