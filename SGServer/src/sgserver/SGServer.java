@@ -5,6 +5,9 @@
  */
 package sgserver;
 
+import Servidor.ServidorN;
+import java.io.IOException;
+
 /**
  *
  * @author Javier A. Cabrera
@@ -14,8 +17,10 @@ public class SGServer {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         // TODO code application logic here
+        ServidorN servidor = new ServidorN();
+        servidor.iniciarServidor();
     }
     
 }

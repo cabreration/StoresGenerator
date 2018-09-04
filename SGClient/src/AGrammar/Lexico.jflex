@@ -24,9 +24,6 @@ import java.util.ArrayList;
 digito = [0-9]
 numero = {digito}+("." {digito}+)?
 cadena = "\"" ~"\""
-letra = [a-zA-ZñÑ]
-clave = {letra}({letra}|{digito}|"_")({letra}|{digito}|"_")({letra}|{digito}|"_")({letra}|{digito}|"_")*{letra}
-correo = ({letra}|{digito})+"@compiladores1.com"
 
 %%
 

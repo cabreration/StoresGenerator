@@ -53,8 +53,8 @@ action code
          
 :}
 
-terminal dolar, respuesta, usuario, id, acceso, menos, verdadero, falso, registro, asignacion, tienda, modificar, eliminar, producto, sucursal, error;
-terminal error, descripcion, lista, propietario, codigo, nombre, telefono, marca, color, size, cantidad;
+terminal dolar, respuesta, usuario, id, acceso, menos, verdadero, falso, registro, asignacion, tienda, modificar, eliminar, producto, sucursal, errorT;
+terminal descripcion, lista, propietario, codigo, nombre, telefono, marca, color, size, cantidad, direccion;
 terminal String cadena, numero; 
 
 non terminal INICIO, RESPUESTAS, BOOL;
@@ -64,6 +64,13 @@ non terminal SIGNUPT, O_TIENDA, C_TIENDA;
 non terminal MODT, O_MOD, C_MOD;
 non terminal DELT, O_DEL, C_DEL;
 non terminal REG_PROD, O_PROD, O_PRODUCTO, C_PRODUCTO;
+non terminal MOD_PROD, O_MODPROD;
+non terminal DEL_PROD, O_DELPROD;
+non terminal ERRORLINE, O_ERROR, C_ERROR, O_DESCRIPCION, C_DESCRIPCION;
+non terminal LISTA_TIENDAS, O_LISTA, C_LISTA, O_CODIGO, C_CODIGO, O_PROPIETARIO, C_PROPIETARIO, O_NOMBRE, C_NOMBRE;
+non terminal O_DIRECCION, C_DIRECCION, O_TELEFONO, C_TELEFONO, TIENDA, TIENDAS;
+non terminal LISTA_PRODUCTOS, O_CANTIDAD, C_CANTIDAD, O_MARCA, C_MARCA, O_SIZE, C_SIZE, O_COLOR, C_COLOR, O_SUCURSAL, C_SUCURSAL;
+non terminal PRODUCTO, PRODUCTOS;
 
 
 start with INICIO;
@@ -78,11 +85,17 @@ RESPUESTAS::= LOGIN
 |             SIGNUPT
 |             MODT
 |             DELT
+|             REG_PROD
+|             MOD_PROD
+|             DEL_PROD
+|             ERRORLINE
+|             LISTA_TIENDAS
+|             LISTA_PRODUCTOS
 ;
 
 O_REPLY::= dolar respuesta dolar;
 
-C_REPLY::= dolar respuestas menos dolar;
+C_REPLY::= dolar respuesta menos dolar;
 
 O_USUARIO::= dolar usuario dolar;
 
@@ -134,3 +147,82 @@ C_PRODUCTO::= dolar producto menos dolar;
 
 REG_PROD::= O_REPLY O_PRODUCTO O_PROD BOOL C_REGISTRO C_PRODUCTO C_REPLY;
 
+O_MODPROD::= dolar modificar id asignacion numero sucursal asignacion numero dolar;
+
+MOD_PROD::= O_REPLY O_PRODUCTO O_MODPROD BOOL C_MOD C_PRODUCTO C_REPLY;
+
+O_DELPROD::= dolar eliminar id asignacion numero sucursal asignacion numero dolar;
+
+DEL_PROD::= O_REPLY O_PRODUCTO O_DELPROD BOOL C_DEL C_PRODUCTO C_REPLY;
+
+O_ERROR::= dolar errorT dolar;
+
+C_ERROR::= dolar errorT menos dolar;
+
+O_DESCRIPCION::= dolar descripcion dolar;
+
+C_DESCRIPCION::= dolar descripcion menos dolar;
+
+ERRORLINE::= O_REPLY O_ERROR O_DESCRIPCION cadena C_DESCRIPCION C_ERROR C_REPLY;
+
+O_LISTA::= dolar lista dolar;
+
+C_LISTA::= dolar lista menos dolar;
+
+O_CODIGO::= dolar codigo dolar;
+
+C_CODIGO::= dolar codigo menos dolar;
+
+O_NOMBRE::= dolar nombre dolar;
+
+C_NOMBRE::= dolar nombre menos dolar;
+
+O_PROPIETARIO::= dolar propietario dolar;
+
+C_PROPIETARIO::= dolar propietario menos dolar;
+
+O_TELEFONO::= dolar telefono dolar;
+
+C_TELEFONO::= dolar telefono menos dolar;
+
+O_DIRECCION::= dolar direccion dolar;
+
+C_DIRECCION::= dolar direccion menos dolar;
+
+TIENDA::= O_TIENDA O_CODIGO numero C_CODIGO O_PROPIETARIO numero C_PROPIETARIO
+O_NOMBRE cadena C_NOMBRE O_DIRECCION cadena C_DIRECCION O_TELEFONO numero C_TELEFONO C_TIENDA;
+
+TIENDAS::= TIENDAS TIENDA
+| TIENDA
+;
+
+LISTA_TIENDAS::= O_REPLY O_LISTA TIENDAS C_LISTA C_REPLY;
+
+O_CANTIDAD::= dolar cantidad dolar;
+
+C_CANTIDAD::= dolar cantidad menos dolar;
+
+O_MARCA::= dolar marca dolar;
+
+C_MARCA::= dolar marca menos dolar;
+
+O_SIZE::= dolar size dolar;
+
+C_SIZE::= dolar size menos dolar;
+
+O_COLOR::= dolar color dolar;
+
+C_COLOR::= dolar color menos dolar;
+
+O_SUCURSAL::= dolar sucursal dolar;
+
+C_SUCURSAL::= dolar sucursal menos dolar;
+
+PRODUCTO::= O_PRODUCTO O_CODIGO numero C_CODIGO O_NOMBRE cadena C_NOMBRE O_CANTIDAD numero C_CANTIDAD O_MARCA cadena C_MARCA
+O_COLOR cadena C_COLOR O_SIZE numero C_SIZE O_SUCURSAL numero C_SUCURSAL C_PRODUCTO;
+
+PRODUCTOS::= PRODUCTOS PRODUCTO
+| PRODUCTO
+;
+
+LISTA_PRODUCTOS::= O_REPLY O_LISTA PRODUCTOS C_LISTA C_REPLY;
