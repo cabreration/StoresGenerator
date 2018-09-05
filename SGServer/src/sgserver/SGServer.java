@@ -19,8 +19,10 @@ public class SGServer {
      */
     public static void main(String[] args) throws IOException {
         // TODO code application logic here
-        ServidorN servidor = new ServidorN();
-        servidor.iniciarServidor();
+        //ServidorN servidor = new ServidorN();
+        //servidor.iniciarServidor();
+        GUI interfaz = new GUI();
+        interfaz.setVisible(true);
     }
     
 }
