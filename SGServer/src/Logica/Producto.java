@@ -10,7 +10,6 @@ package Logica;
  * @author Javier A. Cabrera
  */
 public class Producto {
-    int llave;
     int codigo;
     String nombre;
     int cantidad;
@@ -22,8 +21,7 @@ public class Producto {
     
     //los productos pueden repetir su codigo si el codigo de sucursal es diferente
 
-    public Producto(int llave, int codigo, String nombre, int cantidad, String marca, String color, int size, String imagen, int sucursal_tienda) {
-        this.llave = llave;
+    public Producto(int codigo, String nombre, int cantidad, String marca, String color, int size, String imagen, int sucursal_tienda) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.cantidad = cantidad;
@@ -34,9 +32,16 @@ public class Producto {
         this.sucursal_tienda = sucursal_tienda;
     }
     
-
-    public int getLlave() {
-        return llave;
+    public Producto() 
+    {
+        codigo = -1;
+        nombre = null;
+        cantidad = -1;
+        marca = null;
+        color = null;
+        size = -1;
+        imagen = null;
+        sucursal_tienda = -1;
     }
 
     public int getCodigo() {

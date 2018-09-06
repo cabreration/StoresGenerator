@@ -25,6 +25,15 @@ public class Tienda {
         this.telefono = telefono;
         this.imagen = imagen;
     }
+    
+    public Tienda() {
+        this.codigo = -1;
+        this.usuario_propietario = -1;
+        this.nombre = null;
+        this.direccion = null;
+        this.telefono = -1;
+        this.imagen = null;
+    }
 
     public int getCodigo() {
         return codigo;
@@ -61,4 +70,8 @@ public class Tienda {
     public void setTelefono(int telefono) {
         this.telefono = telefono;
     } 
+    
+    public void setUsuario(int usuario) {
+        this.usuario_propietario = usuario;
+    }
 }
