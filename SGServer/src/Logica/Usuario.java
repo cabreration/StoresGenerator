@@ -27,6 +27,17 @@ public class Usuario {
         this.email = email;
         this.direccion = direccion;
     }
+    
+    public Usuario() 
+    {
+        identificador = -1;
+        nombre = null;
+        apellido = null;
+        password = null;
+        telefono = -1;
+        email = null;
+        direccion = null;
+    }
 
     public int getIdentificador() {
         return identificador;
@@ -79,4 +90,9 @@ public class Usuario {
     public void setDireccion(String direccion) {
         this.direccion = direccion;
     }
+
+    public void setIdentificador(int identificador) {
+        this.identificador = identificador;
+    }
+    
 }

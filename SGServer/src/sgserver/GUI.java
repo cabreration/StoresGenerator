@@ -5,6 +5,10 @@
  */
 package sgserver;
 
+import FGrammar.Lexico;
+import FGrammar.Sintactico;
+import java.io.Reader;
+import java.io.StringReader;
 import static java.lang.System.exit;
 
 /**
@@ -61,6 +65,7 @@ public class GUI extends javax.swing.JFrame {
         commandLine.setColumns(20);
         commandLine.setForeground(new java.awt.Color(255, 255, 255));
         commandLine.setRows(5);
+        commandLine.setCaretColor(new java.awt.Color(255, 255, 255));
         jScrollPane1.setViewportView(commandLine);
 
         jTabbedPane1.addTab("Linea de Comandos", jScrollPane1);
@@ -88,6 +93,7 @@ public class GUI extends javax.swing.JFrame {
         outputLine.setColumns(20);
         outputLine.setForeground(new java.awt.Color(255, 255, 255));
         outputLine.setRows(5);
+        outputLine.setCaretColor(new java.awt.Color(255, 255, 255));
         outputLine.setEnabled(false);
         jScrollPane2.setViewportView(outputLine);
 
@@ -118,8 +124,18 @@ public class GUI extends javax.swing.JFrame {
         });
 
         botonCargar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/Files-Upload-File-icon.png"))); // NOI18N
+        botonCargar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonCargarActionPerformed(evt);
+            }
+        });
 
         botonAnalizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/Mimetype-make-icon.png"))); // NOI18N
+        botonAnalizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonAnalizarActionPerformed(evt);
+            }
+        });
 
         botonErrores.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/Delete-icon.png"))); // NOI18N
 
@@ -206,6 +222,26 @@ public class GUI extends javax.swing.JFrame {
         exit(0);
     }//GEN-LAST:event_terminarActionPerformed
 
+    private void botonCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCargarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_botonCargarActionPerformed
+
+    private void botonAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAnalizarActionPerformed
+        // TODO add your handling code here:
+        String cadena = this.commandLine.getText();
+        Reader lector = new StringReader(cadena);
+        Lexico scanner = new Lexico(lector);
+        Sintactico parser = new Sintactico(scanner);
+        try 
+        {
+            parser.parse();
+        }
+        catch(Exception e) 
+        {
+            System.out.println(e);
+        }
+    }//GEN-LAST:event_botonAnalizarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -251,7 +287,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
-    private javax.swing.JTextArea outputLine;
+    public javax.swing.JTextArea outputLine;
     private javax.swing.JPanel panelConsola;
     private javax.swing.JPanel panelEditor;
     private javax.swing.JPanel panelPrincipal;

@@ -3,6 +3,8 @@ package FGrammar;
 
 import java_cup.runtime.Symbol;
 import java.util.ArrayList;
+import Logica.*;
+import sgserver.*;
 
 parser code  
 {:
@@ -10,6 +12,7 @@ parser code
 
     public void syntax_error(Symbol s)
     {   
+        System.out.println(s.value.toString());
          if (s == null) 
         {
             errores.add(new ErrorC("Error Sintactico", "null", 0, 0, "ultimo token de finalizacion perdido"));
@@ -26,6 +29,7 @@ parser code
 
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception
     {    
+        System.out.println(s.value.toString());
         if (s == null) 
         {
             errores.add(new ErrorC("Error Sintactico", "null", 0, 0, "ultimo token de finalizacion perdido"));
@@ -45,18 +49,34 @@ parser code
         System.out.println("error semantico ");
     }
 
-    public void semantic(String msg, Object obj) {}
+    public void semantic(String msg, Object obj) {
+        System.out.println("error semantico");
+    }
 :}
 
 action code 
 {:
-         
+         Usuario usuarioAuxiliar = new Usuario();
+
+         public void insertarUsuario() {
+            System.out.println("Llegue a insertar usuario");
+            try 
+            {
+                boolean exito = DatosPersistentes.usuarios.agregarUsuario(usuarioAuxiliar);
+                //respuesta verdadera
+            }
+            catch(Exception e) {
+                //respuesta falsa
+            }
+            DatosPersistentes.interfaz.outputLine.append("\n >> Usuario registrado" + usuarioAuxiliar.getNombre());
+            usuarioAuxiliar = new Usuario();
+         }
 :}
 
 terminal dolar, peticion, inicioUsuario, id, password, menos, mas, por, sobre, crearUsuario, nombre, apellido, telefono, email, direccion;
 terminal tienda, tipo, codigo, propietario, img, raizCuadrada, potencia, cantidad, marca, color, sucursal, size, coma, llaveA, llaveC;
 terminal parentesisA, parentesisC, asignacion, producto, obtener;
-terminal String cadena, numero, clave, correo; 
+terminal cadena, numero, clave, correo; 
 
 non terminal INICIO, ACCION, OTRA_ACCION, LISTA, LISTA2;
 non terminal LOGIN, O_PETICION, O_INGRESO, O_ID, O_PASSWORD, C_PASSWORD, C_ID, C_INGRESO, C_PETICION, G_ID, G_PASSWORD;
@@ -117,9 +137,9 @@ C_INGRESO::= dolar inicioUsuario menos dolar;
 
 C_PETICION::= dolar peticion menos dolar;
 
-G_ID::= O_ID numero C_ID;
+G_ID::= O_ID numero:ide C_ID {: RESULT = ide; :};
 
-G_PASSWORD::= O_PASSWORD clave C_PASSWORD;
+G_PASSWORD::= O_PASSWORD clave:key C_PASSWORD {: RESULT = key; :};
 
 LOGIN::= O_INGRESO G_ID G_PASSWORD C_INGRESO 
 |        O_INGRESO G_PASSWORD G_ID C_INGRESO
@@ -139,7 +159,7 @@ O_EMAIL::= dolar email dolar;
 
 C_CREAR::= dolar crearUsuario menos dolar;
 
-C_NOMBRE::= dolar nombre menos dolar;
+C_NOMBRE::= dolar nombre menos dolar ;
 
 C_APELLIDO::= dolar apellido menos dolar;
 
@@ -149,30 +169,30 @@ C_DIRECCION::= dolar direccion menos dolar;
 
 C_EMAIL::= dolar email menos dolar;
 
-G_NOMBRE::= O_NOMBRE cadena C_NOMBRE;
+G_NOMBRE::= O_NOMBRE cadena:name C_NOMBRE {: RESULT = name; :};
 
-G_APELLIDO::= O_APELLIDO cadena C_APELLIDO;
+G_APELLIDO::= O_APELLIDO cadena:ape C_APELLIDO {: RESULT = ape; :};
 
-G_TELEFONO::= O_TELEFONO numero C_TELEFONO;
+G_TELEFONO::= O_TELEFONO numero:tel C_TELEFONO {: RESULT = tel; :};
 
-G_DIRECCION::= O_DIRECCION cadena C_DIRECCION;
+G_DIRECCION::= O_DIRECCION cadena:dir C_DIRECCION {: RESULT = dir; :};
 
-G_EMAIL::= O_EMAIL correo C_EMAIL;
+G_EMAIL::= O_EMAIL correo:cor C_EMAIL {: RESULT = cor; :};
 
-CAMPO_REGISTRO::= G_ID 
-| G_NOMBRE 
-| G_APELLIDO 
-| G_PASSWORD 
-| G_TELEFONO 
-| G_EMAIL 
-| G_DIRECCION
+CAMPO_REGISTRO::= G_ID:ide {: usuarioAuxiliar.setIdentificador(Integer.parseInt(String.valueOf(ide))); :}
+| G_NOMBRE:name {: usuarioAuxiliar.setNombre(String.valueOf(name)); :}
+| G_APELLIDO:ape {: usuarioAuxiliar.setApellido(String.valueOf(ape)); :}
+| G_PASSWORD:pass {: usuarioAuxiliar.setPassword(String.valueOf(pass)); :}
+| G_TELEFONO:tel {: usuarioAuxiliar.setTelefono(Integer.parseInt(String.valueOf(tel))); :}
+| G_EMAIL:cor {: usuarioAuxiliar.setEmail(String.valueOf(cor)); :} 
+| G_DIRECCION:dir {: usuarioAuxiliar.setDireccion(String.valueOf(dir)); :}
 ;
 
 OTRO_CAMPOR::= OTRO_CAMPOR CAMPO_REGISTRO
 | CAMPO_REGISTRO
 ;
 
-REGISTRO::= O_CREAR OTRO_CAMPOR C_CREAR;
+REGISTRO::= O_CREAR OTRO_CAMPOR C_CREAR {: insertarUsuario(); :};
 
 O_TIENDA::= dolar tienda tipo asignacion cadena dolar;
 

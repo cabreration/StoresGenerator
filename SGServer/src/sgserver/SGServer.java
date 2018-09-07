@@ -5,8 +5,12 @@
  */
 package sgserver;
 
+import Logica.TablaProductos;
+import Logica.TablaTiendas;
+import Logica.TablaUsuarios;
 import Servidor.ServidorN;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  *
@@ -21,8 +25,12 @@ public class SGServer {
         // TODO code application logic here
         //ServidorN servidor = new ServidorN();
         //servidor.iniciarServidor();
-        GUI interfaz = new GUI();
-        interfaz.setVisible(true);
+        DatosPersistentes.productos = new TablaProductos();
+        DatosPersistentes.usuarios = new TablaUsuarios();
+        DatosPersistentes.tiendas = new TablaTiendas();
+        DatosPersistentes.usuariosLoggueados = new ArrayList<>();
+        DatosPersistentes.interfaz = new GUI();
+        DatosPersistentes.interfaz.setVisible(true);
     }
     
 }
