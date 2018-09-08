@@ -8,6 +8,7 @@ package Logica;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Set;
+import sgserver.DatosPersistentes;
 
 /**
  *
@@ -25,7 +26,11 @@ public class TablaTiendas {
     public boolean registrarTienda(Tienda tienda) throws Exception 
     {
         if (tiendas.get(String.valueOf(tienda.getCodigo())) != null)
-            throw new Exception("La tienda ya existe");
+            throw new Exception("Una tienda fue registrada ya con ese codigo");
+        
+        //chequear si el usuario propietario existe
+        if (DatosPersistentes.usuarios.usuarios.get(String.valueOf(tienda.getUsuario_propietario())) == null)
+            throw new Exception("No existe ningun usuario con el codigo de propietario especificado");
         
         tiendas.put(String.valueOf(tienda.getCodigo()), tienda);
         return true;

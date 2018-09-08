@@ -57,19 +57,51 @@ parser code
 action code 
 {:
          Usuario usuarioAuxiliar = new Usuario();
+         Tienda tiendaAuxiliar = new Tienda();
 
          public void insertarUsuario() {
             System.out.println("Llegue a insertar usuario");
             try 
             {
                 boolean exito = DatosPersistentes.usuarios.agregarUsuario(usuarioAuxiliar);
+                DatosPersistentes.interfaz.outputLine.append("\n >> Usuario registrado: " + usuarioAuxiliar.getNombre());
                 //respuesta verdadera
             }
             catch(Exception e) {
                 //respuesta falsa
+                DatosPersistentes.interfaz.outputLine.append("\n >> Fallo al registrar usuario " + e);
             }
-            DatosPersistentes.interfaz.outputLine.append("\n >> Usuario registrado" + usuarioAuxiliar.getNombre());
+            
             usuarioAuxiliar = new Usuario();
+         }
+
+         public void logIn(int id, String clave) {
+            System.out.println("Llegue a log in");
+            try 
+            {
+                String exito = DatosPersistentes.usuarios.logIn(id, clave);
+                DatosPersistentes.interfaz.outputLine.append("\n >> Bienvenido " + exito);
+                ArrayList<Usuario> auxiliar = DatosPersistentes.usuariosLoggueados;
+                //respuesta verdadera
+            }
+            catch(Exception e) {
+                //respuesta falsa
+                DatosPersistentes.interfaz.outputLine.append("\n >> Fallo al intentar entrar " + e );
+            }
+         }
+
+         public void registrarTienda() {
+            System.out.println("Registrando tienda");
+            
+            try {
+                DatosPersistentes.tiendas.registrarTienda(tiendaAuxiliar);
+                DatosPersistentes.interfaz.outputLine.append("\n >> Tienda Registrada: " + tiendaAuxiliar.getNombre());
+            }
+            catch(Exception e) {
+                DatosPersistentes.interfaz.outputLine.append("\n >> Error al registrar tienda: " + e);
+            }
+
+            tiendaAuxiliar = new Tienda();
          }
 :}
 
@@ -141,8 +173,8 @@ G_ID::= O_ID numero:ide C_ID {: RESULT = ide; :};
 
 G_PASSWORD::= O_PASSWORD clave:key C_PASSWORD {: RESULT = key; :};
 
-LOGIN::= O_INGRESO G_ID G_PASSWORD C_INGRESO 
-|        O_INGRESO G_PASSWORD G_ID C_INGRESO
+LOGIN::= O_INGRESO G_ID:ide G_PASSWORD:key C_INGRESO {: logIn(Integer.parseInt(String.valueOf(ide)), String.valueOf(key)); :}
+|        O_INGRESO G_PASSWORD:key G_ID:ide C_INGRESO {: logIn(Integer.parseInt(String.valueOf(ide)), String.valueOf(key)); :}
 ;
 
 O_CREAR::= dolar crearUsuario dolar;
@@ -210,19 +242,25 @@ O_IMAGEN::= dolar img dolar;
 
 C_IMAGEN::= dolar img menos dolar; 
 
-G_CODIGO::= O_CODIGO numero C_CODIGO;
+G_CODIGO::= O_CODIGO numero:num C_CODIGO {: RESULT = num; :};
 
-G_PROPIETARIO::= O_PROPIETARIO numero C_PROPIETARIO;
+G_PROPIETARIO::= O_PROPIETARIO numero:num C_PROPIETARIO {: RESULT = num; :};
 
-G_IMAGEN::= O_IMAGEN cadena C_IMAGEN; 
+G_IMAGEN::= O_IMAGEN cadena:cad C_IMAGEN {: RESULT = cad; :}; 
 
-CAMPO_TIENDA::= G_CODIGO | G_PROPIETARIO | G_NOMBRE | G_DIRECCION | G_TELEFONO | G_IMAGEN;
+CAMPO_TIENDA::= G_CODIGO:cod {: tiendaAuxiliar.setCodigo(Integer.parseInt(String.valueOf(cod))); :}
+| G_PROPIETARIO:prop {: tiendaAuxiliar.setUsuario_propietario(Integer.parseInt(String.valueOf(prop))); :}
+| G_NOMBRE:name {: tiendaAuxiliar.setNombre(String.valueOf(name)); :}
+| G_DIRECCION:dir {: tiendaAuxiliar.setDireccion(String.valueOf(dir)); :}
+| G_TELEFONO:tel {: tiendaAuxiliar.setTelefono(Integer.parseInt(String.valueOf(tel))); :}
+| G_IMAGEN:img {: tiendaAuxiliar.setImagen(String.valueOf(img)); :}
+;
 
 OTRO_CAMPOT::= OTRO_CAMPOT CAMPO_TIENDA
 | CAMPO_TIENDA
 ;
 
-TIENDA::= O_TIENDA OTRO_CAMPOT C_TIENDA;
+TIENDA::= O_TIENDA OTRO_CAMPOT C_TIENDA {: registrarTienda(); :};
 
 TIPO::= tipo asignacion cadena;
 

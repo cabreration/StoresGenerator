@@ -74,4 +74,18 @@ public class Tienda {
     public void setUsuario(int usuario) {
         this.usuario_propietario = usuario;
     }
+
+    public void setCodigo(int codigo) {
+        this.codigo = codigo;
+    }
+
+    public void setUsuario_propietario(int usuario_propietario) {
+        this.usuario_propietario = usuario_propietario;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
+    }
+    
+    
 }

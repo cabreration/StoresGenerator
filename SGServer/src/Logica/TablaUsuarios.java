@@ -6,6 +6,7 @@
 package Logica;
 
 import java.util.Hashtable;
+import sgserver.DatosPersistentes;
 
 /**
  *
@@ -29,7 +30,7 @@ public class TablaUsuarios {
         return true;
     }
     
-    public boolean logIn(int id, String password) throws Exception 
+    public String logIn(int id, String password) throws Exception 
     {
         Usuario aux = null;
         if ((aux = usuarios.get(String.valueOf(id))) == null) 
@@ -38,7 +39,8 @@ public class TablaUsuarios {
         if (!aux.getPassword().equals(password))
             throw new Exception("El usuario y la clave no concuerdan");
         
-        return true;
+        DatosPersistentes.usuariosLoggueados.add(aux);
+        return aux.getNombre();
     }
     
 }
