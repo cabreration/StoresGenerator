@@ -58,6 +58,7 @@ action code
 {:
          Usuario usuarioAuxiliar = new Usuario();
          Tienda tiendaAuxiliar = new Tienda();
+         String tipo = null;
 
          public void insertarUsuario() {
             System.out.println("Llegue a insertar usuario");
@@ -102,6 +103,30 @@ action code
             }
 
             tiendaAuxiliar = new Tienda();
+         }
+
+         public void modificarTienda() {
+            System.out.println("Modificando Tienda");
+
+            if (tipo.substring(1, tipo.length()-1).equalsIgnoreCase("modificacion")) {
+                
+                try {
+                    DatosPersistentes.tiendas.modificarTienda(tiendaAuxiliar);
+                    DatosPersistentes.interfaz.outputLine.append("\n >> Tienda Modificada con exito!");
+                }
+                catch(Exception e) {
+                    DatosPersistentes.interfaz.outputLine.append("\n >> Error al modificar tienda: " + e);
+                }
+            }
+            else {
+                try {
+                    DatosPersistentes.tiendas.eliminarTienda(tiendaAuxiliar.getUsuario_propietario(), tiendaAuxiliar.getCodigo());
+                    DatosPersistentes.interfaz.outputLine.append("\n >> Tienda eliminada con exito!");
+                }
+                catch(Exception e) {
+                    DatosPersistentes.interfaz.outputLine.append("\n >> Error al eliminar tienda: " + e);
+                }
+            }
          }
 :}
 
@@ -262,19 +287,25 @@ OTRO_CAMPOT::= OTRO_CAMPOT CAMPO_TIENDA
 
 TIENDA::= O_TIENDA OTRO_CAMPOT C_TIENDA {: registrarTienda(); :};
 
-TIPO::= tipo asignacion cadena;
+TIPO::= tipo asignacion cadena:cad {: tipo = String.valueOf(cad); :};
 
-CODIGO::= codigo asignacion numero;
+CODIGO::= codigo asignacion numero:num {: tiendaAuxiliar.setCodigo(Integer.parseInt(String.valueOf(num))); :};
 
-NOMBRE::= nombre asignacion cadena;
+NOMBRE::= nombre asignacion cadena:cad {: tiendaAuxiliar.setNombre(String.valueOf(cad)); :};
 
-PROP::= propietario asignacion numero;
+PROP::= propietario asignacion numero:num {: tiendaAuxiliar.setUsuario_propietario(Integer.parseInt(String.valueOf(num))); :} ;
 
-DIRECCION::= direccion asignacion cadena;
+DIRECCION::= direccion asignacion cadena:dir {: tiendaAuxiliar.setDireccion(String.valueOf(dir)); :};
 
-TELEFONO::= telefono asignacion numero;
+TELEFONO::= telefono asignacion numero:num {: tiendaAuxiliar.setTelefono(Integer.parseInt(String.valueOf(num))); :};
 
-CAMPO_MOD::= TIPO | CODIGO | NOMBRE | PROP | DIRECCION | TELEFONO;
+CAMPO_MOD::= TIPO 
+| CODIGO 
+| NOMBRE 
+| PROP 
+| DIRECCION 
+| TELEFONO
+;
 
 OTRO_CAMPOMOD::= coma CAMPO_MOD OTRO_CAMPOMOD
 |
@@ -282,7 +313,7 @@ OTRO_CAMPOMOD::= coma CAMPO_MOD OTRO_CAMPOMOD
 
 //MOD_TIENDA::= OTRA_MODT;
 
-MODT::= dolar tienda CAMPO_MOD OTRO_CAMPOMOD menos dolar;
+MODT::= dolar tienda CAMPO_MOD OTRO_CAMPOMOD menos dolar {: modificarTienda(); :};
 
 //OTRA_MODT::= OTRA_MODT MODT
 //| MODT

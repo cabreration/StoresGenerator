@@ -36,14 +36,14 @@ public class TablaTiendas {
         return true;
     }
     
-    public boolean modificarTienda(Tienda datos, int ejecutor) throws Exception 
+    public boolean modificarTienda(Tienda datos) throws Exception 
     {
         Tienda aux = null;
         if ((aux = tiendas.get(String.valueOf(datos.getCodigo()))) == null)
             throw new Exception("No existe ninguna tienda con codigo " + datos.getCodigo());
        
-        if (ejecutor != datos.usuario_propietario) 
-            throw new Exception("No puede realizar las modificaciones porque la tienda no le pertenece");
+        //if (ejecutor != datos.usuario_propietario) 
+          //  throw new Exception("No puede realizar las modificaciones porque la tienda no le pertenece");
         
         if (datos.getDireccion() != null)
             aux.setDireccion(datos.getDireccion());
@@ -53,6 +53,7 @@ public class TablaTiendas {
             aux.setTelefono(datos.getTelefono());
         if (datos.getUsuario_propietario() > -1)
             aux.setUsuario(datos.getUsuario_propietario());
+        
         return true;
     }
     
@@ -60,6 +61,9 @@ public class TablaTiendas {
     {
         if (tiendas.get(String.valueOf(codigo)) ==  null)
             throw new Exception("No existe ninguna tienda con codigo " + codigo);
+        
+        if (DatosPersistentes.usuarios.usuarios.get(String.valueOf(propietario)) == null) 
+            throw new Exception("No existe ningun usuario codigo " + propietario);
         
         if (tiendas.get(String.valueOf(codigo)).getUsuario_propietario() != propietario)
             throw new Exception("No puede eliminar esa tienda porque no es el propietario");
