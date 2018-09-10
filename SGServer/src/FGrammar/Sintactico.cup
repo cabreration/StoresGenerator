@@ -9,6 +9,7 @@ import sgserver.*;
 parser code  
 {:
     public ArrayList<ErrorC> errores = new ArrayList<>();
+    public ArrayList<Errorc> semanticos = new ArrayList<>();
 
     public void syntax_error(Symbol s)
     {   
@@ -59,6 +60,7 @@ action code
          Usuario usuarioAuxiliar = new Usuario();
          Tienda tiendaAuxiliar = new Tienda();
          String tipo = null;
+         Producto productoAuxiliar = new Producto();
 
          public void insertarUsuario() {
             System.out.println("Llegue a insertar usuario");
@@ -127,12 +129,27 @@ action code
                     DatosPersistentes.interfaz.outputLine.append("\n >> Error al eliminar tienda: " + e);
                 }
             }
+            tipo = null;
+         }
+
+         public void registrarProducto() {
+            System.out.println("Registrando producto");
+            
+            try {
+                DatosPersistentes.productos.registrarProducto(productoAuxiliar);
+                DatosPersistentes.interfaz.outputLine.append("\n >> Producto Registrado: " + productoAuxiliar.getNombre());
+            }
+            catch(Exception e) {
+                DatosPersistentes.interfaz.outputLine.append("\n >> Error al registrar producto: " + e);
+            }
+
+            tiendaAuxiliar = new Tienda();
          }
 :}
 
 terminal dolar, peticion, inicioUsuario, id, password, menos, mas, por, sobre, crearUsuario, nombre, apellido, telefono, email, direccion;
 terminal tienda, tipo, codigo, propietario, img, raizCuadrada, potencia, cantidad, marca, color, sucursal, size, coma, llaveA, llaveC;
-terminal parentesisA, parentesisC, asignacion, producto, obtener;
+terminal parentesisA, parentesisC, asignacion, producto, obtener, precio;
 terminal cadena, numero, clave, correo; 
 
 non terminal INICIO, ACCION, OTRA_ACCION, LISTA, LISTA2;
@@ -146,6 +163,7 @@ non terminal CREAR_PRODUCTO, O_PRODUCTO, C_PRODUCTO, CAMPO_CREARPRODUCTO, OTRO_C
 non terminal O_SIZE, C_SIZE, O_SUCURSAL, C_SUCURSAL, G_CANTIDAD, G_MARCA, G_COLOR, G_SIZE, G_SUCURSAL, OPERACION_ARITMETICA;
 non terminal BC_PRODUCTO, BC_ESTANDAR, OTRO_BC, CANTIDAD, MARCA, COLOR, SIZE, SUCURSAL, CAMPOS_BC, OTRO_CAMPOBC;
 non terminal EXPRESION, IMAGEN, GET;
+non terminal O_PRECIO, C_PRECIO, PRECIO, G_PRECIO;
 
 precedence left mas, menos;
 precedence left por, sobre;
@@ -323,7 +341,16 @@ O_PRODUCTO::= dolar producto tipo asignacion cadena dolar;
 
 C_PRODUCTO::= dolar producto menos dolar;
 
-CAMPO_CREARPRODUCTO::= G_CODIGO | G_NOMBRE | G_IMAGEN | G_CANTIDAD | G_MARCA | G_COLOR | G_SIZE | G_SUCURSAL;
+CAMPO_CREARPRODUCTO::= G_CODIGO:cod {: productoAuxiliar.setCodigo(Integer.parseInt(String.valueOf(cod))); :}
+| G_NOMBRE:name {: productoAuxiliar.setNombre(String.valueOf(name)); :}
+| G_IMAGEN:img {: productoAuxiliar.setImagen(String.valueOf(img)); :}
+| G_CANTIDAD:cant {: productoAuxiliar.setCantidad(Integer.parseInt(String.valueOf(cant))); :}
+| G_MARCA:brand {: productoAuxiliar.setMarca(String.valueOf(brand)); :}
+| G_COLOR:colour {: productoAuxiliar.setColor(String.valueOf(colour)); :}
+| G_SIZE:tamanio {: productoAuxiliar.setSize(Integer.parseInt(String.valueOf(tamanio))); :}
+| G_SUCURSAL:sucursal {: productoAuxiliar.setSucursal(String.valueOf(sucursal)); :}
+| G_PRECIO:cost {: productoAuxiliar.setPrecio(Double.parseDouble(String.valueOf(cost))); :}
+;
 
 OTRO_CAMPOCP::= OTRO_CAMPOCP CAMPO_CREARPRODUCTO
 | CAMPO_CREARPRODUCTO
@@ -332,6 +359,12 @@ OTRO_CAMPOCP::= OTRO_CAMPOCP CAMPO_CREARPRODUCTO
 O_CANTIDAD::= dolar cantidad dolar;
 
 C_CANTIDAD::= dolar cantidad menos dolar;
+
+O_PRECIO::= dolar precio dolar;
+
+C_PRECIO::= dolar precio menos dolar;
+
+G_PRECIO::= O_PRECIO OPERACION_ARITMETICA:cost C_PRECIO {: RESULT = cost; :};
 
 O_MARCA::= dolar marca dolar;
 
@@ -349,17 +382,17 @@ O_SUCURSAL::= dolar sucursal dolar;
 
 C_SUCURSAL::= dolar sucursal menos dolar;
 
-G_CANTIDAD::= O_CANTIDAD OPERACION_ARITMETICA C_CANTIDAD;
+G_CANTIDAD::= O_CANTIDAD OPERACION_ARITMETICA:cant C_CANTIDAD {: RESULT = cant; :};
 
-G_MARCA::= O_MARCA cadena C_MARCA;
+G_MARCA::= O_MARCA cadena:cad C_MARCA {: RESULT = cad; :};
 
-G_COLOR::= O_COLOR cadena C_COLOR;
+G_COLOR::= O_COLOR cadena:cad C_COLOR {: RESULT = cad; :};
 
-G_SIZE::= O_SIZE OPERACION_ARITMETICA C_SIZE;
+G_SIZE::= O_SIZE OPERACION_ARITMETICA:tamanio C_SIZE {: RESULT = tamanio; :};
 
-G_SUCURSAL::= O_SUCURSAL numero C_SUCURSAL;
+G_SUCURSAL::= O_SUCURSAL numero:num C_SUCURSAL {: RESULT = num; :};
 
-CREAR_PRODUCTO::= O_PRODUCTO OTRO_CAMPOCP C_PRODUCTO;
+CREAR_PRODUCTO::= O_PRODUCTO OTRO_CAMPOCP C_PRODUCTO {: registrarProducto(); :};
 
 CANTIDAD::= cantidad asignacion OPERACION_ARITMETICA;
 

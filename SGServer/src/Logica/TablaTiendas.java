@@ -86,4 +86,36 @@ public class TablaTiendas {
         
         return aux;
     }
+    
+    public void escribirArchivo() {
+        String escritura = " [ \n\t";
+        
+        ArrayList<Tienda> escritor = new ArrayList<>();
+        
+        Set<String> llaves = this.tiendas.keySet();
+        for (String llave : llaves) {
+            escritor.add(this.tiendas.get(String.valueOf(llave)));
+        }
+        
+        int i;
+        for (i = 0; i < escritor.size() - 1; i++) {
+            Tienda aux = escritor.get(i);
+            escritura += "{ \n \"codigo\": " + "\"" + aux.getCodigo() + "\", \n"
+                    + "\"usuario_propietario\": " + "\"" + aux.getUsuario_propietario() + "\", \n"
+                    + "\"nombre\": " + "\"" + aux.getNombre() + "\", \n"
+                    + "\"direccion\": " + "\"" + aux.getDireccion() + "\", \n"
+                    + "\"telefono\": " + "\"" + aux.getTelefono() + "\", \n"
+                    + "\"imagen\": " + "\"" + aux.getImagen() + "\" \n }, \n";     
+        }
+        
+        Tienda nu = escritor.get(i);
+        escritura += "{ \n \"codigo\": " + "\"" + nu.getCodigo() + "\", \n"
+                    + "\"usuario_propietario\": " + "\"" + nu.getUsuario_propietario() + "\", \n"
+                    + "\"nombre\": " + "\"" + nu.getNombre() + "\", \n"
+                    + "\"direccion\": " + "\"" + nu.getDireccion() + "\", \n"
+                    + "\"telefono\": " + "\"" + nu.getTelefono() + "\", \n"
+                    + "\"imagen\": " + "\"" + nu.getImagen() + "\" \n } \n"; 
+        
+        escritura += "]";
+    }
 }

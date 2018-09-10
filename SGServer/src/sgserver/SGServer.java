@@ -21,16 +21,14 @@ public class SGServer {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException {
-        // TODO code application logic here
-        //ServidorN servidor = new ServidorN();
-        //servidor.iniciarServidor();
+    
+    public static void main(String[] args) {
+        // TODO code application logic here      
         DatosPersistentes.productos = new TablaProductos();
         DatosPersistentes.usuarios = new TablaUsuarios();
         DatosPersistentes.tiendas = new TablaTiendas();
         DatosPersistentes.usuariosLoggueados = new ArrayList<>();
         DatosPersistentes.interfaz = new GUI();
         DatosPersistentes.interfaz.setVisible(true);
-    }
-    
+    } 
 }

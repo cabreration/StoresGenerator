@@ -7,21 +7,37 @@ package sgserver;
 
 import FGrammar.Lexico;
 import FGrammar.Sintactico;
+import Servidor.ServidorN;
+import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import static java.lang.System.exit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Javier A. Cabrera
  */
-public class GUI extends javax.swing.JFrame {
+public class GUI extends javax.swing.JFrame implements Runnable{
 
     /**
      * Creates new form GUI
      */
     public GUI() {
         initComponents();
+        Thread hilo = new Thread(this);
+        hilo.start();
+    }
+    
+    @Override
+    public void run() {
+        ServidorN servidor = new ServidorN();
+        try {
+            servidor.iniciarServidor();
+        } catch (IOException ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

@@ -29,6 +29,8 @@ public class TablaProductos {
         if (productos.get(String.valueOf(producto.getCodigo()) + "-" + String.valueOf(producto.getSucursal_tienda())) != null)
             throw new Exception("Un producto ya fue registrado con ese codigo");
         
+        //validar imagen aqui
+        
         productos.put(String.valueOf(producto.getCodigo()) + "-" + String.valueOf(producto.getSucursal_tienda()),
                 producto);
         
@@ -52,6 +54,8 @@ public class TablaProductos {
             aux.setNombre(producto.getNombre());
         if (producto.getSize() > -1)
             aux.setSize(producto.getSize());
+        if (producto.getPrecio() > -1)
+            aux.setPrecio(producto.getPrecio());
         return true;
     }
     
@@ -77,5 +81,43 @@ public class TablaProductos {
         }
         
         return aux;
+    }
+    
+    public void escribirArchivo() {
+        String escritura = " [ \n\t";
+        
+        ArrayList<Producto> escritor = new ArrayList<>();
+        
+        Set<String> llaves = this.productos.keySet();
+        for (String llave : llaves) {
+            escritor.add(this.productos.get(String.valueOf(llave)));
+        }
+        
+        int i;
+        for (i = 0; i < escritor.size() - 1; i++) {
+            Producto aux = escritor.get(i);
+            escritura += "{ \n \"codigo\": " + "\"" + aux.getCodigo() + "\", \n"
+                    + "\"nombre\": " + "\"" + aux.getNombre() + "\", \n"
+                    + "\"cantidad\": " + "\"" + aux.getCantidad() + "\", \n"
+                    + "\"marca\": " + "\"" + aux.getMarca() + "\", \n"
+                    + "\"color\": " + "\"" + aux.getColor() + "\", \n"
+                    + "\"size\": " + "\"" + aux.getSize() + "\", \n"
+                    + "\"imagen\": " + "\"" + aux.getImagen() + "\",  \n"
+                    + "\"sucursal_tienda\": " + aux.getSucursal_tienda() + "\", \n"
+                    + "\"producto\": " + aux.getPrecio() + "\" \n }, \n";
+        }
+        
+        Producto nu = escritor.get(i);
+        escritura += "{ \n \"codigo\": " + "\"" + nu.getCodigo() + "\", \n"
+                    + "\"nombre\": " + "\"" + nu.getNombre() + "\", \n"
+                    + "\"cantidad\": " + "\"" + nu.getCantidad() + "\", \n"
+                    + "\"marca\": " + "\"" + nu.getMarca() + "\", \n"
+                    + "\"color\": " + "\"" + nu.getColor() + "\", \n"
+                    + "\"size\": " + "\"" + nu.getSize() + "\", \n"
+                    + "\"imagen\": " + "\"" + nu.getImagen() + "\",  \n"
+                    + "\"sucursal_tienda\": " + nu.getSucursal_tienda() + "\", \n"
+                    + "\"producto\": " + nu.getPrecio() + "\" \n } \n";
+        
+        escritura += "]";
     }
 }

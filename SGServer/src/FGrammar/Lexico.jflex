@@ -57,6 +57,7 @@ correo = ({letra}|{digito})+"@compiladores1.com"
 <YYINITIAL> "sucursal"                 {return new Symbol(SimbolosF.sucursal, yycolumn, yyline, "sucursal");}
 <YYINITIAL> "tamaño"                   {return new Symbol(SimbolosF.size, yycolumn, yyline, "tamanio");}
 <YYINITIAL> "producto"                 {return new Symbol(SimbolosF.producto, yycolumn, yyline, "producto");}
+<YYINITIAL> "precio"                   {return new Symbol(SimbolosF.precio, yycolumn, yyline, yytext());}
 <YYINITIAL> ","                        {return new Symbol(SimbolosF.coma, yycolumn, yyline, yytext());}
 <YYINITIAL> "{"                        {return new Symbol(SimbolosF.llaveA, yycolumn, yyline, yytext());}
 <YYINITIAL> "}"                        {return new Symbol(SimbolosF.llaveC, yycolumn, yyline, yytext());}

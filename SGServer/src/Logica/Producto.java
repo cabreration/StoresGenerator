@@ -18,10 +18,11 @@ public class Producto {
     int size;
     String imagen;
     int sucursal_tienda;
+    double precio;
     
     //los productos pueden repetir su codigo si el codigo de sucursal es diferente
 
-    public Producto(int codigo, String nombre, int cantidad, String marca, String color, int size, String imagen, int sucursal_tienda) {
+    public Producto(int codigo, String nombre, int cantidad, String marca, String color, int size, String imagen, int sucursal_tienda, double precio) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.cantidad = cantidad;
@@ -30,6 +31,7 @@ public class Producto {
         this.size = size;
         this.imagen = imagen;
         this.sucursal_tienda = sucursal_tienda;
+        this.precio = precio;
     }
     
     public Producto() 
@@ -42,6 +44,7 @@ public class Producto {
         size = -1;
         imagen = null;
         sucursal_tienda = -1;
+        precio = -1;
     }
 
     public int getCodigo() {
@@ -94,5 +97,25 @@ public class Producto {
 
     public void setSize(int size) {
         this.size = size;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setCodigo(int codigo) {
+        this.codigo = codigo;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
+    }
+
+    public void setSucursal_tienda(int sucursal_tienda) {
+        this.sucursal_tienda = sucursal_tienda;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
     }
 }

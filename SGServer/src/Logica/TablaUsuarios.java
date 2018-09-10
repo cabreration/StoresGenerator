@@ -5,7 +5,9 @@
  */
 package Logica;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Set;
 import sgserver.DatosPersistentes;
 
 /**
@@ -43,4 +45,37 @@ public class TablaUsuarios {
         return aux.getNombre();
     }
     
+    public void escribirArchivo() {
+        String escritura = " [ \n\t";
+        
+        ArrayList<Usuario> escritor = new ArrayList<>();
+        
+        Set<String> llaves = this.usuarios.keySet();
+        for (String llave : llaves) {
+            escritor.add(this.usuarios.get(String.valueOf(llave)));
+        }
+        
+        int i;
+        for (i = 0; i < escritor.size() - 1; i++) {
+            Usuario aux = escritor.get(i);
+            escritura += "{ \n \"identificador\": " + "\"" + aux.getIdentificador() + "\", \n"
+                    + "\"nombre\": " + "\"" + aux.getNombre() + "\", \n"
+                    + "\"apellido\": " + "\"" + aux.getApellido() + "\", \n"
+                    + "\"password\": " + "\"" + aux.getPassword() + "\", \n"
+                    + "\"telefono\": " + "\"" + aux.getTelefono() + "\", \n"
+                    + "\"email\": " + "\"" + aux.getEmail() + "\", \n"
+                    + "\"direccion\": " + "\"" + aux.getDireccion() + "\" \n }, \n";
+        }
+        
+        Usuario nu = escritor.get(i);
+        escritura += "{ \n \"identificador\": " + "\"" + nu.getIdentificador() + "\", \n"
+                    + "\"nombre\": " + "\"" + nu.getNombre() + "\", \n"
+                    + "\"apellido\": " + "\"" + nu.getApellido() + "\", \n"
+                    + "\"password\": " + "\"" + nu.getPassword() + "\", \n"
+                    + "\"telefono\": " + "\"" + nu.getTelefono() + "\", \n"
+                    + "\"email\": " + "\"" + nu.getEmail() + "\", \n"
+                    + "\"direccion\": " + "\"" + nu.getDireccion() + "\" \n } \n";
+        
+        escritura += "]";
+    }
 }
