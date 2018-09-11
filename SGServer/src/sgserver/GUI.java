@@ -8,12 +8,18 @@ package sgserver;
 import FGrammar.Lexico;
 import FGrammar.Sintactico;
 import Servidor.ServidorN;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import static java.lang.System.exit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.JScrollPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -154,6 +160,11 @@ public class GUI extends javax.swing.JFrame implements Runnable{
         });
 
         botonErrores.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/Delete-icon.png"))); // NOI18N
+        botonErrores.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonErroresActionPerformed(evt);
+            }
+        });
 
         terminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/Misc-Download-Database-icon.png"))); // NOI18N
         terminar.addActionListener(new java.awt.event.ActionListener() {
@@ -234,12 +245,46 @@ public class GUI extends javax.swing.JFrame implements Runnable{
 
     private void terminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_terminarActionPerformed
         // TODO add your handling code here:
-        System.out.println("ya termine");
+        try {
+            DatosPersistentes.productos.escribirArchivo();
+            DatosPersistentes.usuarios.escribirArchivo();
+            DatosPersistentes.tiendas.escribirArchivo();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         exit(0);
     }//GEN-LAST:event_terminarActionPerformed
 
     private void botonCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCargarActionPerformed
         // TODO add your handling code here:
+        JFileChooser buscador = new JFileChooser();
+        buscador.setFileSelectionMode( JFileChooser.FILES_ONLY );
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos SL (*.sl)", "sl");
+        buscador.setFileFilter(filtro);
+        int seleccion = buscador.showOpenDialog(this);
+        if(seleccion == JFileChooser.APPROVE_OPTION )
+        {       
+            try 
+            {
+                BufferedReader lectorBuffer;
+                File archivo = buscador.getSelectedFile();
+                String nombre = archivo.getName();
+                lectorBuffer = new BufferedReader(new FileReader(archivo.getAbsolutePath()));  
+                
+                String parcial, completo= "";
+                parcial = lectorBuffer.readLine();
+                while (parcial != null) 
+                {
+                    completo += parcial +"\n";
+                    parcial = lectorBuffer.readLine();
+                }
+                this.commandLine.setText(completo);
+                lectorBuffer.close();   
+            } 
+            catch (IOException ex) 
+            {Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);}
+        }
     }//GEN-LAST:event_botonCargarActionPerformed
 
     private void botonAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAnalizarActionPerformed
@@ -258,6 +303,11 @@ public class GUI extends javax.swing.JFrame implements Runnable{
             e.printStackTrace();
         }
     }//GEN-LAST:event_botonAnalizarActionPerformed
+
+    private void botonErroresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonErroresActionPerformed
+        // TODO add your handling code here:
+        //generar pdf con errores desde aqui
+    }//GEN-LAST:event_botonErroresActionPerformed
 
     /**
      * @param args the command line arguments

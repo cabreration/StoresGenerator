@@ -1,0 +1,10 @@
+ [ 
+	{ 
+ "codigo": "1", 
+"usuario_propietario": "456", 
+"nombre": "Tienda1", 
+"direccion": "por ahi", 
+"telefono": "12345678", 
+"imagen": "ggggg" 
+ } 
+]

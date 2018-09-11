@@ -9,7 +9,8 @@ import sgserver.*;
 parser code  
 {:
     public ArrayList<ErrorC> errores = new ArrayList<>();
-    public ArrayList<Errorc> semanticos = new ArrayList<>();
+    public ArrayList<ErrorC> semanticos = new ArrayList<>();
+    public String respuesta = "";
 
     public void syntax_error(Symbol s)
     {   
@@ -66,13 +67,18 @@ action code
             System.out.println("Llegue a insertar usuario");
             try 
             {
+                usuarioAuxiliar.arreglar();
                 boolean exito = DatosPersistentes.usuarios.agregarUsuario(usuarioAuxiliar);
                 DatosPersistentes.interfaz.outputLine.append("\n >> Usuario registrado: " + usuarioAuxiliar.getNombre());
-                //respuesta verdadera
+                
+                parser.respuesta = " $reply$ $Usuario$ $registro id = " + String.valueOf(usuarioAuxiliar.getId()) + "$ True $registro-$ "
+                                    + " $Usuario-$ $reply-$";
             }
             catch(Exception e) {
                 //respuesta falsa
                 DatosPersistentes.interfaz.outputLine.append("\n >> Fallo al registrar usuario " + e);
+                parser.respuesta = " $reply$ $Usuario$ $registro id = " + String.valueOf(usuarioAuxiliar.getId()) + "$ False $registro-$ "
+                                    + " $Usuario-$ $reply-$";
             }
             
             usuarioAuxiliar = new Usuario();
@@ -85,11 +91,16 @@ action code
                 String exito = DatosPersistentes.usuarios.logIn(id, clave);
                 DatosPersistentes.interfaz.outputLine.append("\n >> Bienvenido " + exito);
                 ArrayList<Usuario> auxiliar = DatosPersistentes.usuariosLoggueados;
-                //respuesta verdadera
+                
+                parser.respuesta = " $reply$ $Usuario$ $id$ " + String.valueOf(id) + " $id-$ $access$ True $access-$ "
+                                    + " $Usuario-$ $reply-$";
             }
             catch(Exception e) {
                 //respuesta falsa
                 DatosPersistentes.interfaz.outputLine.append("\n >> Fallo al intentar entrar " + e );
+
+                parser.respuesta = " $reply$ $Usuario$ $id$ " + String.valueOf(id) + " $id-$ $access$ False $access-$ "
+                                    + " $Usuario-$ $reply-$";
             }
          }
 
@@ -97,11 +108,18 @@ action code
             System.out.println("Registrando tienda");
             
             try {
+                tiendaAuxiliar.arreglar();
                 DatosPersistentes.tiendas.registrarTienda(tiendaAuxiliar);
                 DatosPersistentes.interfaz.outputLine.append("\n >> Tienda Registrada: " + tiendaAuxiliar.getNombre());
+
+                parser.respuesta = " $reply$ $Tienda$ $registro id = " + String.valueOf(tiendaAuxiliar.getCodigo()) + "$ True $registro-$ "
+                                    + " $Tienda-$ $reply-$";
             }
             catch(Exception e) {
                 DatosPersistentes.interfaz.outputLine.append("\n >> Error al registrar tienda: " + e);
+                
+                parser.respuesta = " $reply$ $Tienda$ $registro id = " + String.valueOf(tiendaAuxiliar.getCodigo()) + "$ False $registro-$ "
+                                    + " $Tienda-$ $reply-$";
             }
 
             tiendaAuxiliar = new Tienda();
@@ -115,18 +133,30 @@ action code
                 try {
                     DatosPersistentes.tiendas.modificarTienda(tiendaAuxiliar);
                     DatosPersistentes.interfaz.outputLine.append("\n >> Tienda Modificada con exito!");
+
+                    parser.respuesta = " $reply$ $Tienda$ $modificar id = " + String.valueOf(tiendaAuxiliar.getCodigo()) + "$ True $modificar-$ "
+                                    + " $Tienda-$ $reply-$";
                 }
                 catch(Exception e) {
                     DatosPersistentes.interfaz.outputLine.append("\n >> Error al modificar tienda: " + e);
+
+                    parser.respuesta = " $reply$ $Tienda$ $modificar id = " + String.valueOf(tiendaAuxiliar.getCodigo()) + "$ False $modificar-$ "
+                                    + " $Tienda-$ $reply-$";
                 }
             }
             else {
                 try {
                     DatosPersistentes.tiendas.eliminarTienda(tiendaAuxiliar.getUsuario_propietario(), tiendaAuxiliar.getCodigo());
                     DatosPersistentes.interfaz.outputLine.append("\n >> Tienda eliminada con exito!");
+
+                    parser.respuesta = " $reply$ $Tienda$ $eliminar id = " + String.valueOf(tiendaAuxiliar.getCodigo()) + "$ True $eliminar-$ "
+                                    + " $Tienda-$ $reply-$";
                 }
                 catch(Exception e) {
                     DatosPersistentes.interfaz.outputLine.append("\n >> Error al eliminar tienda: " + e);
+
+                    parser.respuesta = " $reply$ $Tienda$ $eliminar id = " + String.valueOf(tiendaAuxiliar.getCodigo()) + "$ True $eliminar-$ "
+                                    + " $Tienda-$ $reply-$";
                 }
             }
             tipo = null;
@@ -136,11 +166,17 @@ action code
             System.out.println("Registrando producto");
             
             try {
-                DatosPersistentes.productos.registrarProducto(productoAuxiliar);
+                productoAuxiliar.arreglar();
+                DatosPersistentes.productos.insertarProducto(productoAuxiliar);
                 DatosPersistentes.interfaz.outputLine.append("\n >> Producto Registrado: " + productoAuxiliar.getNombre());
+
+                parser.respuesta = " $reply$ $Producto$ $registro id = " + String.valueOf(productoAuxiliar.getCodigo()) + " sucursal = " 
+                                    + String.valueOf(productoAuxiliar.getSucursal_tienda()) + "$ True $registro-$ $Producto-$ $reply-$";
             }
             catch(Exception e) {
                 DatosPersistentes.interfaz.outputLine.append("\n >> Error al registrar producto: " + e);
+                parser.respuesta = " $reply$ $Producto$ $registro id = " + String.valueOf(productoAuxiliar.getCodigo()) + " sucursal = " 
+                                    + String.valueOf(productoAuxiliar.getSucursal_tienda()) + "$ False $registro-$ $Producto-$ $reply-$";
             }
 
             tiendaAuxiliar = new Tienda();
@@ -348,7 +384,7 @@ CAMPO_CREARPRODUCTO::= G_CODIGO:cod {: productoAuxiliar.setCodigo(Integer.parseI
 | G_MARCA:brand {: productoAuxiliar.setMarca(String.valueOf(brand)); :}
 | G_COLOR:colour {: productoAuxiliar.setColor(String.valueOf(colour)); :}
 | G_SIZE:tamanio {: productoAuxiliar.setSize(Integer.parseInt(String.valueOf(tamanio))); :}
-| G_SUCURSAL:sucursal {: productoAuxiliar.setSucursal(String.valueOf(sucursal)); :}
+| G_SUCURSAL:sucursal {: productoAuxiliar.setSucursal_tienda(Integer.parseInt(String.valueOf(sucursal))); :}
 | G_PRECIO:cost {: productoAuxiliar.setPrecio(Double.parseDouble(String.valueOf(cost))); :}
 ;
 
@@ -394,15 +430,17 @@ G_SUCURSAL::= O_SUCURSAL numero:num C_SUCURSAL {: RESULT = num; :};
 
 CREAR_PRODUCTO::= O_PRODUCTO OTRO_CAMPOCP C_PRODUCTO {: registrarProducto(); :};
 
-CANTIDAD::= cantidad asignacion OPERACION_ARITMETICA;
+CANTIDAD::= cantidad asignacion OPERACION_ARITMETICA:cant;
 
-MARCA::= marca asignacion cadena;
+MARCA::= marca asignacion cadena:brand;
 
-COLOR::= color asignacion cadena;
+COLOR::= color asignacion cadena:colour;
 
-SIZE::= size asignacion OPERACION_ARITMETICA;
+SIZE::= size asignacion OPERACION_ARITMETICA:tamanio;
 
-SUCURSAL::= sucursal asignacion numero;
+SUCURSAL::= sucursal asignacion numero:suc;
+
+PRECIO::= precio asignacion OPERACION_ARITMETICA:cost;
 
 BC_PRODUCTO::= BC_ESTANDAR
 |              dolar tienda id asignacion numero dolar BC_ESTANDAR C_TIENDA;

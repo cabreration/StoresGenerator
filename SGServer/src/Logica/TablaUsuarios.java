@@ -5,6 +5,10 @@
  */
 package Logica;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Set;
@@ -45,7 +49,9 @@ public class TablaUsuarios {
         return aux.getNombre();
     }
     
-    public void escribirArchivo() {
+    public void escribirArchivo() throws IOException {
+        if (this.usuarios.size() == 0) return;
+        
         String escritura = " [ \n\t";
         
         ArrayList<Usuario> escritor = new ArrayList<>();
@@ -77,5 +83,10 @@ public class TablaUsuarios {
                     + "\"direccion\": " + "\"" + nu.getDireccion() + "\" \n } \n";
         
         escritura += "]";
+        
+        Path path = Paths.get("Usuarios.txt");
+        byte[] strToBytes = escritura.getBytes();
+ 
+        Files.write(path, strToBytes);
     }
 }

@@ -1,0 +1,11 @@
+ [ 
+	{ 
+ "identificador": "456", 
+"nombre": "Javier", 
+"apellido": "Cabrera", 
+"password": "12345", 
+"telefono": "35392478", 
+"email": "avier@compiladores1.co", 
+"direccion": "por ahi" 
+ } 
+]

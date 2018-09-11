@@ -5,6 +5,10 @@
  */
 package Logica;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Set;
@@ -72,7 +76,7 @@ public class TablaTiendas {
         return true;
     }
     
-    public ArrayList<Tienda> obtenerTiendas(int usuario) throws Exception 
+    public String obtenerTiendas(int usuario) throws Exception 
     {
         if (this.tiendas.isEmpty()) throw new Exception("No hay tiendas registradas");
         
@@ -84,10 +88,19 @@ public class TablaTiendas {
                 aux.add(this.tiendas.get(llave));
         }
         
-        return aux;
+        String respuesta = "$reply$ $lista$ ";
+        for (Tienda store : aux) {
+            respuesta += "$tienda$ $codigo$ " + store.getCodigo() + " $codigo-$" + " $propietario$ " + store.getUsuario_propietario() 
+                    + " $propietario-$ $nombre$ \"" + store.getNombre() + "\" $nombre-$ $direccion$ \"" +store.getDireccion() + "\" $direccion-$"
+                    + " $telefono$ " + store.getTelefono() + " $telefono-$ $tienda-$ ";
+        }
+        respuesta += " $lista-$ $reply-$"; 
+        return respuesta;
     }
     
-    public void escribirArchivo() {
+    public void escribirArchivo() throws IOException {
+        if (this.tiendas.size() == 0) return;
+        
         String escritura = " [ \n\t";
         
         ArrayList<Tienda> escritor = new ArrayList<>();
@@ -117,5 +130,10 @@ public class TablaTiendas {
                     + "\"imagen\": " + "\"" + nu.getImagen() + "\" \n } \n"; 
         
         escritura += "]";
+        
+        Path path = Paths.get("Tiendas.txt");
+        byte[] strToBytes = escritura.getBytes();
+ 
+        Files.write(path, strToBytes);
     }
 }

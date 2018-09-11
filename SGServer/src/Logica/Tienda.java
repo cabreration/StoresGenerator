@@ -87,5 +87,10 @@ public class Tienda {
         this.imagen = imagen;
     }
     
-    
+    public void arreglar() 
+    {
+        this.nombre = this.nombre.substring(1, this.nombre.length()-1);
+        this.direccion = this.direccion.substring(1, this.direccion.length()-1);
+        this.imagen = this.imagen.substring(1, this.imagen.length()-1);
+    }
 }

@@ -5,6 +5,10 @@
  */
 package Logica;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Set;
@@ -68,7 +72,7 @@ public class TablaProductos {
         return true;
     }
     
-    public ArrayList<Producto> obtenerProductos(int tienda) throws Exception 
+    public String obtenerProductos(int tienda) throws Exception 
     {
         if (this.productos.isEmpty()) throw new Exception("No hay tiendas registradas");
         
@@ -80,10 +84,20 @@ public class TablaProductos {
                 aux.add(this.productos.get(llave));
         }
         
-        return aux;
+        String respuesta = " $reply$ $lista$ ";
+        for (Producto prod : aux) {
+            respuesta += "$producto$ $codigo$ " + prod.getCodigo() + " $codigo-$ $nombre$ \"" + prod.getNombre() + "\" $nombre-$"
+                    + " $cantidad$ " + prod.getCantidad() + " $cantidad-$ $marca$ \"" + prod.getMarca() + "\" $marca-$ $color$ \""
+                    + prod.getColor() + "\" $color-$ $tamaño$ " + prod.getSize() + "$tamaño-$ $sucursal " + prod.getSucursal_tienda()
+                    + " $sucursal-$ $producto-$"; 
+        }
+        respuesta += " $lista-$ $reply-$";
+        return null;
     }
     
-    public void escribirArchivo() {
+    public void escribirArchivo() throws IOException {
+        if (this.productos.size() == 0) return;
+        
         String escritura = " [ \n\t";
         
         ArrayList<Producto> escritor = new ArrayList<>();
@@ -119,5 +133,10 @@ public class TablaProductos {
                     + "\"producto\": " + nu.getPrecio() + "\" \n } \n";
         
         escritura += "]";
+        
+        Path path = Paths.get("Productos.txt");
+        byte[] strToBytes = escritura.getBytes();
+ 
+        Files.write(path, strToBytes);
     }
 }

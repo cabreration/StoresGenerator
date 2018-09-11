@@ -118,4 +118,11 @@ public class Producto {
     public void setPrecio(double precio) {
         this.precio = precio;
     }
+    
+    public void arreglar() {
+        this.nombre = this.nombre.substring(1, this.nombre.length()-1);
+        this.color = this.color.substring(1, this.color.length()-1);
+        this.imagen = this.imagen.substring(1, this.imagen.length()-1);
+        this.marca = this.marca.substring(1, this.marca.length()-1);
+    }
 }
