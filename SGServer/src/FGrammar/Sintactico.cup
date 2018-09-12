@@ -12,6 +12,12 @@ parser code
     public ArrayList<ErrorC> semanticos = new ArrayList<>();
     public String respuesta = "";
 
+    //para metodos
+    Usuario usuarioAuxiliar = new Usuario();
+    Tienda tiendaAuxiliar = new Tienda();
+    String tipo = null;
+    Producto productoAuxiliar = new Producto();
+
     public void syntax_error(Symbol s)
     {   
         System.out.println(s.value.toString());
@@ -54,16 +60,104 @@ parser code
     public void semantic(String msg, Object obj) {
         System.out.println("error semantico");
     }
-:}
 
-action code 
-{:
-         Usuario usuarioAuxiliar = new Usuario();
-         Tienda tiendaAuxiliar = new Tienda();
-         String tipo = null;
-         Producto productoAuxiliar = new Producto();
+    public double sumar(Object arg1, Object arg2) {
+            
+            try {
+                return Calculadora.sumar(arg1, arg2);
+            }
+            catch(Exception e) {
+                Symbol current = (java_cup.runtime.Symbol) stack.peek();
+                int linea = current.left;
+                int columna = current.right;
 
-         public void insertarUsuario() {
+                semanticos.add(new ErrorC("Semantico", current.value.toString(), linea, columna, e.getMessage()));
+                System.out.println(e.getMessage());
+                return 0;
+            }
+        }
+
+        public double restar(Object arg1, Object arg2) {
+            
+            try {
+                return Calculadora.restar(arg1, arg2);
+            }
+            catch(Exception e) {
+                Symbol current = (java_cup.runtime.Symbol) stack.peek();
+                int linea = current.left;
+                int columna = current.right;
+
+                semanticos.add(new ErrorC("Semantico", current.value.toString(), linea, columna, e.getMessage()));
+                System.out.println(e.getMessage());
+                return 0;
+            }
+        }
+
+        public double multiplicar(Object arg1, Object arg2) {
+            
+            try {
+                return Calculadora.multiplicar(arg1, arg2);
+            }
+            catch(Exception e) {
+                Symbol current = (java_cup.runtime.Symbol) stack.peek();
+                int linea = current.left;
+                int columna = current.right;
+
+                semanticos.add(new ErrorC("Semantico", current.value.toString(), linea, columna, e.getMessage()));
+                System.out.println(e.getMessage());
+                return 0;
+            }
+        }
+
+        public double dividir(Object arg1, Object arg2) {
+            
+            try {
+                return Calculadora.dividir(arg1, arg2);
+            }
+            catch(Exception e) {
+                Symbol current = (java_cup.runtime.Symbol) stack.peek();
+                int linea = current.left;
+                int columna = current.right;
+
+                semanticos.add(new ErrorC("Semantico", current.value.toString(), linea, columna, e.getMessage()));
+                System.out.println(e.getMessage());
+                return 0;
+            }
+        }
+
+        public double raiz(Object arg1) {
+            
+            try {
+                return Calculadora.raiz(arg1);
+            }
+            catch(Exception e) {
+                Symbol current = (java_cup.runtime.Symbol) stack.peek();
+                int linea = current.left;
+                int columna = current.right;
+
+                semanticos.add(new ErrorC("Semantico", current.value.toString(), linea, columna, e.getMessage()));
+                System.out.println(e.getMessage());
+                return 0;
+            }
+        }
+
+        public double potencia(Object arg1) {
+            
+            try {
+                return Calculadora.potencia(arg1);
+            }
+            catch(Exception e) {
+                Symbol current = (java_cup.runtime.Symbol) stack.peek();
+                int linea = current.left;
+                int columna = current.right;
+
+                semanticos.add(new ErrorC("Semantico", current.value.toString(), linea, columna, e.getMessage()));
+                System.out.println(e.getMessage());
+                return 0;
+            }
+        }
+
+        public void insertarUsuario() {
             System.out.println("Llegue a insertar usuario");
             try 
             {
@@ -71,14 +165,20 @@ action code
                 boolean exito = DatosPersistentes.usuarios.agregarUsuario(usuarioAuxiliar);
                 DatosPersistentes.interfaz.outputLine.append("\n >> Usuario registrado: " + usuarioAuxiliar.getNombre());
                 
-                parser.respuesta = " $reply$ $Usuario$ $registro id = " + String.valueOf(usuarioAuxiliar.getId()) + "$ True $registro-$ "
+                respuesta = " $reply$ $Usuario$ $registro id = " + String.valueOf(usuarioAuxiliar.getIdentificador()) + "$ True $registro-$ "
                                     + " $Usuario-$ $reply-$";
             }
             catch(Exception e) {
                 //respuesta falsa
                 DatosPersistentes.interfaz.outputLine.append("\n >> Fallo al registrar usuario " + e);
-                parser.respuesta = " $reply$ $Usuario$ $registro id = " + String.valueOf(usuarioAuxiliar.getId()) + "$ False $registro-$ "
+                respuesta = " $reply$ $Usuario$ $registro id = " + String.valueOf(usuarioAuxiliar.getIdentificador()) + "$ False $registro-$ "
                                     + " $Usuario-$ $reply-$";
+
+                Symbol current = (java_cup.runtime.Symbol) stack.peek();
+                int linea = current.left;
+                int columna = current.right;
+
+                semanticos.add(new ErrorC("Semantico", current.value.toString(), linea, columna, e.getMessage()));
             }
             
             usuarioAuxiliar = new Usuario();
@@ -92,15 +192,21 @@ action code
                 DatosPersistentes.interfaz.outputLine.append("\n >> Bienvenido " + exito);
                 ArrayList<Usuario> auxiliar = DatosPersistentes.usuariosLoggueados;
                 
-                parser.respuesta = " $reply$ $Usuario$ $id$ " + String.valueOf(id) + " $id-$ $access$ True $access-$ "
+                respuesta = " $reply$ $Usuario$ $id$ " + String.valueOf(id) + " $id-$ $access$ True $access-$ "
                                     + " $Usuario-$ $reply-$";
             }
             catch(Exception e) {
                 //respuesta falsa
                 DatosPersistentes.interfaz.outputLine.append("\n >> Fallo al intentar entrar " + e );
 
-                parser.respuesta = " $reply$ $Usuario$ $id$ " + String.valueOf(id) + " $id-$ $access$ False $access-$ "
+                respuesta = " $reply$ $Usuario$ $id$ " + String.valueOf(id) + " $id-$ $access$ False $access-$ "
                                     + " $Usuario-$ $reply-$";
+
+                Symbol current = (java_cup.runtime.Symbol) stack.peek();
+                int linea = current.left;
+                int columna = current.right;
+
+                semanticos.add(new ErrorC("Semantico", current.value.toString(), linea, columna, e.getMessage()));
             }
          }
 
@@ -112,14 +218,20 @@ action code
                 DatosPersistentes.tiendas.registrarTienda(tiendaAuxiliar);
                 DatosPersistentes.interfaz.outputLine.append("\n >> Tienda Registrada: " + tiendaAuxiliar.getNombre());
 
-                parser.respuesta = " $reply$ $Tienda$ $registro id = " + String.valueOf(tiendaAuxiliar.getCodigo()) + "$ True $registro-$ "
+                respuesta = " $reply$ $Tienda$ $registro id = " + String.valueOf(tiendaAuxiliar.getCodigo()) + "$ True $registro-$ "
                                     + " $Tienda-$ $reply-$";
             }
             catch(Exception e) {
                 DatosPersistentes.interfaz.outputLine.append("\n >> Error al registrar tienda: " + e);
                 
-                parser.respuesta = " $reply$ $Tienda$ $registro id = " + String.valueOf(tiendaAuxiliar.getCodigo()) + "$ False $registro-$ "
+                respuesta = " $reply$ $Tienda$ $registro id = " + String.valueOf(tiendaAuxiliar.getCodigo()) + "$ False $registro-$ "
                                     + " $Tienda-$ $reply-$";
+
+                Symbol current = (java_cup.runtime.Symbol) stack.peek();
+                int linea = current.left;
+                int columna = current.right;
+
+                semanticos.add(new ErrorC("Semantico", current.value.toString(), linea, columna, e.getMessage()));
             }
 
             tiendaAuxiliar = new Tienda();
@@ -134,14 +246,20 @@ action code
                     DatosPersistentes.tiendas.modificarTienda(tiendaAuxiliar);
                     DatosPersistentes.interfaz.outputLine.append("\n >> Tienda Modificada con exito!");
 
-                    parser.respuesta = " $reply$ $Tienda$ $modificar id = " + String.valueOf(tiendaAuxiliar.getCodigo()) + "$ True $modificar-$ "
+                    respuesta = " $reply$ $Tienda$ $modificar id = " + String.valueOf(tiendaAuxiliar.getCodigo()) + "$ True $modificar-$ "
                                     + " $Tienda-$ $reply-$";
                 }
                 catch(Exception e) {
                     DatosPersistentes.interfaz.outputLine.append("\n >> Error al modificar tienda: " + e);
 
-                    parser.respuesta = " $reply$ $Tienda$ $modificar id = " + String.valueOf(tiendaAuxiliar.getCodigo()) + "$ False $modificar-$ "
+                    respuesta = " $reply$ $Tienda$ $modificar id = " + String.valueOf(tiendaAuxiliar.getCodigo()) + "$ False $modificar-$ "
                                     + " $Tienda-$ $reply-$";
+
+                    Symbol current = (java_cup.runtime.Symbol) stack.peek();
+                    int linea = current.left;
+                    int columna = current.right;
+
+                    semanticos.add(new ErrorC("Semantico", current.value.toString(), linea, columna, e.getMessage()));
                 }
             }
             else {
@@ -149,14 +267,20 @@ action code
                     DatosPersistentes.tiendas.eliminarTienda(tiendaAuxiliar.getUsuario_propietario(), tiendaAuxiliar.getCodigo());
                     DatosPersistentes.interfaz.outputLine.append("\n >> Tienda eliminada con exito!");
 
-                    parser.respuesta = " $reply$ $Tienda$ $eliminar id = " + String.valueOf(tiendaAuxiliar.getCodigo()) + "$ True $eliminar-$ "
+                    respuesta = " $reply$ $Tienda$ $eliminar id = " + String.valueOf(tiendaAuxiliar.getCodigo()) + "$ True $eliminar-$ "
                                     + " $Tienda-$ $reply-$";
                 }
                 catch(Exception e) {
                     DatosPersistentes.interfaz.outputLine.append("\n >> Error al eliminar tienda: " + e);
 
-                    parser.respuesta = " $reply$ $Tienda$ $eliminar id = " + String.valueOf(tiendaAuxiliar.getCodigo()) + "$ True $eliminar-$ "
+                    respuesta = " $reply$ $Tienda$ $eliminar id = " + String.valueOf(tiendaAuxiliar.getCodigo()) + "$ True $eliminar-$ "
                                     + " $Tienda-$ $reply-$";
+                                    
+                    Symbol current = (java_cup.runtime.Symbol) stack.peek();
+                    int linea = current.left;
+                    int columna = current.right;
+
+                    semanticos.add(new ErrorC("Semantico", current.value.toString(), linea, columna, e.getMessage()));
                 }
             }
             tipo = null;
@@ -170,17 +294,28 @@ action code
                 DatosPersistentes.productos.insertarProducto(productoAuxiliar);
                 DatosPersistentes.interfaz.outputLine.append("\n >> Producto Registrado: " + productoAuxiliar.getNombre());
 
-                parser.respuesta = " $reply$ $Producto$ $registro id = " + String.valueOf(productoAuxiliar.getCodigo()) + " sucursal = " 
+                respuesta = " $reply$ $Producto$ $registro id = " + String.valueOf(productoAuxiliar.getCodigo()) + " sucursal = " 
                                     + String.valueOf(productoAuxiliar.getSucursal_tienda()) + "$ True $registro-$ $Producto-$ $reply-$";
             }
             catch(Exception e) {
                 DatosPersistentes.interfaz.outputLine.append("\n >> Error al registrar producto: " + e);
-                parser.respuesta = " $reply$ $Producto$ $registro id = " + String.valueOf(productoAuxiliar.getCodigo()) + " sucursal = " 
+                respuesta = " $reply$ $Producto$ $registro id = " + String.valueOf(productoAuxiliar.getCodigo()) + " sucursal = " 
                                     + String.valueOf(productoAuxiliar.getSucursal_tienda()) + "$ False $registro-$ $Producto-$ $reply-$";
+
+                Symbol current = (java_cup.runtime.Symbol) stack.peek();
+                int linea = current.left;
+                int columna = current.right;
+
+                semanticos.add(new ErrorC("Semantico", current.value.toString(), linea, columna, e.getMessage()));
             }
 
             tiendaAuxiliar = new Tienda();
          }
+:}
+
+action code 
+{:
+         
 :}
 
 terminal dolar, peticion, inicioUsuario, id, password, menos, mas, por, sobre, crearUsuario, nombre, apellido, telefono, email, direccion;
@@ -252,8 +387,8 @@ G_ID::= O_ID numero:ide C_ID {: RESULT = ide; :};
 
 G_PASSWORD::= O_PASSWORD clave:key C_PASSWORD {: RESULT = key; :};
 
-LOGIN::= O_INGRESO G_ID:ide G_PASSWORD:key C_INGRESO {: logIn(Integer.parseInt(String.valueOf(ide)), String.valueOf(key)); :}
-|        O_INGRESO G_PASSWORD:key G_ID:ide C_INGRESO {: logIn(Integer.parseInt(String.valueOf(ide)), String.valueOf(key)); :}
+LOGIN::= O_INGRESO G_ID:ide G_PASSWORD:key C_INGRESO {: parser.logIn(Integer.parseInt(String.valueOf(ide)), String.valueOf(key)); :}
+|        O_INGRESO G_PASSWORD:key G_ID:ide C_INGRESO {: parser.logIn(Integer.parseInt(String.valueOf(ide)), String.valueOf(key)); :}
 ;
 
 O_CREAR::= dolar crearUsuario dolar;
@@ -290,20 +425,20 @@ G_DIRECCION::= O_DIRECCION cadena:dir C_DIRECCION {: RESULT = dir; :};
 
 G_EMAIL::= O_EMAIL correo:cor C_EMAIL {: RESULT = cor; :};
 
-CAMPO_REGISTRO::= G_ID:ide {: usuarioAuxiliar.setIdentificador(Integer.parseInt(String.valueOf(ide))); :}
-| G_NOMBRE:name {: usuarioAuxiliar.setNombre(String.valueOf(name)); :}
-| G_APELLIDO:ape {: usuarioAuxiliar.setApellido(String.valueOf(ape)); :}
-| G_PASSWORD:pass {: usuarioAuxiliar.setPassword(String.valueOf(pass)); :}
-| G_TELEFONO:tel {: usuarioAuxiliar.setTelefono(Integer.parseInt(String.valueOf(tel))); :}
-| G_EMAIL:cor {: usuarioAuxiliar.setEmail(String.valueOf(cor)); :} 
-| G_DIRECCION:dir {: usuarioAuxiliar.setDireccion(String.valueOf(dir)); :}
+CAMPO_REGISTRO::= G_ID:ide {: parser.usuarioAuxiliar.setIdentificador(Integer.parseInt(String.valueOf(ide))); :}
+| G_NOMBRE:name {: parser.usuarioAuxiliar.setNombre(String.valueOf(name)); :}
+| G_APELLIDO:ape {: parser.usuarioAuxiliar.setApellido(String.valueOf(ape)); :}
+| G_PASSWORD:pass {: parser.usuarioAuxiliar.setPassword(String.valueOf(pass)); :}
+| G_TELEFONO:tel {: parser.usuarioAuxiliar.setTelefono(Integer.parseInt(String.valueOf(tel))); :}
+| G_EMAIL:cor {: parser.usuarioAuxiliar.setEmail(String.valueOf(cor)); :} 
+| G_DIRECCION:dir {: parser.usuarioAuxiliar.setDireccion(String.valueOf(dir)); :}
 ;
 
 OTRO_CAMPOR::= OTRO_CAMPOR CAMPO_REGISTRO
 | CAMPO_REGISTRO
 ;
 
-REGISTRO::= O_CREAR OTRO_CAMPOR C_CREAR {: insertarUsuario(); :};
+REGISTRO::= O_CREAR OTRO_CAMPOR C_CREAR {: parser.insertarUsuario(); :};
 
 O_TIENDA::= dolar tienda tipo asignacion cadena dolar;
 
@@ -327,31 +462,31 @@ G_PROPIETARIO::= O_PROPIETARIO numero:num C_PROPIETARIO {: RESULT = num; :};
 
 G_IMAGEN::= O_IMAGEN cadena:cad C_IMAGEN {: RESULT = cad; :}; 
 
-CAMPO_TIENDA::= G_CODIGO:cod {: tiendaAuxiliar.setCodigo(Integer.parseInt(String.valueOf(cod))); :}
-| G_PROPIETARIO:prop {: tiendaAuxiliar.setUsuario_propietario(Integer.parseInt(String.valueOf(prop))); :}
-| G_NOMBRE:name {: tiendaAuxiliar.setNombre(String.valueOf(name)); :}
-| G_DIRECCION:dir {: tiendaAuxiliar.setDireccion(String.valueOf(dir)); :}
-| G_TELEFONO:tel {: tiendaAuxiliar.setTelefono(Integer.parseInt(String.valueOf(tel))); :}
-| G_IMAGEN:img {: tiendaAuxiliar.setImagen(String.valueOf(img)); :}
+CAMPO_TIENDA::= G_CODIGO:cod {: parser.tiendaAuxiliar.setCodigo(Integer.parseInt(String.valueOf(cod))); :}
+| G_PROPIETARIO:prop {: parser.tiendaAuxiliar.setUsuario_propietario(Integer.parseInt(String.valueOf(prop))); :}
+| G_NOMBRE:name {: parser.tiendaAuxiliar.setNombre(String.valueOf(name)); :}
+| G_DIRECCION:dir {: parser.tiendaAuxiliar.setDireccion(String.valueOf(dir)); :}
+| G_TELEFONO:tel {: parser.tiendaAuxiliar.setTelefono(Integer.parseInt(String.valueOf(tel))); :}
+| G_IMAGEN:img {: parser.tiendaAuxiliar.setImagen(String.valueOf(img)); :}
 ;
 
 OTRO_CAMPOT::= OTRO_CAMPOT CAMPO_TIENDA
 | CAMPO_TIENDA
 ;
 
-TIENDA::= O_TIENDA OTRO_CAMPOT C_TIENDA {: registrarTienda(); :};
+TIENDA::= O_TIENDA OTRO_CAMPOT C_TIENDA {: parser.registrarTienda(); :};
 
-TIPO::= tipo asignacion cadena:cad {: tipo = String.valueOf(cad); :};
+TIPO::= tipo asignacion cadena:cad {: parser.tipo = String.valueOf(cad); :};
 
-CODIGO::= codigo asignacion numero:num {: tiendaAuxiliar.setCodigo(Integer.parseInt(String.valueOf(num))); :};
+CODIGO::= codigo asignacion numero:num {: parser.tiendaAuxiliar.setCodigo(Integer.parseInt(String.valueOf(num))); :};
 
-NOMBRE::= nombre asignacion cadena:cad {: tiendaAuxiliar.setNombre(String.valueOf(cad)); :};
+NOMBRE::= nombre asignacion cadena:cad {: parser.tiendaAuxiliar.setNombre(String.valueOf(cad)); :};
 
-PROP::= propietario asignacion numero:num {: tiendaAuxiliar.setUsuario_propietario(Integer.parseInt(String.valueOf(num))); :} ;
+PROP::= propietario asignacion numero:num {: parser.tiendaAuxiliar.setUsuario_propietario(Integer.parseInt(String.valueOf(num))); :} ;
 
-DIRECCION::= direccion asignacion cadena:dir {: tiendaAuxiliar.setDireccion(String.valueOf(dir)); :};
+DIRECCION::= direccion asignacion cadena:dir {: parser.tiendaAuxiliar.setDireccion(String.valueOf(dir)); :};
 
-TELEFONO::= telefono asignacion numero:num {: tiendaAuxiliar.setTelefono(Integer.parseInt(String.valueOf(num))); :};
+TELEFONO::= telefono asignacion numero:num {: parser.tiendaAuxiliar.setTelefono(Integer.parseInt(String.valueOf(num))); :};
 
 CAMPO_MOD::= TIPO 
 | CODIGO 
@@ -367,7 +502,7 @@ OTRO_CAMPOMOD::= coma CAMPO_MOD OTRO_CAMPOMOD
 
 //MOD_TIENDA::= OTRA_MODT;
 
-MODT::= dolar tienda CAMPO_MOD OTRO_CAMPOMOD menos dolar {: modificarTienda(); :};
+MODT::= dolar tienda CAMPO_MOD OTRO_CAMPOMOD menos dolar {: parser.modificarTienda(); :};
 
 //OTRA_MODT::= OTRA_MODT MODT
 //| MODT
@@ -377,15 +512,15 @@ O_PRODUCTO::= dolar producto tipo asignacion cadena dolar;
 
 C_PRODUCTO::= dolar producto menos dolar;
 
-CAMPO_CREARPRODUCTO::= G_CODIGO:cod {: productoAuxiliar.setCodigo(Integer.parseInt(String.valueOf(cod))); :}
-| G_NOMBRE:name {: productoAuxiliar.setNombre(String.valueOf(name)); :}
-| G_IMAGEN:img {: productoAuxiliar.setImagen(String.valueOf(img)); :}
-| G_CANTIDAD:cant {: productoAuxiliar.setCantidad(Integer.parseInt(String.valueOf(cant))); :}
-| G_MARCA:brand {: productoAuxiliar.setMarca(String.valueOf(brand)); :}
-| G_COLOR:colour {: productoAuxiliar.setColor(String.valueOf(colour)); :}
-| G_SIZE:tamanio {: productoAuxiliar.setSize(Integer.parseInt(String.valueOf(tamanio))); :}
-| G_SUCURSAL:sucursal {: productoAuxiliar.setSucursal_tienda(Integer.parseInt(String.valueOf(sucursal))); :}
-| G_PRECIO:cost {: productoAuxiliar.setPrecio(Double.parseDouble(String.valueOf(cost))); :}
+CAMPO_CREARPRODUCTO::= G_CODIGO:cod {: parser.productoAuxiliar.setCodigo(Integer.parseInt(String.valueOf(cod))); :}
+| G_NOMBRE:name {: parser.productoAuxiliar.setNombre(String.valueOf(name)); :}
+| G_IMAGEN:img {: parser.productoAuxiliar.setImagen(String.valueOf(img)); :}
+| G_CANTIDAD:cant {: parser.productoAuxiliar.setCantidad(Integer.parseInt(String.valueOf(cant))); :}
+| G_MARCA:brand {: parser.productoAuxiliar.setMarca(String.valueOf(brand)); :}
+| G_COLOR:colour {: parser.productoAuxiliar.setColor(String.valueOf(colour)); :}
+| G_SIZE:tamanio {: parser.productoAuxiliar.setSize(Double.parseDouble(String.valueOf(tamanio))); :}
+| G_SUCURSAL:sucursal {: parser.productoAuxiliar.setSucursal_tienda(Integer.parseInt(String.valueOf(sucursal))); :}
+| G_PRECIO:cost {: parser.productoAuxiliar.setPrecio(Double.parseDouble(String.valueOf(cost))); :}
 ;
 
 OTRO_CAMPOCP::= OTRO_CAMPOCP CAMPO_CREARPRODUCTO
@@ -400,7 +535,7 @@ O_PRECIO::= dolar precio dolar;
 
 C_PRECIO::= dolar precio menos dolar;
 
-G_PRECIO::= O_PRECIO OPERACION_ARITMETICA:cost C_PRECIO {: RESULT = cost; :};
+G_PRECIO::= O_PRECIO OPERACION_ARITMETICA:cost C_PRECIO {: RESULT = (double)cost; :};
 
 O_MARCA::= dolar marca dolar;
 
@@ -418,17 +553,17 @@ O_SUCURSAL::= dolar sucursal dolar;
 
 C_SUCURSAL::= dolar sucursal menos dolar;
 
-G_CANTIDAD::= O_CANTIDAD OPERACION_ARITMETICA:cant C_CANTIDAD {: RESULT = cant; :};
+G_CANTIDAD::= O_CANTIDAD OPERACION_ARITMETICA:cant C_CANTIDAD {: RESULT = (int)cant; :};
 
 G_MARCA::= O_MARCA cadena:cad C_MARCA {: RESULT = cad; :};
 
 G_COLOR::= O_COLOR cadena:cad C_COLOR {: RESULT = cad; :};
 
-G_SIZE::= O_SIZE OPERACION_ARITMETICA:tamanio C_SIZE {: RESULT = tamanio; :};
+G_SIZE::= O_SIZE OPERACION_ARITMETICA:tamanio C_SIZE {: RESULT = (double)tamanio; :};
 
 G_SUCURSAL::= O_SUCURSAL numero:num C_SUCURSAL {: RESULT = num; :};
 
-CREAR_PRODUCTO::= O_PRODUCTO OTRO_CAMPOCP C_PRODUCTO {: registrarProducto(); :};
+CREAR_PRODUCTO::= O_PRODUCTO OTRO_CAMPOCP C_PRODUCTO {: parser.registrarProducto(); :};
 
 CANTIDAD::= cantidad asignacion OPERACION_ARITMETICA:cant;
 
@@ -451,24 +586,34 @@ BC_ESTANDAR::= dolar producto CAMPOS_BC OTRO_CAMPOBC menos dolar;
 //| BC_ESTANDAR
 
 
-CAMPOS_BC::= CODIGO | NOMBRE | IMAGEN | CANTIDAD | MARCA | COLOR | SIZE | SUCURSAL | TIPO;
+CAMPOS_BC::= CODIGO 
+| NOMBRE 
+| IMAGEN 
+| CANTIDAD 
+| MARCA 
+| COLOR 
+| SIZE 
+| SUCURSAL 
+| TIPO 
+| PRECIO;
 
 OTRO_CAMPOBC::= coma CAMPOS_BC OTRO_CAMPOBC
 |
 ;
 
-EXPRESION::= EXPRESION mas EXPRESION
-|            EXPRESION menos EXPRESION
-|            EXPRESION por EXPRESION
-|            EXPRESION sobre EXPRESION
-|            raizCuadrada EXPRESION
-|            potencia EXPRESION
-|            parentesisA EXPRESION parentesisC
-|            numero
+EXPRESION::= EXPRESION:num mas EXPRESION:num2 {: RESULT = parser.sumar(num, num2); :}
+|            EXPRESION:num menos EXPRESION:num2 {: RESULT = parser.restar(num, num2); :}
+|            EXPRESION:num por EXPRESION:num2 {: RESULT = parser.multiplicar(num, num2); :}
+|            EXPRESION:num sobre EXPRESION:num2 {: RESULT = parser.dividir(num, num2); :}
+|            raizCuadrada EXPRESION:num {: RESULT = parser.raiz(num); :}
+|            potencia EXPRESION:num {: RESULT = parser.potencia(num); :}
+|            parentesisA EXPRESION:num parentesisC {: RESULT= num; :}
+|            numero:num {: RESULT = num; :}
 ;
 
-OPERACION_ARITMETICA::= numero
-|                       llaveA EXPRESION llaveC;
+OPERACION_ARITMETICA::= numero:num {: RESULT = (double)num; :}
+|                       llaveA EXPRESION:expresion llaveC {: RESULT = expresion; :}
+;
 
 
 GET::= dolar obtener tipo asignacion cadena propietario asignacion numero menos dolar

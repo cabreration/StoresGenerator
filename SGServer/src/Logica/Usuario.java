@@ -100,7 +100,6 @@ public class Usuario {
         this.nombre = this.nombre.substring(1, this.nombre.length()-1);
         this.apellido = this.apellido.substring(1, this.apellido.length()-1);
         this.direccion = this.direccion.substring(1, this.direccion.length()-1);
-        this.email = this.email.substring(1, this.email.length()-1);
         this.password = this.password.substring(1, this.password.length()-1);
     }
     

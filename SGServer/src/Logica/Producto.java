@@ -15,7 +15,7 @@ public class Producto {
     int cantidad;
     String marca;
     String color;
-    int size;
+    double size;
     String imagen;
     int sucursal_tienda;
     double precio;
@@ -67,7 +67,7 @@ public class Producto {
         return color;
     }
 
-    public int getSize() {
+    public double getSize() {
         return size;
     }
 
@@ -95,7 +95,7 @@ public class Producto {
         this.color = color;
     }
 
-    public void setSize(int size) {
+    public void setSize(double size) {
         this.size = size;
     }
 
