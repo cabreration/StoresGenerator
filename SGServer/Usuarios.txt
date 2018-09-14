@@ -1,11 +1,20 @@
  [ 
 	{ 
- "identificador": "456", 
+ "identificador": 457, 
+"nombre": "Jorge", 
+"apellido": "Golon", 
+"password": "a34567c", 
+"telefono": 35392478, 
+"email": "jorge@compiladores1.com", 
+"direccion": "por ahi" 
+ }, 
+{ 
+ "identificador": 456, 
 "nombre": "Javier", 
 "apellido": "Cabrera", 
-"password": "12345", 
-"telefono": "35392478", 
-"email": "avier@compiladores1.co", 
+"password": "a12345c", 
+"telefono": 35392478, 
+"email": "javier@compiladores1.com", 
 "direccion": "por ahi" 
  } 
 ]

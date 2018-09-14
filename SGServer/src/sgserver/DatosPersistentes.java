@@ -16,7 +16,6 @@ import java.util.ArrayList;
  * @author Javier A. Cabrera
  */
 public class DatosPersistentes {
-    public static ArrayList<Usuario> usuariosLoggueados;
     public static TablaUsuarios usuarios;
     public static TablaTiendas tiendas;
     public static TablaProductos productos;

@@ -1,0 +1,13 @@
+ [ 
+	{ 
+ "codigo": 1, 
+"nombre": "dragonair", 
+"cantidad": 18, 
+"marca": "Nintendo", 
+"color": "Verde", 
+"size": 4.0, 
+"imagen": "path de la imagen",  
+"sucursal_tienda": 1, 
+"precio": 35.0 
+ } 
+]

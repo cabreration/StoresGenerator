@@ -31,9 +31,19 @@ public class TablaProductos {
         if (productos == null) productos = new Hashtable<>();
         
         if (productos.get(String.valueOf(producto.getCodigo()) + "-" + String.valueOf(producto.getSucursal_tienda())) != null)
-            throw new Exception("Un producto ya fue registrado con ese codigo");
+            throw new Exception("Un producto ya fue registrado con ese codigo en esa sucursal");
         
         //validar imagen aqui
+        if (producto.getImagen() ==  null) {}
+        
+        if (producto.getCantidad() < 0) throw new Exception("Debe ingresar una cantidad");
+        if (producto.getCodigo() < 0) throw new Exception("Debe ingresar un codigo");
+        if (producto.getColor() == null) throw new Exception("Debe ingresar un color");
+        if (producto.getMarca() == null) throw new Exception("Debe ingresar una marca");
+        if (producto.getNombre() == null) throw new Exception("Debe ingresar un nombre");
+        if (producto.getPrecio() < 0) throw new Exception("Debe ingresar un precio");
+        if (producto.getSize() < 0) throw new Exception("Debe ingresar un tamanio");
+        if (producto.getSucursal_tienda() < 0) throw new Exception("Debe ingresar una sucursal");
         
         productos.put(String.valueOf(producto.getCodigo()) + "-" + String.valueOf(producto.getSucursal_tienda()),
                 producto);
@@ -48,6 +58,8 @@ public class TablaProductos {
         if ((aux = productos.get(String.valueOf(producto.getCodigo()) + "-" + String.valueOf(producto.getSucursal_tienda()))) == null)
             throw new Exception("Tal producto no ha sido registrado");
         
+        if (producto.getImagen() != null) throw new Exception("Imposible modificar la imagen");
+        
         if (producto.getCantidad() > -1)
             aux.setCantidad(producto.getCantidad());
         if (producto.getColor() != null)
@@ -60,6 +72,8 @@ public class TablaProductos {
             aux.setSize(producto.getSize());
         if (producto.getPrecio() > -1)
             aux.setPrecio(producto.getPrecio());
+        
+        
         return true;
     }
     
@@ -110,27 +124,27 @@ public class TablaProductos {
         int i;
         for (i = 0; i < escritor.size() - 1; i++) {
             Producto aux = escritor.get(i);
-            escritura += "{ \n \"codigo\": " + "\"" + aux.getCodigo() + "\", \n"
+            escritura += "{ \n \"codigo\": " + aux.getCodigo() + ", \n"
                     + "\"nombre\": " + "\"" + aux.getNombre() + "\", \n"
-                    + "\"cantidad\": " + "\"" + aux.getCantidad() + "\", \n"
+                    + "\"cantidad\": " + aux.getCantidad() + ", \n"
                     + "\"marca\": " + "\"" + aux.getMarca() + "\", \n"
                     + "\"color\": " + "\"" + aux.getColor() + "\", \n"
-                    + "\"size\": " + "\"" + aux.getSize() + "\", \n"
+                    + "\"size\": " +  aux.getSize() + ", \n"
                     + "\"imagen\": " + "\"" + aux.getImagen() + "\",  \n"
-                    + "\"sucursal_tienda\": " + aux.getSucursal_tienda() + "\", \n"
-                    + "\"producto\": " + aux.getPrecio() + "\" \n }, \n";
+                    + "\"sucursal_tienda\": " + aux.getSucursal_tienda() + ", \n"
+                    + "\"producto\": " + aux.getPrecio() + " \n }, \n";
         }
         
         Producto nu = escritor.get(i);
-        escritura += "{ \n \"codigo\": " + "\"" + nu.getCodigo() + "\", \n"
+        escritura += "{ \n \"codigo\": " + nu.getCodigo() + ", \n"
                     + "\"nombre\": " + "\"" + nu.getNombre() + "\", \n"
-                    + "\"cantidad\": " + "\"" + nu.getCantidad() + "\", \n"
+                    + "\"cantidad\": " + nu.getCantidad() + ", \n"
                     + "\"marca\": " + "\"" + nu.getMarca() + "\", \n"
                     + "\"color\": " + "\"" + nu.getColor() + "\", \n"
-                    + "\"size\": " + "\"" + nu.getSize() + "\", \n"
+                    + "\"size\": " + + nu.getSize() + ", \n"
                     + "\"imagen\": " + "\"" + nu.getImagen() + "\",  \n"
-                    + "\"sucursal_tienda\": " + nu.getSucursal_tienda() + "\", \n"
-                    + "\"producto\": " + nu.getPrecio() + "\" \n } \n";
+                    + "\"sucursal_tienda\": " + nu.getSucursal_tienda() + ", \n"
+                    + "\"precio\": " + nu.getPrecio() + " \n } \n";
         
         escritura += "]";
         

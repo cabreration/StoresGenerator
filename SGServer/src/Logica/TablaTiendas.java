@@ -34,7 +34,15 @@ public class TablaTiendas {
         
         //chequear si el usuario propietario existe
         if (DatosPersistentes.usuarios.usuarios.get(String.valueOf(tienda.getUsuario_propietario())) == null)
-            throw new Exception("No existe ningun usuario con el codigo de propietario especificado");
+            throw new Exception("No existe ningun usuario con el codigo de propietario especificado"); 
+        
+        if (tienda.getImagen() == null) {} //asignarle una imagen por defecto
+        
+        if (tienda.getCodigo() < 0) throw new Exception("Debe ingresar un codigo para registrar la tienda");
+        if (tienda.getDireccion() == null) throw new Exception("Debe ingresar una direccion");
+        if (tienda.getNombre() == null) throw new Exception("Debe ingresar un nombre");
+        if (tienda.getUsuario_propietario() < 0) throw new Exception("Debe ingresar un codigo de propietario");
+        if (tienda.getTelefono() < 0) throw new Exception("Debe ingresar un numero telefonico");
         
         tiendas.put(String.valueOf(tienda.getCodigo()), tienda);
         return true;
@@ -113,20 +121,20 @@ public class TablaTiendas {
         int i;
         for (i = 0; i < escritor.size() - 1; i++) {
             Tienda aux = escritor.get(i);
-            escritura += "{ \n \"codigo\": " + "\"" + aux.getCodigo() + "\", \n"
-                    + "\"usuario_propietario\": " + "\"" + aux.getUsuario_propietario() + "\", \n"
+            escritura += "{ \n \"codigo\": " + aux.getCodigo() + ", \n"
+                    + "\"usuario_propietario\": " + aux.getUsuario_propietario() + ", \n"
                     + "\"nombre\": " + "\"" + aux.getNombre() + "\", \n"
                     + "\"direccion\": " + "\"" + aux.getDireccion() + "\", \n"
-                    + "\"telefono\": " + "\"" + aux.getTelefono() + "\", \n"
+                    + "\"telefono\": " + aux.getTelefono() + ", \n"
                     + "\"imagen\": " + "\"" + aux.getImagen() + "\" \n }, \n";     
         }
         
         Tienda nu = escritor.get(i);
-        escritura += "{ \n \"codigo\": " + "\"" + nu.getCodigo() + "\", \n"
-                    + "\"usuario_propietario\": " + "\"" + nu.getUsuario_propietario() + "\", \n"
+        escritura += "{ \n \"codigo\": " + nu.getCodigo() + ", \n"
+                    + "\"usuario_propietario\": " + nu.getUsuario_propietario() + ", \n"
                     + "\"nombre\": " + "\"" + nu.getNombre() + "\", \n"
                     + "\"direccion\": " + "\"" + nu.getDireccion() + "\", \n"
-                    + "\"telefono\": " + "\"" + nu.getTelefono() + "\", \n"
+                    + "\"telefono\": " + nu.getTelefono() + ", \n"
                     + "\"imagen\": " + "\"" + nu.getImagen() + "\" \n } \n"; 
         
         escritura += "]";

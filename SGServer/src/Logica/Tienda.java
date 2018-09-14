@@ -89,8 +89,11 @@ public class Tienda {
     
     public void arreglar() 
     {
-        this.nombre = this.nombre.substring(1, this.nombre.length()-1);
-        this.direccion = this.direccion.substring(1, this.direccion.length()-1);
-        this.imagen = this.imagen.substring(1, this.imagen.length()-1);
+        if (this.nombre != null)
+            this.nombre = this.nombre.substring(1, this.nombre.length()-1);
+        if (this.direccion != null)
+            this.direccion = this.direccion.substring(1, this.direccion.length()-1);
+        if (this.imagen != null)
+            this.imagen = this.imagen.substring(1, this.imagen.length()-1);
     }
 }

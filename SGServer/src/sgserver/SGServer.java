@@ -27,7 +27,7 @@ public class SGServer {
         DatosPersistentes.productos = new TablaProductos();
         DatosPersistentes.usuarios = new TablaUsuarios();
         DatosPersistentes.tiendas = new TablaTiendas();
-        DatosPersistentes.usuariosLoggueados = new ArrayList<>();
+        
         DatosPersistentes.interfaz = new GUI();
         DatosPersistentes.interfaz.setVisible(true);
     } 

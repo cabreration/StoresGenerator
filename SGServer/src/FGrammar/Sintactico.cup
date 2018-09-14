@@ -190,7 +190,6 @@ parser code
             {
                 String exito = DatosPersistentes.usuarios.logIn(id, clave);
                 DatosPersistentes.interfaz.outputLine.append("\n >> Bienvenido " + exito);
-                ArrayList<Usuario> auxiliar = DatosPersistentes.usuariosLoggueados;
                 
                 respuesta = " $reply$ $Usuario$ $id$ " + String.valueOf(id) + " $id-$ $access$ True $access-$ "
                                     + " $Usuario-$ $reply-$";
@@ -239,8 +238,10 @@ parser code
 
          public void modificarTienda() {
             System.out.println("Modificando Tienda");
+            tiendaAuxiliar.arreglar();
 
-            if (tipo.substring(1, tipo.length()-1).equalsIgnoreCase("modificacion")) {
+            if (tipo.substring(1, tipo.length()-1).equalsIgnoreCase("modificacion") 
+                    || tipo.substring(1, tipo.length()-1).equalsIgnoreCase("modificar")) {
                 
                 try {
                     DatosPersistentes.tiendas.modificarTienda(tiendaAuxiliar);
@@ -284,6 +285,7 @@ parser code
                 }
             }
             tipo = null;
+            tiendaAuxiliar = new Tienda();
          }
 
          public void registrarProducto() {
@@ -309,7 +311,63 @@ parser code
                 semanticos.add(new ErrorC("Semantico", current.value.toString(), linea, columna, e.getMessage()));
             }
 
-            tiendaAuxiliar = new Tienda();
+            productoAuxiliar = new Producto();
+         }
+
+         public void modificarProducto() {
+            System.out.println("Modificando Tienda");
+            productoAuxiliar.arreglar();
+
+            if (tipo.substring(1, tipo.length()-1).equalsIgnoreCase("modificacion") 
+                || tipo.substring(1, tipo.length()-1).equalsIgnoreCase("modificar") ) {
+                
+                try {
+                    DatosPersistentes.productos.modificarProducto(productoAuxiliar);
+                    DatosPersistentes.interfaz.outputLine.append("\n >> Producto Modificado con exito!");
+
+                    respuesta = " $reply$ $Producto$ $modificar id = " + String.valueOf(productoAuxiliar.getCodigo()) +
+                                 " sucursal = " + String.valueOf(productoAuxiliar.getSucursal_tienda()) + " $ True $modificar-$ "
+                                    + " $Producto-$ $reply-$";
+                }
+                catch(Exception e) {
+                    DatosPersistentes.interfaz.outputLine.append("\n >> Error al modificar producto: " + e.getMessage());
+
+                    respuesta = " $reply$ $Producto$ $modificar id = " + String.valueOf(productoAuxiliar.getCodigo()) +
+                                 " sucursal = " + String.valueOf(productoAuxiliar.getSucursal_tienda()) + " $ False $modificar-$ "
+                                    + " $Producto-$ $reply-$";
+
+                    Symbol current = (java_cup.runtime.Symbol) stack.peek();
+                    int linea = current.left;
+                    int columna = current.right;
+
+                    semanticos.add(new ErrorC("Semantico", current.value.toString(), linea, columna, e.getMessage()));
+                }
+            }
+            else {
+                try {
+                    DatosPersistentes.productos.eliminarProducto(productoAuxiliar.getCodigo(), productoAuxiliar.getSucursal_tienda());
+                    DatosPersistentes.interfaz.outputLine.append("\n >> Producto eliminado con exito!");
+
+                    respuesta = " $reply$ $Producto$ $eliminar id = " + String.valueOf(productoAuxiliar.getCodigo()) +
+                                 " sucursal = " + String.valueOf(productoAuxiliar.getSucursal_tienda()) + " $ True $eliminar-$ "
+                                    + " $Producto-$ $reply-$";
+                }
+                catch(Exception e) {
+                    DatosPersistentes.interfaz.outputLine.append("\n >> Error al eliminar producto: " + e.getMessage());
+
+                    respuesta = " $reply$ $Producto$ $eliminar id = " + String.valueOf(productoAuxiliar.getCodigo()) +
+                                 " sucursal = " + String.valueOf(productoAuxiliar.getSucursal_tienda()) + " $ False $eliminar-$ "
+                                    + " $Producto-$ $reply-$";
+                                    
+                    Symbol current = (java_cup.runtime.Symbol) stack.peek();
+                    int linea = current.left;
+                    int columna = current.right;
+
+                    semanticos.add(new ErrorC("Semantico", current.value.toString(), linea, columna, e.getMessage()));
+                }
+            }
+            tipo = null;
+            productoAuxiliar = new Producto();
          }
 :}
 
@@ -478,22 +536,22 @@ TIENDA::= O_TIENDA OTRO_CAMPOT C_TIENDA {: parser.registrarTienda(); :};
 
 TIPO::= tipo asignacion cadena:cad {: parser.tipo = String.valueOf(cad); :};
 
-CODIGO::= codigo asignacion numero:num {: parser.tiendaAuxiliar.setCodigo(Integer.parseInt(String.valueOf(num))); :};
+CODIGO::= codigo asignacion numero:num {: RESULT = num; :};
 
-NOMBRE::= nombre asignacion cadena:cad {: parser.tiendaAuxiliar.setNombre(String.valueOf(cad)); :};
+NOMBRE::= nombre asignacion cadena:cad {: RESULT = cad; :};
 
-PROP::= propietario asignacion numero:num {: parser.tiendaAuxiliar.setUsuario_propietario(Integer.parseInt(String.valueOf(num))); :} ;
+PROP::= propietario asignacion numero:num {: RESULT = num; :} ;
 
-DIRECCION::= direccion asignacion cadena:dir {: parser.tiendaAuxiliar.setDireccion(String.valueOf(dir)); :};
+DIRECCION::= direccion asignacion cadena:dir {: RESULT = dir; :};
 
-TELEFONO::= telefono asignacion numero:num {: parser.tiendaAuxiliar.setTelefono(Integer.parseInt(String.valueOf(num))); :};
+TELEFONO::= telefono asignacion numero:num {: RESULT = num; :};
 
 CAMPO_MOD::= TIPO 
-| CODIGO 
-| NOMBRE 
-| PROP 
-| DIRECCION 
-| TELEFONO
+| CODIGO:num {: parser.tiendaAuxiliar.setCodigo(Integer.parseInt(String.valueOf(num))); :}
+| NOMBRE:name {: parser.tiendaAuxiliar.setNombre(String.valueOf(name)); :}
+| PROP:num {: parser.tiendaAuxiliar.setUsuario_propietario(Integer.parseInt(String.valueOf(num))); :}
+| DIRECCION:dir {: parser.tiendaAuxiliar.setDireccion(String.valueOf(dir)); :}
+| TELEFONO:num {: parser.tiendaAuxiliar.setTelefono(Integer.parseInt(String.valueOf(num))); :}
 ;
 
 OTRO_CAMPOMOD::= coma CAMPO_MOD OTRO_CAMPOMOD
@@ -515,7 +573,7 @@ C_PRODUCTO::= dolar producto menos dolar;
 CAMPO_CREARPRODUCTO::= G_CODIGO:cod {: parser.productoAuxiliar.setCodigo(Integer.parseInt(String.valueOf(cod))); :}
 | G_NOMBRE:name {: parser.productoAuxiliar.setNombre(String.valueOf(name)); :}
 | G_IMAGEN:img {: parser.productoAuxiliar.setImagen(String.valueOf(img)); :}
-| G_CANTIDAD:cant {: parser.productoAuxiliar.setCantidad(Integer.parseInt(String.valueOf(cant))); :}
+| G_CANTIDAD:cant {: parser.productoAuxiliar.setCantidad((int)Double.parseDouble(String.valueOf(cant))); :}
 | G_MARCA:brand {: parser.productoAuxiliar.setMarca(String.valueOf(brand)); :}
 | G_COLOR:colour {: parser.productoAuxiliar.setColor(String.valueOf(colour)); :}
 | G_SIZE:tamanio {: parser.productoAuxiliar.setSize(Double.parseDouble(String.valueOf(tamanio))); :}
@@ -535,7 +593,7 @@ O_PRECIO::= dolar precio dolar;
 
 C_PRECIO::= dolar precio menos dolar;
 
-G_PRECIO::= O_PRECIO OPERACION_ARITMETICA:cost C_PRECIO {: RESULT = (double)cost; :};
+G_PRECIO::= O_PRECIO OPERACION_ARITMETICA:cost C_PRECIO {: RESULT = cost; :};
 
 O_MARCA::= dolar marca dolar;
 
@@ -553,32 +611,36 @@ O_SUCURSAL::= dolar sucursal dolar;
 
 C_SUCURSAL::= dolar sucursal menos dolar;
 
-G_CANTIDAD::= O_CANTIDAD OPERACION_ARITMETICA:cant C_CANTIDAD {: RESULT = (int)cant; :};
+G_CANTIDAD::= O_CANTIDAD OPERACION_ARITMETICA:cant C_CANTIDAD {: RESULT = cant; :};
 
 G_MARCA::= O_MARCA cadena:cad C_MARCA {: RESULT = cad; :};
 
 G_COLOR::= O_COLOR cadena:cad C_COLOR {: RESULT = cad; :};
 
-G_SIZE::= O_SIZE OPERACION_ARITMETICA:tamanio C_SIZE {: RESULT = (double)tamanio; :};
+G_SIZE::= O_SIZE OPERACION_ARITMETICA:tamanio C_SIZE {: RESULT = tamanio; :};
 
 G_SUCURSAL::= O_SUCURSAL numero:num C_SUCURSAL {: RESULT = num; :};
 
 CREAR_PRODUCTO::= O_PRODUCTO OTRO_CAMPOCP C_PRODUCTO {: parser.registrarProducto(); :};
 
-CANTIDAD::= cantidad asignacion OPERACION_ARITMETICA:cant;
+CANTIDAD::= cantidad asignacion OPERACION_ARITMETICA:cant {: RESULT = cant; :};
 
-MARCA::= marca asignacion cadena:brand;
+MARCA::= marca asignacion cadena:brand {: RESULT = brand; :};
 
-COLOR::= color asignacion cadena:colour;
+COLOR::= color asignacion cadena:colour {: RESULT = colour; :};
 
-SIZE::= size asignacion OPERACION_ARITMETICA:tamanio;
+SIZE::= size asignacion OPERACION_ARITMETICA:tamanio {: RESULT = tamanio; :};
 
-SUCURSAL::= sucursal asignacion numero:suc;
+SUCURSAL::= sucursal asignacion numero:suc {: RESULT = suc; :};
 
-PRECIO::= precio asignacion OPERACION_ARITMETICA:cost;
+PRECIO::= precio asignacion OPERACION_ARITMETICA:cost {: RESULT = cost; :};
 
-BC_PRODUCTO::= BC_ESTANDAR
-|              dolar tienda id asignacion numero dolar BC_ESTANDAR C_TIENDA;
+BC_PRODUCTO::= BC_ESTANDAR {: parser.modificarProducto(); :}
+|              dolar tienda id asignacion numero:num dolar BC_ESTANDAR C_TIENDA 
+{: parser.productoAuxiliar.setSucursal_tienda(Integer.parseInt(String.valueOf(num)));
+    parser.modificarProducto();
+ :}
+;
 
 BC_ESTANDAR::= dolar producto CAMPOS_BC OTRO_CAMPOBC menos dolar;
 
@@ -586,16 +648,17 @@ BC_ESTANDAR::= dolar producto CAMPOS_BC OTRO_CAMPOBC menos dolar;
 //| BC_ESTANDAR
 
 
-CAMPOS_BC::= CODIGO 
-| NOMBRE 
-| IMAGEN 
-| CANTIDAD 
-| MARCA 
-| COLOR 
-| SIZE 
-| SUCURSAL 
-| TIPO 
-| PRECIO;
+CAMPOS_BC::= CODIGO:code {: parser.productoAuxiliar.setCodigo(Integer.parseInt(String.valueOf(code))); :}
+| NOMBRE:name {: parser.productoAuxiliar.setNombre(String.valueOf(name)); :} 
+| IMAGEN:img {: parser.productoAuxiliar.setImagen(String.valueOf(img)); :}
+| CANTIDAD:cant {: parser.productoAuxiliar.setCantidad((int)Double.parseDouble(String.valueOf(cant))); :}
+| MARCA:brand {: parser.productoAuxiliar.setMarca(String.valueOf(brand)); :}
+| COLOR:colour {: parser.productoAuxiliar.setColor(String.valueOf(colour)); :}
+| SIZE:tamanio {: parser.productoAuxiliar.setSize(Double.parseDouble(String.valueOf(tamanio))); :}
+| SUCURSAL:store {: parser.productoAuxiliar.setSucursal_tienda(Integer.parseInt(String.valueOf(store))); :}
+| TIPO:tip {: parser.tipo = String.valueOf(parser.tipo); :}
+| PRECIO:cost {: parser.productoAuxiliar.setPrecio(Double.parseDouble(String.valueOf(cost))); :}
+;
 
 OTRO_CAMPOBC::= coma CAMPOS_BC OTRO_CAMPOBC
 |
@@ -605,13 +668,13 @@ EXPRESION::= EXPRESION:num mas EXPRESION:num2 {: RESULT = parser.sumar(num, num2
 |            EXPRESION:num menos EXPRESION:num2 {: RESULT = parser.restar(num, num2); :}
 |            EXPRESION:num por EXPRESION:num2 {: RESULT = parser.multiplicar(num, num2); :}
 |            EXPRESION:num sobre EXPRESION:num2 {: RESULT = parser.dividir(num, num2); :}
-|            raizCuadrada EXPRESION:num {: RESULT = parser.raiz(num); :}
-|            potencia EXPRESION:num {: RESULT = parser.potencia(num); :}
+|            raizCuadrada parentesisA EXPRESION:num parentesisC {: RESULT = parser.raiz(num); :}
+|            potencia parentesisC EXPRESION:num parentesisA {: RESULT = parser.potencia(num); :}
 |            parentesisA EXPRESION:num parentesisC {: RESULT= num; :}
-|            numero:num {: RESULT = num; :}
+|            numero:num {: System.out.println(String.valueOf(num)); RESULT = Double.parseDouble(String.valueOf(num)); :}
 ;
 
-OPERACION_ARITMETICA::= numero:num {: RESULT = (double)num; :}
+OPERACION_ARITMETICA::= numero:num {: RESULT = num; :}
 |                       llaveA EXPRESION:expresion llaveC {: RESULT = expresion; :}
 ;
 

@@ -120,9 +120,13 @@ public class Producto {
     }
     
     public void arreglar() {
-        this.nombre = this.nombre.substring(1, this.nombre.length()-1);
-        this.color = this.color.substring(1, this.color.length()-1);
-        this.imagen = this.imagen.substring(1, this.imagen.length()-1);
-        this.marca = this.marca.substring(1, this.marca.length()-1);
+        if (this.nombre != null)
+            this.nombre = this.nombre.substring(1, this.nombre.length()-1);
+        if (this.color != null)
+            this.color = this.color.substring(1, this.color.length()-1);
+        if (this.imagen != null)
+            this.imagen = this.imagen.substring(1, this.imagen.length()-1);
+        if (this.marca != null)
+            this.marca = this.marca.substring(1, this.marca.length()-1);
     }
 }
