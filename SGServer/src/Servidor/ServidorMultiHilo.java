@@ -5,9 +5,13 @@
  */
 package Servidor;
 
+import FGrammar.Lexico;
+import FGrammar.Sintactico;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringReader;
 import java.net.Socket;
 
 /**
@@ -39,20 +43,31 @@ public class ServidorMultiHilo extends Thread {
             String entradaCompleta = "";
             String aux = "";
             try {
-            while (!(aux = entrada.readLine()).equals("fin")) 
-            {
-                entradaCompleta += aux;
-            }
+                while (!(aux = entrada.readLine()).equals("fin")) 
+                {
+                    entradaCompleta += aux;
+                }
             }
             catch(Exception e) {System.out.println(e);}
             
             System.out.println(entradaCompleta);
             //aqui tenemos la cadena enviada ya toda junta y lista para ser analizada por el compilador
-            if (entradaCompleta.equals("Hola mundo")) 
+            Reader lector = new StringReader(entradaCompleta);
+            Lexico scanner = new Lexico(lector);
+            Sintactico parser = new Sintactico(scanner);
+            try 
             {
-                salida.println("Si llego!");
+                parser.parse();
+                salida.println(parser.respuesta);
+                salida.println("fin");
             }
-            else salida.println("No llego :c");
+            catch(Exception e) 
+            {
+                salida.println(" $reply$ $Usuario$ $id$ 0 $id-$ $access$ False $access-$ $Usuario-$ $reply-$");
+                salida.println("fin");
+                System.out.println(e);
+                e.printStackTrace();
+            }
             //vamos a enviar esa cadena por medio de la variable salida
             socket.close();
             

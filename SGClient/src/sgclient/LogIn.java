@@ -4,6 +4,17 @@
  * and open the template in the editor.
  */
 package sgclient;
+import AGrammar.Lexico;
+import AGrammar.Sintactico;
+import Logica.Data;
+import Logica.Peticiones;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.net.Socket;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -27,21 +38,239 @@ public class LogIn extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        lineaPassword = new javax.swing.JTextField();
+        lineaCodigo = new javax.swing.JTextField();
+        botonEntrar = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Stores Generator - Log In");
+        setResizable(false);
+
+        jPanel1.setBackground(new java.awt.Color(246, 222, 108));
+
+        jPanel2.setBackground(new java.awt.Color(52, 115, 143));
+
+        jLabel1.setFont(new java.awt.Font("Noto Serif", 1, 36)); // NOI18N
+        jLabel1.setText("Stores Generator");
+
+        jLabel3.setFont(new java.awt.Font("Noto Serif", 1, 24)); // NOI18N
+        jLabel3.setText("Password:");
+
+        jLabel4.setFont(new java.awt.Font("Noto Serif", 1, 24)); // NOI18N
+        jLabel4.setText("Codigo: ");
+
+        lineaPassword.setBackground(new java.awt.Color(246, 222, 108));
+        lineaPassword.setFont(new java.awt.Font("Noto Serif", 0, 14)); // NOI18N
+        lineaPassword.setForeground(new java.awt.Color(0, 0, 0));
+        lineaPassword.setText("Password");
+        lineaPassword.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                lineaPasswordFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                lineaPasswordFocusLost(evt);
+            }
+        });
+
+        lineaCodigo.setBackground(new java.awt.Color(246, 222, 108));
+        lineaCodigo.setFont(new java.awt.Font("Noto Serif", 0, 14)); // NOI18N
+        lineaCodigo.setForeground(new java.awt.Color(0, 0, 0));
+        lineaCodigo.setText("Codigo");
+        lineaCodigo.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                lineaCodigoFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                lineaCodigoFocusLost(evt);
+            }
+        });
+
+        botonEntrar.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
+        botonEntrar.setText("Entrar");
+        botonEntrar.setToolTipText("");
+        botonEntrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonEntrarActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(64, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4)
+                    .addComponent(lineaPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lineaCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(37, 37, 37))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(125, 125, 125)
+                .addComponent(botonEntrar, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(41, 41, 41)
+                .addComponent(jLabel1)
+                .addGap(47, 47, 47)
+                .addComponent(jLabel4)
+                .addGap(18, 18, 18)
+                .addComponent(lineaCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(31, 31, 31)
+                .addComponent(jLabel3)
+                .addGap(18, 18, 18)
+                .addComponent(lineaPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(39, 39, 39)
+                .addComponent(botonEntrar)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Iconos/seller-stall-002-512.png"))); // NOI18N
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addGap(21, 21, 21))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(46, 46, 46)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 423, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(35, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void botonEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEntrarActionPerformed
+        // TODO add your handling code here:
+        //peticion del login
+        if (this.lineaCodigo.getText() == "" || this.lineaCodigo.getText() == null) {
+            JOptionPane.showMessageDialog(null, "Debe ingresar un codigo", "Stores Generator", JOptionPane.ERROR_MESSAGE);
+            return;
+        }    
+        if (this.lineaPassword.getText() == "" || this.lineaPassword.getText() == null) {
+            JOptionPane.showMessageDialog(null, "Debe ingresar un codigo", "Stores Generator", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        String codigo = this.lineaCodigo.getText();
+        String password = this.lineaPassword.getText();
+        String mensaje = Peticiones.logIn(codigo, password);
+        
+        try 
+        {
+            Socket socket = new Socket("localhost", 8889);
+            PrintWriter salida = new PrintWriter(
+                    socket.getOutputStream(),
+                    true
+            );
+            BufferedReader entrada = new BufferedReader(
+                    new InputStreamReader(
+                            socket.getInputStream()
+                    )
+            );
+            
+            salida.println(mensaje);
+            salida.println("fin");
+            
+            String entradaCompleta = "";
+            String aux = "";
+            try {
+                while (!(aux = entrada.readLine()).equals("fin")) 
+                {
+                    entradaCompleta += aux;
+                }
+            }
+            catch(Exception e) {System.out.println(e);}
+            
+            System.out.println(entradaCompleta);
+            
+            //informo si fue posible o no acceder al sistema
+            Reader lector = new StringReader(entradaCompleta);
+            Lexico scanner = new Lexico(lector);
+            Sintactico parser = new Sintactico(scanner);
+            try 
+            {
+                parser.parse();
+                if (parser.logIn) {
+                    Inicio init = new Inicio();
+                    init.setVisible(true);
+                    Data.usuarioActual = parser.usuarioActual;
+                    this.setVisible(false);
+                    this.dispose();
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "El usuario y la clave no concuerdan", "Stores Generator", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            catch(Exception e) 
+            {
+                System.out.println(e);
+                e.printStackTrace();
+            }
+            //hago get de tiendas  */
+            socket.close();
+        }
+        catch(Exception e) 
+        {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "La comunicacion ha fallado", "Stores Generator", JOptionPane.ERROR_MESSAGE);
+        } 
+    }//GEN-LAST:event_botonEntrarActionPerformed
+
+    private void lineaCodigoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_lineaCodigoFocusLost
+        // TODO add your handling code here:
+        if ((this.lineaCodigo.getText()).equals("") || (this.lineaCodigo.getText()) == null)
+            this.lineaCodigo.setText("Codigo");
+    }//GEN-LAST:event_lineaCodigoFocusLost
+
+    private void lineaCodigoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_lineaCodigoFocusGained
+        // TODO add your handling code here:
+        if ((this.lineaCodigo.getText()).equals("Codigo"))
+            this.lineaCodigo.setText("");
+    }//GEN-LAST:event_lineaCodigoFocusGained
+
+    private void lineaPasswordFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_lineaPasswordFocusLost
+        // TODO add your handling code here:
+        if ((this.lineaPassword.getText()).equals("") || (this.lineaPassword.getText()) == null )
+        this.lineaPassword.setText("Password");
+    }//GEN-LAST:event_lineaPasswordFocusLost
+
+    private void lineaPasswordFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_lineaPasswordFocusGained
+        // TODO add your handling code here:
+        if ((this.lineaPassword.getText()).equals("Password"))
+            this.lineaPassword.setText("");
+    }//GEN-LAST:event_lineaPasswordFocusGained
 
     /**
      * @param args the command line arguments
@@ -79,5 +308,14 @@ public class LogIn extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton botonEntrar;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JTextField lineaCodigo;
+    private javax.swing.JTextField lineaPassword;
     // End of variables declaration//GEN-END:variables
 }

@@ -22,29 +22,14 @@ public class SGClient {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        try 
-        {
-            Socket socket = new Socket("localhost", 8889);
-            PrintWriter salida = new PrintWriter(
-                    socket.getOutputStream(),
-                    true
-            );
-            BufferedReader entrada = new BufferedReader(
-                    new InputStreamReader(
-                            socket.getInputStream()
-                    )
-            );
-            
-            salida.println("Hola mundo");
-            salida.println("fin");
-            String uno = entrada.readLine();
-            System.out.println(uno);
-            socket.close();
-        }
-        catch(Exception e) 
-        {
-            e.printStackTrace();
-        }
+        //LogIn log = new LogIn();
+        //log.setVisible(true);
+        
+        Inicio init = new Inicio();
+        init.setVisible(true);
+        
+        MarcoTiendas marc = new MarcoTiendas();
+        marc.setVisible(true);
     }
     
 }

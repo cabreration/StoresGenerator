@@ -132,7 +132,7 @@ public class TablaProductos {
                     + "\"size\": " +  aux.getSize() + ", \n"
                     + "\"imagen\": " + "\"" + aux.getImagen() + "\",  \n"
                     + "\"sucursal_tienda\": " + aux.getSucursal_tienda() + ", \n"
-                    + "\"producto\": " + aux.getPrecio() + " \n }, \n";
+                    + "\"precio\": " + aux.getPrecio() + " \n }, \n";
         }
         
         Producto nu = escritor.get(i);

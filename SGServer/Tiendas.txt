@@ -1,10 +1,18 @@
  [ 
 	{ 
- "codigo": "1", 
-"usuario_propietario": "456", 
-"nombre": "tienda1.0", 
-"direccion": "guatemala", 
-"telefono": "345678", 
+ "codigo": 2, 
+"usuario_propietario": 457, 
+"nombre": "Golon Store", 
+"direccion": "por ahi", 
+"telefono": 12345678, 
+"imagen": "ggggg" 
+ }, 
+{ 
+ "codigo": 1, 
+"usuario_propietario": 456, 
+"nombre": "Tienda1", 
+"direccion": "por ahi", 
+"telefono": 12345678, 
 "imagen": "ggggg" 
  } 
 ]

@@ -5,6 +5,15 @@
  */
 package sgclient;
 
+import Logica.Data;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Javier A. Cabrera
@@ -27,21 +36,210 @@ public class Inicio extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        jButton1 = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        botonTiendas = new javax.swing.JButton();
+        botonEnviar = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        botonSalir = new javax.swing.JButton();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        consola = new javax.swing.JTextArea();
+
+        jButton1.setText("jButton1");
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setTitle("Inicio - Stores Generator");
+
+        jPanel1.setBackground(new java.awt.Color(18, 47, 61));
+
+        jPanel2.setBackground(new java.awt.Color(246, 222, 108));
+
+        botonTiendas.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
+        botonTiendas.setText("Tiendas");
+        botonTiendas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonTiendasActionPerformed(evt);
+            }
+        });
+
+        botonEnviar.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
+        botonEnviar.setText("Enviar");
+        botonEnviar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonEnviarActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setFont(new java.awt.Font("Noto Serif", 1, 24)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel1.setText("Acciones");
+
+        botonSalir.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
+        botonSalir.setText("Cerrar Sesion");
+        botonSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonSalirActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(74, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(botonSalir)
+                    .addComponent(botonTiendas)
+                    .addComponent(botonEnviar)
+                    .addComponent(jLabel1))
+                .addGap(57, 57, 57))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(57, 57, 57)
+                .addComponent(jLabel1)
+                .addGap(29, 29, 29)
+                .addComponent(botonEnviar)
+                .addGap(32, 32, 32)
+                .addComponent(botonTiendas)
+                .addGap(36, 36, 36)
+                .addComponent(botonSalir)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        consola.setBackground(new java.awt.Color(52, 115, 143));
+        consola.setColumns(20);
+        consola.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
+        consola.setRows(5);
+        jScrollPane1.setViewportView(consola);
+
+        jTabbedPane1.addTab("Consola", jScrollPane1);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(34, 34, 34)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 418, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(37, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 437, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(32, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void botonEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEnviarActionPerformed
+        // TODO add your handling code here:.
+        String cadena = this.consola.getText();
+        if (cadena.equals("") || cadena == null) return;
+        
+        try {
+            Socket socket = new Socket("localhost", 8889);
+            PrintWriter salida = new PrintWriter(
+                    socket.getOutputStream(),
+                    true
+            );
+            BufferedReader entrada = new BufferedReader(
+                    new InputStreamReader(
+                            socket.getInputStream()
+                    )
+            );
+            
+            salida.println(cadena);
+            salida.println("fin");
+            
+            String entradaCompleta = "";
+            String aux = "";
+            try {
+                while (!(aux = entrada.readLine()).equals("fin")) 
+                {
+                    entradaCompleta += aux;
+                }
+                
+                //parsear la cadena de entrada
+                
+            }
+            catch(Exception e) 
+            {
+                e.printStackTrace();
+            }
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_botonEnviarActionPerformed
+
+    private void botonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonSalirActionPerformed
+        // TODO add your handling code here:
+        this.setVisible(false);
+        this.dispose();
+        LogIn log = new LogIn();
+        log.setVisible(true);
+    }//GEN-LAST:event_botonSalirActionPerformed
+
+    private void botonTiendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonTiendasActionPerformed
+        // TODO add your handling code here:
+        try {
+            Socket socket = new Socket("localhost", 8889);
+            PrintWriter salida = new PrintWriter(
+                    socket.getOutputStream(),
+                    true
+            );
+            BufferedReader entrada = new BufferedReader(
+                    new InputStreamReader(
+                            socket.getInputStream()
+                    )
+            );
+            
+            salida.println("$request$ $get tipo = \"tiendas\" propietario = " + Data.usuarioActual + "-$ $request-$");
+            salida.println("fin");
+            
+            String entradaCompleta = "";
+            String aux = "";
+            try {
+                while (!(aux = entrada.readLine()).equals("fin")) 
+                {
+                    entradaCompleta += aux;
+                }
+                
+                //parsear la cadena de entrada
+                //aqui se van a obtener todas las tiendas
+                
+            }
+            catch(Exception e) 
+            {
+                e.printStackTrace();
+            }
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_botonTiendasActionPerformed
 
     /**
      * @param args the command line arguments
@@ -79,5 +277,15 @@ public class Inicio extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton botonEnviar;
+    private javax.swing.JButton botonSalir;
+    private javax.swing.JButton botonTiendas;
+    private javax.swing.JTextArea consola;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
 }

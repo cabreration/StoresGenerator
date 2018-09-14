@@ -70,10 +70,6 @@ public class Tienda {
     public void setTelefono(int telefono) {
         this.telefono = telefono;
     } 
-    
-    public void setUsuario(int usuario) {
-        this.usuario_propietario = usuario;
-    }
 
     public void setCodigo(int codigo) {
         this.codigo = codigo;

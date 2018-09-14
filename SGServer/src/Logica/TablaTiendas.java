@@ -64,7 +64,7 @@ public class TablaTiendas {
         if (datos.getTelefono() >  -1)
             aux.setTelefono(datos.getTelefono());
         if (datos.getUsuario_propietario() > -1)
-            aux.setUsuario(datos.getUsuario_propietario());
+            aux.setUsuario_propietario(datos.getUsuario_propietario());
         
         return true;
     }

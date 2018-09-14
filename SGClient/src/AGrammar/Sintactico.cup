@@ -3,10 +3,19 @@ package AGrammar;
 
 import java_cup.runtime.Symbol;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 parser code  
 {:
     public ArrayList<ErrorC> errores = new ArrayList<>();
+    public boolean logIn = false;
+    public int usuarioActual = 0;
+    public boolean registroTienda = false;
+    public boolean modTienda = false;
+    public boolean delTienda = false;
+    public boolean registroProducto = false;
+    public boolean modProducto = false;
+    public boolean delProducto = false;
 
     public void syntax_error(Symbol s)
     {   
@@ -50,7 +59,7 @@ parser code
 
 action code 
 {:
-         
+        
 :}
 
 terminal dolar, respuesta, usuario, id, acceso, menos, verdadero, falso, registro, asignacion, tienda, modificar, eliminar, producto, sucursal, errorT;
@@ -109,10 +118,13 @@ O_ACCESO::= dolar acceso dolar;
 
 C_ACCESO::= dolar acceso menos dolar;
 
-BOOL::= verdadero | falso;
+BOOL::= verdadero {: RESULT = true; :}
+| falso {: RESULT = false; :};
 
-LOGIN::= O_REPLY O_USUARIO O_ID numero C_ID O_ACCESO BOOL C_ACCESO C_USUARIO C_REPLY
-|        O_REPLY O_USUARIO O_ACCESO BOOL C_ACCESO O_ID numero C_ID C_USUARIO C_REPLY
+LOGIN::= O_REPLY O_USUARIO O_ID numero:num C_ID O_ACCESO BOOL:bool C_ACCESO C_USUARIO C_REPLY 
+{: parser.logIn = (boolean)bool; parser.usuarioActual = Integer.parseInt(String.valueOf(num)); :}
+|        O_REPLY O_USUARIO O_ACCESO BOOL:bool C_ACCESO O_ID numero:num C_ID C_USUARIO C_REPLY 
+{: parser.logIn = (boolean)bool; parser.usuarioActual = Integer.parseInt(String.valueOf(num)); :}
 ;
 
 O_REGISTRO::= dolar registro id asignacion numero dolar;
@@ -125,7 +137,7 @@ O_TIENDA::= dolar tienda dolar;
 
 C_TIENDA::= dolar tienda menos dolar;
 
-SIGNUPT::= O_REPLY O_TIENDA O_REGISTRO BOOL C_REGISTRO C_TIENDA C_REPLY;
+SIGNUPT::= O_REPLY O_TIENDA O_REGISTRO BOOL:bool C_REGISTRO C_TIENDA C_REPLY {: :};
 
 O_MOD::= dolar modificar id asignacion numero dolar;
 

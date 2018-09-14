@@ -23,10 +23,10 @@ public class SGServer {
      */
     
     public static void main(String[] args) {
-        // TODO code application logic here      
-        DatosPersistentes.productos = new TablaProductos();
-        DatosPersistentes.usuarios = new TablaUsuarios();
-        DatosPersistentes.tiendas = new TablaTiendas();
+        // TODO code application logic here
+        DatosPersistentes.cargarUsuarios();
+        DatosPersistentes.cargarTiendas();
+        DatosPersistentes.cargarProductos();
         
         DatosPersistentes.interfaz = new GUI();
         DatosPersistentes.interfaz.setVisible(true);
