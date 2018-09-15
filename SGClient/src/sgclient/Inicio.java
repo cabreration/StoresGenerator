@@ -5,12 +5,18 @@
  */
 package sgclient;
 
+import AGrammar.Lexico;
+import AGrammar.Sintactico;
 import Logica.Data;
+import Logica.Tienda;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringReader;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -229,6 +235,24 @@ public class Inicio extends javax.swing.JFrame {
                 
                 //parsear la cadena de entrada
                 //aqui se van a obtener todas las tiendas
+                System.out.println(entradaCompleta);
+                Reader lector = new StringReader(entradaCompleta);
+                Lexico scanner = new Lexico(lector);
+                Sintactico parser = new Sintactico(scanner);
+                try 
+                {
+                    parser.parse();
+                    ArrayList<Tienda> ts = Data.tiendas;
+                    MarcoTiendas marc = new MarcoTiendas();
+                    marc.setVisible(true);
+                    this.setVisible(false);
+                    this.dispose();
+                }
+                catch(Exception e) 
+                {
+                    System.out.println(e);
+                    e.printStackTrace();
+                }
                 
             }
             catch(Exception e) 

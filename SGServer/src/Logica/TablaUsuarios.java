@@ -100,4 +100,22 @@ public class TablaUsuarios {
  
         Files.write(path, strToBytes);
     }
+    
+    public String consulta(ArrayList<Consulta> condiciones) {
+        ArrayList<Usuario> satisfactorios = new ArrayList<>();
+        
+        Set<String> llaves = this.usuarios.keySet();
+        for (String llave : llaves) {
+            satisfactorios.add(this.usuarios.get(String.valueOf(llave)));
+        }
+        
+        ArrayList<Usuario> resultado = consulta(condiciones, satisfactorios);
+        return null;
+    }
+    
+    public ArrayList<Usuario> consulta(ArrayList<Consulta> condiciones, ArrayList<Usuario> usuarios) {
+        
+        ArrayList<Usuario> done = new ArrayList<>();
+        return null;
+    } 
 }

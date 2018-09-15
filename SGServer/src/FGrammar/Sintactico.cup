@@ -369,6 +369,27 @@ parser code
             tipo = null;
             productoAuxiliar = new Producto();
          }
+
+        public void obtenerTiendas(String tipo, int usuario) {
+            String tip = tipo.substring(1, tipo.length()-1);
+            
+            System.out.println("Llegue a get de Tiendas");
+
+            if (tip.equals("tiendas") || tipo.equals("tienda")) {
+                try {
+                    respuesta = DatosPersistentes.tiendas.obtenerTiendas(usuario);
+                    DatosPersistentes.interfaz.outputLine.append("\n >> Lista de tiendas obtenida: " + respuesta);
+                }
+                catch(Exception e) {
+                    respuesta = "$reply$ $error$ $descripcion$ \"" + e.getMessage() + "\" $descripcion-$ $error-$ $reply-$";
+                    DatosPersistentes.interfaz.outputLine.append("\n >> Error al obtener lista de tiendas");
+                }
+            }
+            else {
+                respuesta = "$reply$ $error$ $descripcion$ \"La peticion para obtener productos requiere mas argumentos\" $descripcion-$ $error-$ $reply-$";
+                DatosPersistentes.interfaz.outputLine.append("\n >> Error al obtener lista de tiendas");
+            }
+        }
 :}
 
 action code 
@@ -380,6 +401,9 @@ terminal dolar, peticion, inicioUsuario, id, password, menos, mas, por, sobre, c
 terminal tienda, tipo, codigo, propietario, img, raizCuadrada, potencia, cantidad, marca, color, sucursal, size, coma, llaveA, llaveC;
 terminal parentesisA, parentesisC, asignacion, producto, obtener, precio;
 terminal cadena, numero, clave, correo; 
+
+//terminales consultas
+terminal consulta, extraer, de, donde, user, puntoYComa, conjuncion, disyuncion, negacion, igualIgual;
 
 non terminal INICIO, ACCION, OTRA_ACCION, LISTA, LISTA2;
 non terminal LOGIN, O_PETICION, O_INGRESO, O_ID, O_PASSWORD, C_PASSWORD, C_ID, C_INGRESO, C_PETICION, G_ID, G_PASSWORD;
@@ -394,14 +418,22 @@ non terminal BC_PRODUCTO, BC_ESTANDAR, OTRO_BC, CANTIDAD, MARCA, COLOR, SIZE, SU
 non terminal EXPRESION, IMAGEN, GET;
 non terminal O_PRECIO, C_PRECIO, PRECIO, G_PRECIO;
 
+//Gramatica de consultas
+
+non terminal QUERY, O_QUERY, C_QUERY, EXPRESION_LOGICA, CONSULTA, LISTA_CONSULTAS, LISTA_QUERY, TABLAS, LOGICA_SIMPLE, ATRIBUTO, VALOR;
+
 precedence left mas, menos;
 precedence left por, sobre;
 precedence left parentesisA, parentesisC;
 precedence right raizCuadrada, potencia;
+precedence left conjuncion;
+precedence left disyuncion;
+precedence right negacion;
 
 start with INICIO;
 
 INICIO::= LISTA2
+| LISTA_QUERY
 | error INICIO
 |
 ;
@@ -679,12 +711,68 @@ OPERACION_ARITMETICA::= numero:num {: RESULT = num; :}
 ;
 
 
-GET::= dolar obtener tipo asignacion cadena propietario asignacion numero menos dolar
-|      dolar obtener propietario asignacion numero tipo asignacion cadena menos dolar
+GET::= dolar obtener tipo asignacion cadena:cad propietario asignacion numero:num menos dolar 
+{: parser.obtenerTiendas(String.valueOf(cad), Integer.parseInt(String.valueOf(num))); :}
+|      dolar obtener propietario asignacion numero:num tipo asignacion cadena:cad menos dolar 
+{: parser.obtenerTiendas(String.valueOf(cad), Integer.parseInt(String.valueOf(num))); :}
 |      dolar obtener tipo asignacion cadena propietario asignacion numero sucursal asignacion numero menos dolar
 |      dolar obtener tipo asignacion cadena sucursal asignacion numero propietario asignacion numero menos dolar
 |      dolar obtener sucursal asignacion numero tipo asignacion cadena propietario asignacion numero menos dolar
 |      dolar obtener sucursal asignacion numero propietario asignacion numero tipo asignacion cadena menos dolar
 |      dolar obtener propietario asignacion numero sucursal asignacion numero tipo asignacion cadena menos dolar
 |      dolar obtener propietario asignacion numero tipo asignacion cadena sucursal asignacion numero menos dolar
+;
+
+
+QUERY::= O_QUERY LISTA_CONSULTAS C_QUERY;
+
+O_QUERY::= dolar consulta dolar;
+
+C_QUERY::= dolar consulta menos dolar;
+
+LISTA_QUERY::= LISTA_QUERY QUERY
+| QUERY
+;
+
+LISTA_CONSULTAS::= LISTA_CONSULTAS CONSULTA
+| CONSULTA
+;
+
+CONSULTA::= extraer de TABLAS puntoYComa
+| extraer de TABLAS donde EXPRESION_LOGICA puntoYComa
+;
+
+TABLAS::= user
+| producto
+| tienda
+;
+
+EXPRESION_LOGICA::= EXPRESION_LOGICA conjuncion EXPRESION_LOGICA
+|                   EXPRESION_LOGICA disyuncion EXPRESION_LOGICA
+|                   negacion parentesisA EXPRESION_LOGICA parentesisC
+|                   LOGICA_SIMPLE
+;
+
+LOGICA_SIMPLE::= ATRIBUTO igualIgual VALOR;
+
+ATRIBUTO::= nombre
+| id
+| password
+| apellido
+| telefono
+| email
+| direccion
+| codigo
+| propietario
+| img
+| cantidad
+| marca
+| size
+| color
+| sucursal
+| precio
+;
+
+VALOR::= numero:num {: RESULT = num; :}
+| cadena:cad {: RESULT = cad; :}
 ;

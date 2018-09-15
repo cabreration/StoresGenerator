@@ -1,5 +1,29 @@
  [ 
 	{ 
+ "codigo": 5, 
+"usuario_propietario": 456, 
+"nombre": "Jade Inc", 
+"direccion": "por ahi", 
+"telefono": 12345678, 
+"imagen": "ggggg" 
+ }, 
+{ 
+ "codigo": 4, 
+"usuario_propietario": 456, 
+"nombre": "Tongue Tied", 
+"direccion": "por ahi", 
+"telefono": 12345678, 
+"imagen": "ggggg" 
+ }, 
+{ 
+ "codigo": 3, 
+"usuario_propietario": 456, 
+"nombre": "DJ Solutions", 
+"direccion": "por ahi", 
+"telefono": 12345678, 
+"imagen": "ggggg" 
+ }, 
+{ 
  "codigo": 2, 
 "usuario_propietario": 457, 
 "nombre": "Golon Store", 

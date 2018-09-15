@@ -5,17 +5,39 @@
  */
 package sgclient;
 
+import AGrammar.Lexico;
+import AGrammar.Sintactico;
+import Logica.Data;
+import Logica.Peticiones;
+import Logica.Tienda;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Javier A. Cabrera
  */
 public class MarcoTiendas extends javax.swing.JFrame {
 
+    ArrayList<Integer> codigos = new ArrayList<>();
+    boolean modificando = false;
+    boolean registrando = false;
     /**
      * Creates new form MarcoTiendas
      */
     public MarcoTiendas() {
         initComponents();
+        llenarLista();
     }
 
     /**
@@ -48,11 +70,12 @@ public class MarcoTiendas extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
-        jTextField5 = new javax.swing.JTextField();
-        jTextField6 = new javax.swing.JTextField();
+        campoCodigo = new javax.swing.JTextField();
+        campoNombre = new javax.swing.JTextField();
+        campoDireccion = new javax.swing.JTextField();
+        campoTelefono = new javax.swing.JTextField();
+        campoImagen = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
 
         botonModificar1.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
         botonModificar1.setText("Modificar");
@@ -71,15 +94,30 @@ public class MarcoTiendas extends javax.swing.JFrame {
 
         botonVer.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
         botonVer.setText("Ver");
+        botonVer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonVerActionPerformed(evt);
+            }
+        });
 
         botonModificar.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
         botonModificar.setText("Modificar");
+        botonModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonModificarActionPerformed(evt);
+            }
+        });
 
         botonEliminar.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
         botonEliminar.setText("Eliminar");
 
         botonNueva.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
         botonNueva.setText("Registrar");
+        botonNueva.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonNuevaActionPerformed(evt);
+            }
+        });
 
         jPanel3.setBackground(new java.awt.Color(237, 138, 69));
 
@@ -114,6 +152,11 @@ public class MarcoTiendas extends javax.swing.JFrame {
 
         botonVolver.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
         botonVolver.setText("Volver");
+        botonVolver.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonVolverActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -158,23 +201,29 @@ public class MarcoTiendas extends javax.swing.JFrame {
         );
 
         jLabel3.setFont(new java.awt.Font("Noto Serif", 1, 24)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Informacion");
 
         jPanel4.setBackground(new java.awt.Color(18, 47, 61));
 
         jLabel4.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Codigo:");
 
         jLabel5.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("Nombre:");
 
         jLabel6.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setText("Direccion:");
 
         jLabel7.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("Telefono:");
 
         jLabel8.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
         jLabel8.setText("Imagen:");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -207,35 +256,32 @@ public class MarcoTiendas extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jTextField1.setBackground(new java.awt.Color(52, 115, 143));
-        jTextField1.setFont(new java.awt.Font("Noto Serif", 0, 14)); // NOI18N
+        campoCodigo.setEditable(false);
+        campoCodigo.setBackground(new java.awt.Color(52, 115, 143));
+        campoCodigo.setFont(new java.awt.Font("Noto Serif", 0, 14)); // NOI18N
+        campoCodigo.setForeground(new java.awt.Color(255, 255, 255));
 
-        jTextField2.setBackground(new java.awt.Color(52, 115, 143));
-        jTextField2.setFont(new java.awt.Font("Noto Serif", 0, 14)); // NOI18N
+        campoNombre.setEditable(false);
+        campoNombre.setBackground(new java.awt.Color(52, 115, 143));
+        campoNombre.setFont(new java.awt.Font("Noto Serif", 0, 14)); // NOI18N
+        campoNombre.setForeground(new java.awt.Color(255, 255, 255));
 
-        jTextField4.setBackground(new java.awt.Color(52, 115, 143));
-        jTextField4.setFont(new java.awt.Font("Noto Serif", 0, 14)); // NOI18N
-        jTextField4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField4ActionPerformed(evt);
-            }
-        });
+        campoDireccion.setEditable(false);
+        campoDireccion.setBackground(new java.awt.Color(52, 115, 143));
+        campoDireccion.setFont(new java.awt.Font("Noto Serif", 0, 14)); // NOI18N
+        campoDireccion.setForeground(new java.awt.Color(255, 255, 255));
 
-        jTextField5.setBackground(new java.awt.Color(52, 115, 143));
-        jTextField5.setFont(new java.awt.Font("Noto Serif", 0, 14)); // NOI18N
-        jTextField5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField5ActionPerformed(evt);
-            }
-        });
+        campoTelefono.setEditable(false);
+        campoTelefono.setBackground(new java.awt.Color(52, 115, 143));
+        campoTelefono.setFont(new java.awt.Font("Noto Serif", 0, 14)); // NOI18N
+        campoTelefono.setForeground(new java.awt.Color(255, 255, 255));
 
-        jTextField6.setBackground(new java.awt.Color(52, 115, 143));
-        jTextField6.setFont(new java.awt.Font("Noto Serif", 0, 14)); // NOI18N
-        jTextField6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField6ActionPerformed(evt);
-            }
-        });
+        campoImagen.setEditable(false);
+        campoImagen.setBackground(new java.awt.Color(52, 115, 143));
+        campoImagen.setFont(new java.awt.Font("Noto Serif", 0, 14)); // NOI18N
+        campoImagen.setForeground(new java.awt.Color(255, 255, 255));
+
+        jButton1.setText("Buscar");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -246,14 +292,20 @@ public class MarcoTiendas extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap(91, Short.MAX_VALUE)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(26, 26, 26)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(112, 112, 112))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(26, 26, 26)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(campoTelefono, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+                                    .addComponent(campoImagen)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(campoNombre, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(campoCodigo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(campoDireccion, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING))))
+                        .addGap(57, 57, 57))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(135, 135, 135)
                         .addComponent(jLabel3)
@@ -269,16 +321,18 @@ public class MarcoTiendas extends javax.swing.JFrame {
                 .addGap(45, 45, 45)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(campoCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(campoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(campoDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(campoTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(campoImagen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jButton1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -296,17 +350,203 @@ public class MarcoTiendas extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
+    private void botonVerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonVerActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField4ActionPerformed
+        if (this.modificando) this.modificando = false;
+        if (this.registrando) this.registrando = false;
+        this.campoNombre.setEditable(false);
+        this.campoDireccion.setEditable(false);
+        this.campoTelefono.setEditable(false);
+        
+        Tienda store = buscarTienda(this.listaTiendas.getSelectedIndex());
+        if (store == null) return;
+        
+        this.campoCodigo.setText(String.valueOf(store.getCodigo()));
+        this.campoNombre.setText(store.getNombre());
+        this.campoDireccion.setText(store.getDireccion());
+        this.campoTelefono.setText(String.valueOf(store.getTelefono()));
+    }//GEN-LAST:event_botonVerActionPerformed
 
-    private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
+    private void botonModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonModificarActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField5ActionPerformed
+        if (!this.modificando) {
+            this.modificando = true;
+            this.campoNombre.setEditable(true);
+            this.campoDireccion.setEditable(true);
+            this.campoTelefono.setEditable(true);
+        }
+        else {
+            if (this.campoNombre.getText().equals("") 
+                    || this.campoNombre.getText() == null 
+                    || this.campoDireccion.getText().equals("")
+                    || this.campoDireccion.getText() == null
+                    || this.campoTelefono.getText().equals("")
+                    || this.campoTelefono.getText() == null) {
+                JOptionPane.showMessageDialog(null, "Todos los campos deben ser llenados", "Stores Generator", JOptionPane.ERROR_MESSAGE);
+                return;
+            }   
+            
+            //enviar la peticion al servidor para que modifique desde aqui
+            this.modificando = false;
+            try {
+                Socket socket = new Socket("localhost", 8889);
+                PrintWriter salida = new PrintWriter(
+                    socket.getOutputStream(),
+                    true
+                );
+                BufferedReader entrada = new BufferedReader(
+                    new InputStreamReader(
+                            socket.getInputStream()
+                    )
+                );
+                
+                String peticion = Peticiones.modificarTienda(this.campoCodigo.getText(),
+                        String.valueOf(Data.usuarioActual), this.campoNombre.getText(), this.campoDireccion.getText(),
+                        this.campoTelefono.getText());
+                
+                salida.println(peticion);
+                salida.println("fin");
+                
+                String aux = "";
+                String entradaCompleta = "";
+                
+                try {
+                while (!(aux = entrada.readLine()).equals("fin")) 
+                {
+                    entradaCompleta += aux;
+                }
+                
+                //parsear la cadena de entrada
+                //aqui se van a obtener todas las tiendas
+                System.out.println(entradaCompleta);
+                Reader lector = new StringReader(entradaCompleta);
+                Lexico scanner = new Lexico(lector);
+                Sintactico parser = new Sintactico(scanner);
+                try 
+                {
+                    parser.parse();
+                    if (parser.modTienda) {
+                        JOptionPane.showMessageDialog(null, "Se modifico la tienda de forma exitosa",
+                                "Stores Generator", JOptionPane.INFORMATION_MESSAGE);
+                        
+                        //modificamos la informacion local
+                        Tienda tempStore = buscarTienda(this.listaTiendas.getSelectedIndex());
+                        tempStore.setNombre(this.campoCodigo.getText());
+                        tempStore.setDireccion(this.campoDireccion.getText());
+                        tempStore.setTelefono(Integer.parseInt(this.campoTelefono.getText()));
+                    }
+                    else 
+                        JOptionPane.showMessageDialog(null, "La tienda no fue modificada",
+                                "Stores Generator", JOptionPane.ERROR_MESSAGE);
+                }
+                catch(Exception e) 
+                {
+                    System.out.println(e);
+                    e.printStackTrace();
+                }
+                
+            }
+            catch(Exception e) 
+            {
+                e.printStackTrace();
+            }
+                
+            } catch (IOException ex) {
+                Logger.getLogger(MarcoTiendas.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+    }//GEN-LAST:event_botonModificarActionPerformed
 
-    private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField6ActionPerformed
+    private void botonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonVolverActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField6ActionPerformed
+        this.setVisible(false);
+        this.dispose();
+        Inicio init = new Inicio();
+        init.setVisible(true);
+    }//GEN-LAST:event_botonVolverActionPerformed
+
+    private void botonNuevaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonNuevaActionPerformed
+        // TODO add your handling code here:
+        if (this.registrando = false) {
+            this.campoCodigo.setText("");
+            this.campoNombre.setText("");
+            this.campoDireccion.setText("");
+            this.campoTelefono.setText("");
+            this.campoImagen.setText("");
+            
+            this.campoNombre.setEditable(true);
+            this.campoDireccion.setEditable(true);
+            this.campoTelefono.setEditable(true);
+            this.registrando = true;
+        }
+        else {
+            // construimos una tienda y la mandamos en la peticion
+            if (this.campoNombre.getText().equals("") 
+                    ||this.campoNombre.getText() == null
+                    || this.campoDireccion.getText().equals("")
+                    || this.campoDireccion.getText() == null
+                    || this.campoTelefono.getText().equals("")
+                    || this.campoTelefono.getText() == null) {
+                
+                JOptionPane.showMessageDialog(null, "Los campos de nombre, direccion y telefono son obligatorios,",
+                         "Stores Generator", JOptionPane.ERROR_MESSAGE);
+            }
+            try {
+                Socket socket = new Socket("localhost", 8889);
+                PrintWriter salida = new PrintWriter(
+                    socket.getOutputStream(),
+                    true
+                );
+                BufferedReader entrada = new BufferedReader(
+                    new InputStreamReader(
+                            socket.getInputStream()
+                    )
+                );
+                
+                Random rand = new Random();
+                int codigo = rand.nextInt(2000000000);
+                String peticion = "";
+                
+                if (campoImagen.getText().equals("") || campoImagen.getText() == null)
+                    peticion = Peticiones.crearTienda(String.valueOf(codigo), String.valueOf(Data.usuarioActual),
+                        this.campoNombre.getText(), this.campoDireccion.getText(), this.campoTelefono.getText(), "imagen por defecto");
+                else
+                    peticion = Peticiones.crearTienda(String.valueOf(codigo), String.valueOf(Data.usuarioActual),
+                        this.campoNombre.getText(), this.campoDireccion.getText(), this.campoTelefono.getText(), this.campoImagen.getText());
+                
+                salida.println(peticion);
+                salida.println("fin");
+                
+                String entradaCompleta  ="";
+                String aux1 = "";
+                
+                try {
+                    while (!(aux1 = entrada.readLine()).equals("fin")) 
+                    {
+                        entradaCompleta += aux1;
+                    }
+                    
+                    System.out.println(entradaCompleta);
+                    Reader lector = new StringReader(entradaCompleta);
+                    Lexico scanner = new Lexico(lector);
+                    Sintactico parser = new Sintactico(scanner);
+                    parser.parse();
+                    if (parser.registroTienda) {
+                        JOptionPane.showConfirmDialog(null, "Registro exitoso", "Stores Generator", JOptionPane.INFORMATION_MESSAGE);
+                        this.registrando = false;
+                    }
+                    else 
+                        JOptionPane.showConfirmDialog(null, "Error, intente de nuevo", "Stores Generator", JOptionPane.INFORMATION_MESSAGE);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+                
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_botonNuevaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -342,6 +582,23 @@ public class MarcoTiendas extends javax.swing.JFrame {
             }
         });
     }
+    
+    private void llenarLista() {
+        for (int i = 0; i < Data.tiendas.size(); i++) {
+            this.listaTiendas.addItem(Data.tiendas.get(i).getNombre());
+            this.codigos.add(Data.tiendas.get(i).getCodigo());
+        }
+    }
+    
+    private Tienda buscarTienda(int indice) {
+        Tienda aux = null;
+        int codigo = this.codigos.get(indice);
+        for (int i = 0; i < Data.tiendas.size(); i++) {
+            if (Data.tiendas.get(i).getCodigo() == codigo)
+                aux = Data.tiendas.get(i);
+        }
+        return aux;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonEliminar;
@@ -351,6 +608,12 @@ public class MarcoTiendas extends javax.swing.JFrame {
     private javax.swing.JButton botonProductos;
     private javax.swing.JButton botonVer;
     private javax.swing.JButton botonVolver;
+    private javax.swing.JTextField campoCodigo;
+    private javax.swing.JTextField campoDireccion;
+    private javax.swing.JTextField campoImagen;
+    private javax.swing.JTextField campoNombre;
+    private javax.swing.JTextField campoTelefono;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -363,12 +626,7 @@ public class MarcoTiendas extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
     private javax.swing.JComboBox<String> listaTiendas;
     // End of variables declaration//GEN-END:variables
 }

@@ -63,12 +63,24 @@ correo = ({letra}|{digito})+"@compiladores1.com"
 <YYINITIAL> "}"                        {return new Symbol(SimbolosF.llaveC, yycolumn, yyline, yytext());}
 <YYINITIAL> "("                        {return new Symbol(SimbolosF.parentesisA, yycolumn, yyline, yytext());}
 <YYINITIAL> ")"                        {return new Symbol(SimbolosF.parentesisC, yycolumn, yyline, yytext());}
+<YYINITIAL> "=="                       {return new Symbol(SimbolosF.igualIgual, yycolumn, yyline, yytext());}
 <YYINITIAL> "="                        {return new Symbol(SimbolosF.asignacion, yycolumn, yyline, yytext());}
+<YYINITIAL> "get"                      {return new Symbol(SimbolosF.obtener, yycolumn, yyline, "get");}
+
+<YYINITIAL> "query"                    {return new Symbol(SimbolosF.consulta, yycolumn, yyline, yytext());}
+<YYINITIAL> "extraer"                  {return new Symbol(SimbolosF.extraer, yycolumn, yyline, yytext());}
+<YYINITIAL> "de"                       {return new Symbol(SimbolosF.de, yycolumn, yyline, yytext());}
+<YYINITIAL> "donde"                    {return new Symbol(SimbolosF.donde, yycolumn, yyline, yytext());}
+<YYINITIAL> "usuario"                  {return new Symbol(SimbolosF.user, yycolumn, yyline, yytext());}
+<YYINITIAL> ";"                        {return new Symbol(SimbolosF.puntoYComa, yycolumn, yyline, yytext());}
+<YYINITIAL> "%%"                       {return new Symbol(SimbolosF.conjuncion, yycolumn, yyline, yytext());}
+<YYINITIAL> "##"                       {return new Symbol(SimbolosF.disyuncion, yycolumn, yyline, yytext());}
+<YYINITIAL> "N"                        {return new Symbol(SimbolosF.negacion, yycolumn, yyline, yytext());}
+
 <YYINITIAL> {cadena}                   {return new Symbol(SimbolosF.cadena, yycolumn, yyline, yytext());}
 <YYINITIAL> {numero}                   {return new Symbol(SimbolosF.numero, yycolumn, yyline, yytext());}
 <YYINITIAL> {clave}                    {return new Symbol(SimbolosF.clave, yycolumn, yyline, yytext());}
 <YYINITIAL> {correo}                   {return new Symbol(SimbolosF.correo, yycolumn, yyline, yytext());}
-<YYINITIAL> "get"                      {return new Symbol(SimbolosF.obtener, yycolumn, yyline, "get");}
 
 <YYINITIAL> [ \t\r\f\n]                {}
 

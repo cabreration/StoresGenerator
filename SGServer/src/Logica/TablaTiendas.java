@@ -92,7 +92,7 @@ public class TablaTiendas {
   
         Set<String> llaves = this.tiendas.keySet();
         for (String llave : llaves) {
-            if (this.tiendas.get(llave).getCodigo() == usuario)
+            if (this.tiendas.get(llave).getUsuario_propietario() == usuario)
                 aux.add(this.tiendas.get(llave));
         }
         
