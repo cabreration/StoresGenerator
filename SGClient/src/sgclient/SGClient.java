@@ -5,11 +5,13 @@
  */
 package sgclient;
 
+import Logica.Data;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  *
@@ -22,14 +24,10 @@ public class SGClient {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        //LogIn log = new LogIn();
-        //log.setVisible(true);
-        
-        Inicio init = new Inicio();
-        init.setVisible(true);
-        
-        MarcoTiendas marc = new MarcoTiendas();
-        marc.setVisible(true);
+        Data.tiendas = new ArrayList<>();
+        Data.productos = new ArrayList<>();
+        LogIn log = new LogIn();
+        log.setVisible(true);
     }
     
 }

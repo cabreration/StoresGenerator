@@ -4,6 +4,9 @@ package AGrammar;
 import java_cup.runtime.Symbol;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import Logica.Producto;
+import Logica.Tienda;
+import Logica.Data;
 
 parser code  
 {:
@@ -16,6 +19,8 @@ parser code
     public boolean registroProducto = false;
     public boolean modProducto = false;
     public boolean delProducto = false;
+    Tienda tiendaAuxiliar = new Tienda();
+    Producto productoAuxiliar = new Producto();
 
     public void syntax_error(Symbol s)
     {   
@@ -59,7 +64,10 @@ parser code
 
 action code 
 {:
-        
+        public void registrarTienda() {
+            Data.tiendas.add(parser.tiendaAuxiliar);
+            parser.tiendaAuxiliar = new Tienda();
+        }
 :}
 
 terminal dolar, respuesta, usuario, id, acceso, menos, verdadero, falso, registro, asignacion, tienda, modificar, eliminar, producto, sucursal, errorT;
@@ -201,8 +209,17 @@ O_DIRECCION::= dolar direccion dolar;
 
 C_DIRECCION::= dolar direccion menos dolar;
 
-TIENDA::= O_TIENDA O_CODIGO numero C_CODIGO O_PROPIETARIO numero C_PROPIETARIO
-O_NOMBRE cadena C_NOMBRE O_DIRECCION cadena C_DIRECCION O_TELEFONO numero C_TELEFONO C_TIENDA;
+TIENDA::= O_TIENDA O_CODIGO numero:cod C_CODIGO O_PROPIETARIO numero:prop C_PROPIETARIO
+O_NOMBRE cadena:name C_NOMBRE O_DIRECCION cadena:dir C_DIRECCION O_TELEFONO numero:tel C_TELEFONO C_TIENDA
+{:
+    parser.tiendaAuxiliar.setCodigo(Integer.parseInt(String.valueOf(cod)));
+    parser.tiendaAuxiliar.setUsuario_propietario(Integer.parseInt(String.valueOf(prop)));
+    parser.tiendaAuxiliar.setNombre((String.valueOf(name)).substring(1, (String.valueOf(name)).length()-1)));
+    parser.tiendaAuxiliar.setDireccion((String.valueOf(dir)).substring(1, (String.valueOf(dir)).length()-1));
+    parser.tiendaAuxiliar.setTelefono(Integer.parseInt(String.valueOf(tel)));
+    registrarTienda();
+:}
+;
 
 TIENDAS::= TIENDAS TIENDA
 | TIENDA
