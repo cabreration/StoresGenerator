@@ -403,7 +403,7 @@ terminal parentesisA, parentesisC, asignacion, producto, obtener, precio;
 terminal cadena, numero, clave, correo; 
 
 //terminales consultas
-terminal consulta, extraer, de, donde, user, puntoYComa, conjuncion, disyuncion, negacion, igualIgual;
+terminal consulta, extraer, de, donde, user, puntoYComa, conjuncion, disyuncion, negacion, igualIgual, vacio;
 
 non terminal INICIO, ACCION, OTRA_ACCION, LISTA, LISTA2;
 non terminal LOGIN, O_PETICION, O_INGRESO, O_ID, O_PASSWORD, C_PASSWORD, C_ID, C_INGRESO, C_PETICION, G_ID, G_PASSWORD;
@@ -424,11 +424,11 @@ non terminal QUERY, O_QUERY, C_QUERY, EXPRESION_LOGICA, CONSULTA, LISTA_CONSULTA
 
 precedence left mas, menos;
 precedence left por, sobre;
-precedence left parentesisA, parentesisC;
 precedence right raizCuadrada, potencia;
-precedence left conjuncion;
 precedence left disyuncion;
+precedence left conjuncion;
 precedence right negacion;
+precedence left parentesisA, parentesisC;
 
 start with INICIO;
 
@@ -747,32 +747,34 @@ TABLAS::= user
 | tienda
 ;
 
-EXPRESION_LOGICA::= EXPRESION_LOGICA conjuncion EXPRESION_LOGICA
-|                   EXPRESION_LOGICA disyuncion EXPRESION_LOGICA
-|                   negacion parentesisA EXPRESION_LOGICA parentesisC
-|                   LOGICA_SIMPLE
+EXPRESION_LOGICA::= EXPRESION_LOGICA:log1 conjuncion EXPRESION_LOGICA:log2 {: log1.hermano = log2; RESULT = new Condicion(1, (Condicion)log1); :}
+|                   EXPRESION_LOGICA:log1 disyuncion EXPRESION_LOGICA:log2 {: log1.hermano = log2; RESULT = new Condicion(2, (Condicion)log1); :}
+|                   negacion parentesisA EXPRESION_LOGICA:log parentesisC {: RESULT = new Condicion(3, (Condicion)log); :}
+|                   parentesisA EXPRESION_LOGICA:log parentesisC {: RESULT = (Condicion)log; :}
+|                   LOGICA_SIMPLE:log {: RESULT = (Condicion)log; :}
 ;
 
-LOGICA_SIMPLE::= ATRIBUTO igualIgual VALOR;
+LOGICA_SIMPLE::= ATRIBUTO:atr igualIgual VALOR:val {: RESULT = new Condicion(atr, val); :};
 
-ATRIBUTO::= nombre
-| id
-| password
-| apellido
-| telefono
-| email
-| direccion
-| codigo
-| propietario
-| img
-| cantidad
-| marca
-| size
-| color
-| sucursal
-| precio
+ATRIBUTO::= nombre {: RESULT = 1; :}
+| id {: RESULT = 2; :}
+| password {: RESULT = 3; :}
+| apellido {: RESULT = 4; :}
+| telefono {: RESULT = 5; :}
+| email {: RESULT = 6; :}
+| direccion {: RESULT = 7; :}
+| codigo {: RESULT = 8; :}
+| propietario {: RESULT = 9; :}
+| img {: RESULT = 10; :}
+| cantidad {: RESULT = 11; :}
+| marca {: RESULT = 12; :}
+| size {: RESULT = 13; :}
+| color {: RESULT = 14; :}
+| sucursal {: RESULT = 15; :}
+| precio {: RESULT = 16; :}
 ;
 
-VALOR::= numero:num {: RESULT = num; :}
-| cadena:cad {: RESULT = cad; :}
+VALOR::= cadena:cad {: RESULT = cad; :}
+| OPERACION_ARITMETICA:expr {: RESULT = expr; :}
+| vacio {: RESULT = null; :}
 ;

@@ -144,4 +144,136 @@ public class TablaTiendas {
  
         Files.write(path, strToBytes);
     }
+    
+    public ArrayList<Tienda> modoLista() {
+        ArrayList<Tienda> satisfactorios = new ArrayList<>();
+        
+        Set<String> llaves = this.tiendas.keySet();
+        for (String llave : llaves) {
+            satisfactorios.add(this.tiendas.get(String.valueOf(llave)));
+        }
+        return satisfactorios;
+    }
+    
+    public String consultar(Condicion condicion) throws Exception {
+    
+        ArrayList<Tienda> total = consultar(condicion, this.modoLista());
+        
+        String respuesta = "";
+        for (Tienda st: total) {
+            respuesta += ">> Codigo: " + st.getCodigo() + " - Propietario: " + st.getUsuario_propietario()
+                    + " - Nombre: " + st.getNombre() + " - Direccion: " + st.getDireccion() 
+                    + " - Telefono: " + st.getTelefono() + " - Imagen: " + st.getImagen() + "\n";
+        }
+        respuesta += "\n";
+        return respuesta;
+    }
+    
+    public ArrayList<Tienda> consultar(Condicion condicion, ArrayList<Tienda> actuales) throws Exception {
+        ArrayList<Tienda> resultado = new ArrayList<>();
+        
+        if (condicion.operacion == 1) {
+            return conjuncion(condicion, actuales);
+        }
+        else if (condicion.operacion == 2) {
+            return disyuncion(condicion, actuales);
+        }
+        else if (condicion.operacion == 3) {
+            return negacion(condicion, actuales);
+        }
+        else {
+            for (Tienda store: actuales) {
+                //si se cumple la condicion entonces lo agrego a la lista que voy a devolver;
+                switch(condicion.tipo) {
+                    case 1:
+                        if (condicion.valor == null) throw new Exception("Los nombres nunca seran vacios");
+                        if (store.getNombre().equals(String.valueOf(condicion.valor)))
+                            resultado.add(store);
+                        break;
+                    case 8:
+                        if (condicion.valor == null) throw new Exception ("Los identificadores nunca seran nulos");
+                        if (store.getCodigo() == (int)condicion.valor)
+                            resultado.add(store);
+                        break;
+                    case 9:
+                        if (condicion.valor == null) throw new Exception("Las propietarios nunca seran vacias");
+                        if (store.getUsuario_propietario() == (int)condicion.valor)
+                            resultado.add(store);
+                        break;
+                    case 7:
+                        if (condicion.valor == null) throw new Exception("Las direcciones de las tiendas nunca seran vacios");
+                        if (store.getDireccion().equals(String.valueOf(condicion.valor)))
+                            resultado.add(store);
+                        break;
+                    case 5:
+                        if (condicion.valor == null && store.getTelefono() == -1)
+                            resultado.add(store);
+                        else if (store.getTelefono() == (int)condicion.valor)
+                            resultado.add(store);
+                        break;
+                    case 6:
+                        if (condicion.valor == null) throw new Exception("Las imagenes nunca seran vacias");
+                        if (store.getImagen().equals((String.valueOf(condicion.valor))))
+                            resultado.add(store);
+                        break;
+                    default:
+                        throw new Exception("El atributo no pertenece a la tabla \"Tiendas\"");
+                }
+            }
+        }
+        
+        return resultado;
+    }
+    
+    public ArrayList<Tienda> negacion(Condicion condicion, ArrayList<Tienda> actuales) throws Exception {
+        ArrayList<Tienda> base = consultar(condicion.hijo, actuales);
+        ArrayList<Tienda> respuesta = new ArrayList<>();
+        boolean flag = false;
+        
+        for (Tienda store: actuales) {
+            for (Tienda store2: base) {
+                if (store.getCodigo() == store2.getCodigo())
+                    flag = true;
+            }
+            if (!flag) respuesta.add(store);
+            else flag = false;
+        }
+        
+        return respuesta;
+    }
+    
+    public ArrayList<Tienda> conjuncion(Condicion condicion, ArrayList<Tienda> actuales) throws Exception {
+        ArrayList<Tienda> base = consultar(condicion.hijo, actuales);
+        ArrayList<Tienda> base2 = consultar(condicion.hijo.hermano, base);
+        return base2;
+    }
+    
+    public ArrayList<Tienda> disyuncion(Condicion condicion, ArrayList<Tienda> actuales) throws Exception {
+        ArrayList<Tienda> base = consultar(condicion.hijo, actuales);
+        ArrayList<Tienda> complemento = new ArrayList<>();
+        
+        boolean flag = false;
+        for (Tienda st: actuales) {
+            for (Tienda st2: base) {
+                if (st.getCodigo() == st2.getCodigo())
+                    flag = true;
+            }
+            if (!flag) complemento.add(st);
+            else flag = false;
+        }
+        
+        ArrayList<Tienda> semi_respuesta = consultar(condicion.hermano, complemento);
+        ArrayList<Tienda> respuesta = new ArrayList<>();
+        
+        for (Tienda us: base) {
+            respuesta.add(us);
+        }
+        
+        for (Tienda us: semi_respuesta)
+            respuesta.add(us);
+        
+        return respuesta;
+    }
+    
+    
 }

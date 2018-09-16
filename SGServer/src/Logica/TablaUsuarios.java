@@ -101,21 +101,146 @@ public class TablaUsuarios {
         Files.write(path, strToBytes);
     }
     
-    public String consulta(ArrayList<Consulta> condiciones) {
+    public ArrayList<Usuario> modoLista() {
         ArrayList<Usuario> satisfactorios = new ArrayList<>();
         
         Set<String> llaves = this.usuarios.keySet();
         for (String llave : llaves) {
             satisfactorios.add(this.usuarios.get(String.valueOf(llave)));
         }
-        
-        ArrayList<Usuario> resultado = consulta(condiciones, satisfactorios);
-        return null;
+        return satisfactorios;
     }
     
-    public ArrayList<Usuario> consulta(ArrayList<Consulta> condiciones, ArrayList<Usuario> usuarios) {
+    public String consultar(Condicion condicion) throws Exception {
+    
+        ArrayList<Usuario> actuales = this.modoLista();
+        ArrayList<Usuario> total = consultar(condicion, actuales);
         
-        ArrayList<Usuario> done = new ArrayList<>();
-        return null;
-    } 
+        String respuesta = "";
+        for (Usuario us: total) {
+            respuesta += "Identificador: " + us.getIdentificador() + " - Nombre: " + us.getNombre() + " - Apellido: " + us.getApellido()
+                    + " - Password: " + us.getPassword() + " - Email: " + us.getEmail();
+            if (us.getTelefono() != -1)
+                respuesta += " - Telefono: " + us.getTelefono();
+            if (us.getDireccion() != null)
+                respuesta += " - Direccion: " + us.getDireccion();
+            respuesta += "\n";
+        }
+        return respuesta;
+    }
+    
+    public ArrayList<Usuario> consultar(Condicion condicion, ArrayList<Usuario> actuales) throws Exception {
+        ArrayList<Usuario> resultado = new ArrayList<>();
+        
+        if (condicion.operacion == 1) {
+            return conjuncion(condicion, actuales);
+        }
+        else if (condicion.operacion == 2) {
+            return disyuncion(condicion, actuales);
+        }
+        else if (condicion.operacion == 3) {
+            return negacion(condicion, actuales);
+        }
+        else {
+            for (Usuario us: actuales) {
+                //si se cumple la condicion entonces lo agrego a la lista que voy a devolver;
+                switch(condicion.tipo) {
+                    case 1:
+                        if (condicion.valor == null) throw new Exception("Los nombres nunca seran vacios");
+                        if (us.getNombre().equals(String.valueOf(condicion.valor)))
+                            resultado.add(us);
+                        break;
+                    case 2:
+                        if (condicion.valor == null) throw new Exception ("Los identificadores nunca seran nulos");
+                        if (us.getIdentificador() == (int)condicion.valor)
+                            resultado.add(us);
+                        break;
+                    case 3:
+                        if (condicion.valor == null) throw new Exception("Las password nunca seran vacias");
+                        if (us.getPassword().equals(String.valueOf(condicion.valor)))
+                            resultado.add(us);
+                        break;
+                    case 4:
+                        if (condicion.valor == null) throw new Exception("Los apellidos nunca seran vacios");
+                        if (us.getApellido().equals(String.valueOf(condicion.valor)))
+                            resultado.add(us);
+                        break;
+                    case 5:
+                        if (condicion.valor == null && us.getTelefono() == -1)
+                            resultado.add(us);
+                        else if (us.getTelefono() == (int)condicion.valor)
+                            resultado.add(us);
+                        break;
+                    case 6:
+                        if (condicion.valor == null) throw new Exception("Los emails nunca seran vacios");
+                        if (us.getEmail().equals((String.valueOf(condicion.valor))))
+                            resultado.add(us);
+                        break;
+                    case 7:
+                        if (condicion.valor == null && us.getDireccion() == null)
+                            resultado.add(us);
+                        else if (us.getDireccion().equals(String.valueOf(condicion.valor)))
+                            resultado.add(us);
+                        break;
+                    default:
+                        throw new Exception("El atributo no pertenece a la tabla \"Usuarios\"");
+                }
+            }
+        }
+        
+        return resultado;
+    }
+    
+    public ArrayList<Usuario> negacion(Condicion condicion, ArrayList<Usuario> actuales) throws Exception {
+        
+        ArrayList<Usuario> base = consultar(condicion.hijo, actuales);
+        ArrayList<Usuario> respuesta = new ArrayList<>();
+        boolean flag = false;
+        
+        for (Usuario us: actuales) {
+            for (Usuario us2: base) {
+                if (us.getIdentificador() == us2.getIdentificador())
+                    flag = true;
+            }
+            if (!flag) respuesta.add(us);
+            else flag = false;
+        }
+        
+        return respuesta;
+    }
+    
+    public ArrayList<Usuario> conjuncion(Condicion condicion, ArrayList<Usuario> actuales) throws Exception {
+        
+        ArrayList<Usuario> base = consultar(condicion.hijo, actuales);
+        ArrayList<Usuario> base2 = consultar(condicion.hijo.hermano, base);
+        return base2;
+    }
+    
+    public ArrayList<Usuario> disyuncion(Condicion condicion, ArrayList<Usuario> actuales) throws Exception {
+        
+        ArrayList<Usuario> base = consultar(condicion.hijo, actuales);
+        ArrayList<Usuario> complemento = new ArrayList<>();
+        
+        boolean flag = false;
+        for (Usuario us: actuales) {
+            for (Usuario us2: base) {
+                if (us.getIdentificador() == us2.getIdentificador())
+                    flag = true;
+            }
+            if (!flag) complemento.add(us);
+            else flag = false;
+        }
+        
+        ArrayList<Usuario> semi_respuesta = consultar(condicion.hermano, complemento);
+        ArrayList<Usuario> respuesta = new ArrayList<>();
+        
+        for (Usuario us: base) {
+            respuesta.add(us);
+        }
+        
+        for (Usuario us: semi_respuesta)
+            respuesta.add(us);
+        
+        return respuesta;
+    }
 }

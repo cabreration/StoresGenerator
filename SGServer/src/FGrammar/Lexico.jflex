@@ -76,6 +76,7 @@ correo = ({letra}|{digito})+"@compiladores1.com"
 <YYINITIAL> "%%"                       {return new Symbol(SimbolosF.conjuncion, yycolumn, yyline, yytext());}
 <YYINITIAL> "##"                       {return new Symbol(SimbolosF.disyuncion, yycolumn, yyline, yytext());}
 <YYINITIAL> "N"                        {return new Symbol(SimbolosF.negacion, yycolumn, yyline, yytext());}
+<YYINITIAL> "vacio"                    {return new Symbol(SimbolosF.vacio, yycolumn, yyline, yytext());}
 
 <YYINITIAL> {cadena}                   {return new Symbol(SimbolosF.cadena, yycolumn, yyline, yytext());}
 <YYINITIAL> {numero}                   {return new Symbol(SimbolosF.numero, yycolumn, yyline, yytext());}

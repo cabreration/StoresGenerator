@@ -153,4 +153,147 @@ public class TablaProductos {
  
         Files.write(path, strToBytes);
     }
+    
+    public ArrayList<Producto> modoLista() {
+        ArrayList<Producto> satisfactorios = new ArrayList<>();
+        
+        Set<String> llaves = this.productos.keySet();
+        for (String llave : llaves) {
+            satisfactorios.add(this.productos.get(String.valueOf(llave)));
+        }
+        return satisfactorios;
+    }
+    
+    public void consultar(Condicion condicion) throws Exception {
+    
+        ArrayList<Producto> total = consultar(condicion, this.modoLista());
+        
+        String respuesta = "";
+        for (Producto prod: total) {
+            respuesta += ">> Codigo: " + prod.getCodigo() + " - Nombre: " + prod.getNombre() 
+                    + " - Cantidad: " + prod.getCantidad() + " - Marca: " + prod.getMarca()
+                    + " - Color: " + prod.getColor() + " - Tamanio: " + String.valueOf(prod.getSize())
+                    + " - Sucursal: " + prod.getSucursal_tienda() + " - Precio: " + String.valueOf(prod.getPrecio())
+                    + " - Imagen: " + prod.getImagen() + "\n";
+        }
+    }
+    
+    public ArrayList<Producto> consultar(Condicion condicion, ArrayList<Producto> actuales) throws Exception {
+        ArrayList<Producto> resultado = new ArrayList<>();
+        
+        if (condicion.operacion == 1) {
+            return conjuncion(condicion, actuales);
+        }
+        else if (condicion.operacion == 2) {
+            return disyuncion(condicion, actuales);
+        }
+        else if (condicion.operacion == 3) {
+            return negacion(condicion, actuales);
+        }
+        else {
+            for (Producto prod: actuales) {
+                //si se cumple la condicion entonces lo agrego a la lista que voy a devolver;
+                switch(condicion.tipo) {
+                    case 1:
+                        if (condicion.valor == null) throw new Exception("Los nombres nunca seran vacios");
+                        if (prod.getNombre().equals(String.valueOf(condicion.valor)))
+                            resultado.add(prod);
+                        break;
+                    case 8:
+                        if (condicion.valor == null) throw new Exception ("Los codigos nunca seran nulos");
+                        if (prod.getCodigo() == (int)condicion.valor)
+                            resultado.add(prod);
+                        break;
+                    case 11:
+                        if (condicion.valor == null) throw new Exception("Las cantidades nunca seran vacias");
+                        if (prod.getCantidad() == (int)condicion.valor)
+                            resultado.add(prod);
+                        break;
+                    case 12:
+                        if (condicion.valor == null) throw new Exception("Las marcas nunca seran vacias");
+                        if (prod.getMarca().equals(String.valueOf(condicion.valor)))
+                            resultado.add(prod);
+                        break;
+                    case 14:
+                        if (condicion.valor == null) throw new Exception("Los colores nunca seran vacios");
+                        else if (prod.getColor().equals(String.valueOf(condicion.valor)))
+                            resultado.add(prod);
+                        break;
+                    case 13:
+                        if (condicion.valor == null) throw new Exception("Los tamanios nunca seran vacios");
+                        if (prod.getSize() == (double)condicion.valor);
+                            resultado.add(prod);
+                        break;
+                    case 15:
+                        if (condicion.valor == null) throw new Exception("Las sucursales nunca seran vacias");
+                        else if (prod.getSucursal_tienda() == (int)condicion.valor)
+                            resultado.add(prod);
+                        break;
+                    case 16:
+                        if (condicion.valor == null) throw new Exception("Los precios nunca seran vacios");
+                        else if (prod.getPrecio() == (double)condicion.valor);
+                            resultado.add(prod);
+                    default:
+                        throw new Exception("El atributo no pertenece a la tabla \"Usuarios\"");
+                }
+            }
+        }
+        
+        return resultado;
+    }
+    
+    public ArrayList<Producto> negacion(Condicion condicion, ArrayList<Producto> actuales) throws Exception {
+        
+        ArrayList<Producto> base = consultar(condicion.hijo, actuales);
+        ArrayList<Producto> respuesta = new ArrayList<>();
+        boolean flag = false;
+        
+        for (Producto prod: actuales) {
+            for (Producto prod2: base) {
+                if (prod.getCodigo() == prod2.getCodigo() 
+                        && prod.getSucursal_tienda() == prod2.getSucursal_tienda())
+                    flag = true;
+            }
+            if (!flag) respuesta.add(prod);
+            else flag = false;
+        }
+        
+        return respuesta;
+    }
+    
+    public ArrayList<Producto> conjuncion(Condicion condicion, ArrayList<Producto> actuales) throws Exception {
+        
+        ArrayList<Producto> base = consultar(condicion.hijo, actuales);
+        ArrayList<Producto> base2 = consultar(condicion.hijo.hermano, base);
+        return base2;
+    }
+    
+    public ArrayList<Producto> disyuncion(Condicion condicion, ArrayList<Producto> actuales) throws Exception {
+        
+        ArrayList<Producto> base = consultar(condicion.hijo, actuales);
+        ArrayList<Producto> complemento = new ArrayList<>();
+        
+        boolean flag = false;
+        for (Producto us: actuales) {
+            for (Producto us2: base) {
+                if (us.getCodigo() == us2.getCodigo()
+                        && us.getSucursal_tienda() == us2.getSucursal_tienda())
+                    flag = true;
+            }
+            if (!flag) complemento.add(us);
+            else flag = false;
+        }
+        
+        ArrayList<Producto> semi_respuesta = consultar(condicion.hermano, complemento);
+        ArrayList<Producto> respuesta = new ArrayList<>();
+        
+        for (Producto us: base) {
+            respuesta.add(us);
+        }
+        
+        for (Producto us: semi_respuesta)
+            respuesta.add(us);
+        
+        return respuesta;
+    }
 }
