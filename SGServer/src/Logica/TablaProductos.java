@@ -102,11 +102,11 @@ public class TablaProductos {
         for (Producto prod : aux) {
             respuesta += "$producto$ $codigo$ " + prod.getCodigo() + " $codigo-$ $nombre$ \"" + prod.getNombre() + "\" $nombre-$"
                     + " $cantidad$ " + prod.getCantidad() + " $cantidad-$ $marca$ \"" + prod.getMarca() + "\" $marca-$ $color$ \""
-                    + prod.getColor() + "\" $color-$ $tamaño$ " + prod.getSize() + "$tamaño-$ $sucursal " + prod.getSucursal_tienda()
-                    + " $sucursal-$ $producto-$"; 
+                    + prod.getColor() + "\" $color-$ $tamaño$ " + prod.getSize() + " $tamaño-$ $sucursal$ " + prod.getSucursal_tienda()
+                    + " $sucursal-$ $precio$ " + prod.getPrecio() + " $precio-$ $producto-$ \n"; 
         }
         respuesta += " $lista-$ $reply-$";
-        return null;
+        return respuesta;
     }
     
     public void escribirArchivo() throws IOException {
@@ -164,7 +164,7 @@ public class TablaProductos {
         return satisfactorios;
     }
     
-    public void consultar(Condicion condicion) throws Exception {
+    public String consultar(Condicion condicion) throws Exception {
     
         ArrayList<Producto> total = consultar(condicion, this.modoLista());
         
@@ -176,9 +176,26 @@ public class TablaProductos {
                     + " - Sucursal: " + prod.getSucursal_tienda() + " - Precio: " + String.valueOf(prod.getPrecio())
                     + " - Imagen: " + prod.getImagen() + "\n";
         }
+        return respuesta;
+    }
+    
+    public String extraerCompleta() {
+        ArrayList<Producto> todos = this.modoLista();
+        String respuesta = "";
+        for (Producto prod: todos) {
+            respuesta += ">> Codigo: " + prod.getCodigo() + " - Nombre: " + prod.getNombre() 
+                    + " - Cantidad: " + prod.getCantidad() + " - Marca: " + prod.getMarca()
+                    + " - Color: " + prod.getColor() + " - Tamanio: " + String.valueOf(prod.getSize())
+                    + " - Sucursal: " + prod.getSucursal_tienda() + " - Precio: " + String.valueOf(prod.getPrecio())
+                    + " - Imagen: " + prod.getImagen() + "\n";
+        }
+        return respuesta;
     }
     
     public ArrayList<Producto> consultar(Condicion condicion, ArrayList<Producto> actuales) throws Exception {
+        if ((condicion.tipo == 1 || condicion.tipo == 3 || condicion.tipo == 4 || condicion.tipo == 7 || condicion.tipo == 10
+                || condicion.tipo == 12 || condicion.tipo == 14) && condicion.valor != null)
+                condicion.valor = (String.valueOf(condicion.valor)).substring(1, (String.valueOf(condicion.valor)).length()-1);
         ArrayList<Producto> resultado = new ArrayList<>();
         
         if (condicion.operacion == 1) {
@@ -284,7 +301,7 @@ public class TablaProductos {
             else flag = false;
         }
         
-        ArrayList<Producto> semi_respuesta = consultar(condicion.hermano, complemento);
+        ArrayList<Producto> semi_respuesta = consultar(condicion.hijo.hermano, complemento);
         ArrayList<Producto> respuesta = new ArrayList<>();
         
         for (Producto us: base) {

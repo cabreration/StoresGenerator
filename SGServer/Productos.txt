@@ -7,7 +7,7 @@
 "color": "Rojo", 
 "size": 5.0, 
 "imagen": "path de la imagen",  
-"sucursal_tienda": 1, 
+"sucursal_tienda": 5, 
 "precio": 45.0 
  }, 
 { 
@@ -18,7 +18,7 @@
 "color": "Amarillo", 
 "size": 4.0, 
 "imagen": "path de la imagen",  
-"sucursal_tienda": 1, 
+"sucursal_tienda": 5, 
 "precio": 35.0 
  } 
 ]

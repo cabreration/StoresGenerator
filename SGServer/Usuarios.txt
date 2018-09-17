@@ -1,5 +1,23 @@
  [ 
 	{ 
+ "identificador": 440, 
+"nombre": "Jorge", 
+"apellido": "Gamez", 
+"password": "a34567c", 
+"telefono": 35392478, 
+"email": "jorge@compiladores1.com", 
+"direccion": "por ahi" 
+ }, 
+{ 
+ "identificador": 450, 
+"nombre": "Jorge", 
+"apellido": "Giron", 
+"password": "a12345b", 
+"telefono": 35392478, 
+"email": "jorge@compiladores1.com", 
+"direccion": "por ahi" 
+ }, 
+{ 
  "identificador": 458, 
 "nombre": "Ismael", 
 "apellido": "Muhun", 

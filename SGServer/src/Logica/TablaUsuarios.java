@@ -129,7 +129,27 @@ public class TablaUsuarios {
         return respuesta;
     }
     
+    public String extraerCompleta() {
+        ArrayList<Usuario> todos = this.modoLista();
+        
+        String respuesta = "";
+        for (Usuario us: todos) {
+            respuesta += "Identificador: " + us.getIdentificador() + " - Nombre: " + us.getNombre() + " - Apellido: " + us.getApellido()
+                    + " - Password: " + us.getPassword() + " - Email: " + us.getEmail();
+            if (us.getTelefono() != -1)
+                respuesta += " - Telefono: " + us.getTelefono();
+            if (us.getDireccion() != null)
+                respuesta += " - Direccion: " + us.getDireccion();
+            respuesta += "\n";
+        }
+        return respuesta;
+    }
+    
     public ArrayList<Usuario> consultar(Condicion condicion, ArrayList<Usuario> actuales) throws Exception {
+        if ((condicion.tipo == 1 || condicion.tipo == 3 || condicion.tipo == 4 || condicion.tipo == 7 || condicion.tipo == 10
+                || condicion.tipo == 12 || condicion.tipo == 14) && condicion.valor != null)
+                condicion.valor = (String.valueOf(condicion.valor)).substring(1, (String.valueOf(condicion.valor)).length()-1);
+        
         ArrayList<Usuario> resultado = new ArrayList<>();
         
         if (condicion.operacion == 1) {
@@ -231,7 +251,7 @@ public class TablaUsuarios {
             else flag = false;
         }
         
-        ArrayList<Usuario> semi_respuesta = consultar(condicion.hermano, complemento);
+        ArrayList<Usuario> semi_respuesta = consultar(condicion.hijo.hermano, complemento);
         ArrayList<Usuario> respuesta = new ArrayList<>();
         
         for (Usuario us: base) {

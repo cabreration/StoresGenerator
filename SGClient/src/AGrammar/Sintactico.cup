@@ -21,6 +21,7 @@ parser code
     public boolean delProducto = false;
     Tienda tiendaAuxiliar = new Tienda();
     Producto productoAuxiliar = new Producto();
+    public ArrayList<Producto> productos = new ArrayList<>();
 
     public void syntax_error(Symbol s)
     {   
@@ -70,11 +71,16 @@ action code
             Data.tiendas.add(parser.tiendaAuxiliar);
             parser.tiendaAuxiliar = new Tienda();
         }
+
+        public void registrarProducto() {
+            parser.productos.add(parser.productoAuxiliar);
+            parser.productoAuxiliar = new Producto();
+        }
 :}
 
 terminal dolar, respuesta, usuario, id, acceso, menos, verdadero, falso, registro, asignacion, tienda, modificar, eliminar, producto, sucursal, errorT;
-terminal descripcion, lista, propietario, codigo, nombre, telefono, marca, color, size, cantidad, direccion;
-terminal String cadena, numero; 
+terminal descripcion, lista, propietario, codigo, nombre, telefono, marca, color, size, cantidad, direccion, precio;
+terminal cadena, numero; 
 
 non terminal INICIO, RESPUESTAS, BOOL;
 non terminal O_REPLY, C_REPLY, O_USUARIO, C_USUARIO, O_ID, C_ID, O_ACCESO, C_ACCESO, LOGIN;
@@ -89,7 +95,7 @@ non terminal ERRORLINE, O_ERROR, C_ERROR, O_DESCRIPCION, C_DESCRIPCION;
 non terminal LISTA_TIENDAS, O_LISTA, C_LISTA, O_CODIGO, C_CODIGO, O_PROPIETARIO, C_PROPIETARIO, O_NOMBRE, C_NOMBRE;
 non terminal O_DIRECCION, C_DIRECCION, O_TELEFONO, C_TELEFONO, TIENDA, TIENDAS;
 non terminal LISTA_PRODUCTOS, O_CANTIDAD, C_CANTIDAD, O_MARCA, C_MARCA, O_SIZE, C_SIZE, O_COLOR, C_COLOR, O_SUCURSAL, C_SUCURSAL;
-non terminal PRODUCTO, PRODUCTOS;
+non terminal PRODUCTO, PRODUCTOS, O_PRECIO, C_PRECIO;
 
 
 start with INICIO;
@@ -99,17 +105,17 @@ INICIO::= RESPUESTAS
 |
 ;
 
-RESPUESTAS::= LOGIN
-|             SIGNUP
-|             SIGNUPT
-|             MODT
-|             DELT
+RESPUESTAS::= LOGIN //done
+|             SIGNUP //no lo voy a hacer
+|             SIGNUPT //no lo he probado
+|             MODT //done
+|             DELT //no lo he probado
 |             REG_PROD
 |             MOD_PROD
 |             DEL_PROD
-|             ERRORLINE
-|             LISTA_TIENDAS
-|             LISTA_PRODUCTOS
+|             ERRORLINE // no lo he probado
+|             LISTA_TIENDAS //done
+|             LISTA_PRODUCTOS //no lo he probado
 ;
 
 O_REPLY::= dolar respuesta dolar;
@@ -147,19 +153,19 @@ O_TIENDA::= dolar tienda dolar;
 
 C_TIENDA::= dolar tienda menos dolar;
 
-SIGNUPT::= O_REPLY O_TIENDA O_REGISTRO BOOL:bool C_REGISTRO C_TIENDA C_REPLY {: :};
+SIGNUPT::= O_REPLY O_TIENDA O_REGISTRO BOOL:bool C_REGISTRO C_TIENDA C_REPLY {: parser.registroTienda = (boolean)bool; :};
 
 O_MOD::= dolar modificar id asignacion numero dolar;
 
 C_MOD::= dolar modificar menos dolar;
 
-MODT::= O_REPLY O_TIENDA O_MOD BOOL C_MOD C_TIENDA C_REPLY;
+MODT::= O_REPLY O_TIENDA O_MOD BOOL:bool C_MOD C_TIENDA C_REPLY {: parser.modTienda = (boolean)bool; :};
 
 O_DEL::= dolar eliminar id asignacion numero dolar;
 
 C_DEL::= dolar eliminar menos dolar;
 
-DELT::= O_REPLY O_TIENDA O_DEL BOOL C_DEL C_TIENDA C_REPLY;
+DELT::= O_REPLY O_TIENDA O_DEL BOOL:bool C_DEL C_TIENDA C_REPLY {: parser.delTienda = (boolean)bool; :};
 
 O_PROD::= dolar registro id asignacion numero sucursal asignacion numero dolar;
 
@@ -185,7 +191,11 @@ O_DESCRIPCION::= dolar descripcion dolar;
 
 C_DESCRIPCION::= dolar descripcion menos dolar;
 
-ERRORLINE::= O_REPLY O_ERROR O_DESCRIPCION cadena C_DESCRIPCION C_ERROR C_REPLY;
+ERRORLINE::= O_REPLY O_ERROR O_DESCRIPCION cadena:er C_DESCRIPCION C_ERROR C_REPLY 
+{:
+    JOptionPane.showMessageDialog(null, String.valueOf(er), "Stores Generator", JOptionPane.ERROR_MESSAGE);
+:}
+;
 
 O_LISTA::= dolar lista dolar;
 
@@ -249,8 +259,24 @@ O_SUCURSAL::= dolar sucursal dolar;
 
 C_SUCURSAL::= dolar sucursal menos dolar;
 
-PRODUCTO::= O_PRODUCTO O_CODIGO numero C_CODIGO O_NOMBRE cadena C_NOMBRE O_CANTIDAD numero C_CANTIDAD O_MARCA cadena C_MARCA
-O_COLOR cadena C_COLOR O_SIZE numero C_SIZE O_SUCURSAL numero C_SUCURSAL C_PRODUCTO;
+O_PRECIO::= dolar precio dolar;
+
+C_PRECIO::= dolar precio menos dolar;
+
+PRODUCTO::= O_PRODUCTO O_CODIGO numero:code C_CODIGO O_NOMBRE cadena:name C_NOMBRE O_CANTIDAD numero:cant C_CANTIDAD O_MARCA cadena:brand C_MARCA
+O_COLOR cadena:colr C_COLOR O_SIZE numero:size C_SIZE O_SUCURSAL numero:sucursal C_SUCURSAL O_PRECIO numero:pre C_PRECIO C_PRODUCTO 
+{:
+    parser.productoAuxiliar.setCodigo(Integer.parseInt(String.valueOf(code)));
+    parser.productoAuxiliar.setNombre(String.valueOf(name));
+    parser.productoAuxiliar.setCantidad(Integer.parseInt(String.valueOf(cant)));
+    parser.productoAuxiliar.setMarca(String.valueOf(brand));
+    parser.productoAuxiliar.setColor(String.valueOf(colr));
+    parser.productoAuxiliar.setSize(Double.parseDouble(String.valueOf(size)));
+    parser.productoAuxiliar.setSucursal_tienda(Integer.parseInt(String.valueOf(sucursal)));
+    parser.productoAuxiliar.setPrecio(Double.parseDouble(String.valueOf(pre)));
+    registrarProducto();
+:}
+;
 
 PRODUCTOS::= PRODUCTOS PRODUCTO
 | PRODUCTO

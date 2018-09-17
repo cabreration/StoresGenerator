@@ -27,16 +27,24 @@
  "codigo": 2, 
 "usuario_propietario": 457, 
 "nombre": "Golon Store", 
-"direccion": "por ahi", 
+"direccion": "San Cristobal", 
 "telefono": 12345678, 
 "imagen": "ggggg" 
  }, 
 { 
- "codigo": 1, 
+ "codigo": 1796699382, 
 "usuario_propietario": 456, 
-"nombre": "Tienda1", 
-"direccion": "por ahi", 
-"telefono": 12345678, 
-"imagen": "ggggg" 
+"nombre": "SiverTongue", 
+"direccion": "Los Angeles", 
+"telefono": 854521, 
+"imagen": "imagen por defecto" 
+ }, 
+{ 
+ "codigo": 700179231, 
+"usuario_propietario": 456, 
+"nombre": "Momo Store", 
+"direccion": "Ave. Mariscal", 
+"telefono": 45184177, 
+"imagen": "imagen por defecto" 
  } 
 ]

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
 /**
@@ -30,14 +31,16 @@ import javax.swing.JOptionPane;
 public class MarcoTiendas extends javax.swing.JFrame {
 
     ArrayList<Integer> codigos = new ArrayList<>();
-    boolean modificando = false;
-    boolean registrando = false;
+    boolean modificando;
+    boolean registrando;
     /**
      * Creates new form MarcoTiendas
      */
     public MarcoTiendas() {
         initComponents();
         llenarLista();
+        modificando = false;
+        registrando = false;
     }
 
     /**
@@ -110,6 +113,11 @@ public class MarcoTiendas extends javax.swing.JFrame {
 
         botonEliminar.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
         botonEliminar.setText("Eliminar");
+        botonEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonEliminarActionPerformed(evt);
+            }
+        });
 
         botonNueva.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
         botonNueva.setText("Registrar");
@@ -149,6 +157,11 @@ public class MarcoTiendas extends javax.swing.JFrame {
 
         botonProductos.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
         botonProductos.setText("Productos");
+        botonProductos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonProductosActionPerformed(evt);
+            }
+        });
 
         botonVolver.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
         botonVolver.setText("Volver");
@@ -431,7 +444,7 @@ public class MarcoTiendas extends javax.swing.JFrame {
                         
                         //modificamos la informacion local
                         Tienda tempStore = buscarTienda(this.listaTiendas.getSelectedIndex());
-                        tempStore.setNombre(this.campoCodigo.getText());
+                        tempStore.setNombre(this.campoNombre.getText());
                         tempStore.setDireccion(this.campoDireccion.getText());
                         tempStore.setTelefono(Integer.parseInt(this.campoTelefono.getText()));
                     }
@@ -450,7 +463,7 @@ public class MarcoTiendas extends javax.swing.JFrame {
             {
                 e.printStackTrace();
             }
-                
+                socket.close();
             } catch (IOException ex) {
                 Logger.getLogger(MarcoTiendas.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -468,7 +481,7 @@ public class MarcoTiendas extends javax.swing.JFrame {
 
     private void botonNuevaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonNuevaActionPerformed
         // TODO add your handling code here:
-        if (this.registrando = false) {
+        if (!this.registrando) {
             this.campoCodigo.setText("");
             this.campoNombre.setText("");
             this.campoDireccion.setText("");
@@ -480,7 +493,7 @@ public class MarcoTiendas extends javax.swing.JFrame {
             this.campoTelefono.setEditable(true);
             this.registrando = true;
         }
-        else {
+        else if (registrando) {
             // construimos una tienda y la mandamos en la peticion
             if (this.campoNombre.getText().equals("") 
                     ||this.campoNombre.getText() == null
@@ -515,6 +528,12 @@ public class MarcoTiendas extends javax.swing.JFrame {
                     peticion = Peticiones.crearTienda(String.valueOf(codigo), String.valueOf(Data.usuarioActual),
                         this.campoNombre.getText(), this.campoDireccion.getText(), this.campoTelefono.getText(), this.campoImagen.getText());
                 
+                Tienda temporal = new Tienda();
+                temporal.setCodigo(codigo);
+                temporal.setDireccion(this.campoDireccion.getText());
+                temporal.setNombre(this.campoNombre.getText());
+                temporal.setTelefono(Integer.parseInt(this.campoTelefono.getText()));
+                
                 salida.println(peticion);
                 salida.println("fin");
                 
@@ -533,20 +552,132 @@ public class MarcoTiendas extends javax.swing.JFrame {
                     Sintactico parser = new Sintactico(scanner);
                     parser.parse();
                     if (parser.registroTienda) {
-                        JOptionPane.showConfirmDialog(null, "Registro exitoso", "Stores Generator", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showConfirmDialog(null, "Registro exitoso", "Stores Generator", JOptionPane.PLAIN_MESSAGE);
                         this.registrando = false;
+                        
+                        Data.tiendas.add(temporal);
+                        this.listaTiendas.addItem(temporal.getNombre());
+                        this.codigos.add(temporal.getCodigo());
                     }
                     else 
                         JOptionPane.showConfirmDialog(null, "Error, intente de nuevo", "Stores Generator", JOptionPane.INFORMATION_MESSAGE);
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
-                
+            socket.close();    
             } catch(Exception e) {
                 e.printStackTrace();
             }
         }
     }//GEN-LAST:event_botonNuevaActionPerformed
+
+    private void botonEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEliminarActionPerformed
+        // TODO add your handling code here:
+        String peticion = Peticiones.eliminarTienda(String.valueOf(this.codigos.get(this.listaTiendas.getSelectedIndex())),
+                String.valueOf(Data.usuarioActual));
+        
+        try {
+            Socket socket = new Socket("localhost", 8889);
+                PrintWriter salida = new PrintWriter(
+                    socket.getOutputStream(),
+                    true
+                );
+                BufferedReader entrada = new BufferedReader(
+                    new InputStreamReader(
+                            socket.getInputStream()
+                    )
+                );
+                
+            salida.println(peticion);
+            salida.println("fin");
+            
+            String entradaCompleta  ="";
+            String aux1 = "";
+                
+            try {
+                while (!(aux1 = entrada.readLine()).equals("fin")) 
+                    entradaCompleta += aux1;
+                    
+                    
+                System.out.println(entradaCompleta);
+                Reader lector = new StringReader(entradaCompleta);
+                Lexico scanner = new Lexico(lector);
+                Sintactico parser = new Sintactico(scanner);
+                parser.parse();
+                if (parser.delTienda) {
+                    JOptionPane.showConfirmDialog(null, "Se ha eliminado la tienda exitosamente",
+                           "Stores Generator", JOptionPane.PLAIN_MESSAGE);
+                    
+                    Data.tiendas.remove(this.codigos.get(this.listaTiendas.getSelectedIndex()));
+                    llenarLista();
+                    this.campoCodigo.setText("");
+                    this.campoNombre.setText("");
+                    this.campoDireccion.setText("");
+                    this.campoTelefono.setText("");
+                    this.campoImagen.setText("");
+                }
+                else 
+                        JOptionPane.showConfirmDialog(null, "Error, intente de nuevo", "Stores Generator", JOptionPane.INFORMATION_MESSAGE);
+                
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        socket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_botonEliminarActionPerformed
+
+    private void botonProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonProductosActionPerformed
+        // TODO add your handling code here
+        //mandar a traer los productos
+        int tiendaActual = this.codigos.get(this.listaTiendas.getSelectedIndex());
+        String peticion = "$request$ $get tipo=\"productos\" propietario = " + Data.usuarioActual + " sucursal = " + tiendaActual + "-$ $request-$";
+        
+        try {
+            Socket socket = new Socket("localhost", 8889);
+                PrintWriter salida = new PrintWriter(
+                    socket.getOutputStream(),
+                    true
+                );
+                BufferedReader entrada = new BufferedReader(
+                    new InputStreamReader(
+                            socket.getInputStream()
+                    )
+                );
+                
+            salida.println(peticion);
+            salida.println("fin");
+            
+            String entradaCompleta  ="";
+            String aux1 = "";
+                
+            try {
+                while (!(aux1 = entrada.readLine()).equals("fin")) 
+                    entradaCompleta += aux1;
+  
+                System.out.println(entradaCompleta);
+                Reader lector = new StringReader(entradaCompleta);
+                Lexico scanner = new Lexico(lector);
+                Sintactico parser = new Sintactico(scanner);
+                parser.parse();
+                
+                this.setVisible(false);
+                this.dispose();
+                MarcoProductos prods = new MarcoProductos();
+                prods.productos = parser.productos;
+                prods.llenarListaProductos();
+                prods.setVisible(true);
+                
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        socket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }    
+        
+    }//GEN-LAST:event_botonProductosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -584,6 +715,13 @@ public class MarcoTiendas extends javax.swing.JFrame {
     }
     
     private void llenarLista() {
+        if (this.listaTiendas.getItemCount() > 0) {
+            this.listaTiendas.removeAllItems();
+            if (this.codigos.size() > 0)
+                for (int i = 0; i < this.codigos.size(); i++) {
+                    this.codigos.remove(i);
+                }
+        }
         for (int i = 0; i < Data.tiendas.size(); i++) {
             this.listaTiendas.addItem(Data.tiendas.get(i).getNombre());
             this.codigos.add(Data.tiendas.get(i).getCodigo());

@@ -10,10 +10,10 @@ package Logica;
  * @author Javier A. Cabrera
  */
 public class Condicion {
-    int tipo;
-    Object valor;
+    public int tipo;
+    public Object valor;
     Condicion hijo;
-    Condicion hermano;
+    public Condicion hermano;
     int operacion;
     
     public Condicion(int tipo, Object valor, Condicion hijo) {

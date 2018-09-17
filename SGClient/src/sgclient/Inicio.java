@@ -194,7 +194,7 @@ public class Inicio extends javax.swing.JFrame {
             {
                 e.printStackTrace();
             }
-            
+        socket.close();    
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -202,6 +202,9 @@ public class Inicio extends javax.swing.JFrame {
 
     private void botonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonSalirActionPerformed
         // TODO add your handling code here:
+        Data.usuarioActual = 0;
+        Data.tiendas = new ArrayList<>();
+        Data.productos = new ArrayList<>();
         this.setVisible(false);
         this.dispose();
         LogIn log = new LogIn();
@@ -210,6 +213,7 @@ public class Inicio extends javax.swing.JFrame {
 
     private void botonTiendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonTiendasActionPerformed
         // TODO add your handling code here:
+        if (Data.tiendas.size() == 0) {
         try {
             Socket socket = new Socket("localhost", 8889);
             PrintWriter salida = new PrintWriter(
@@ -259,9 +263,14 @@ public class Inicio extends javax.swing.JFrame {
             {
                 e.printStackTrace();
             }
-            
+        socket.close();
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+        }
+        else {
+            MarcoTiendas mar = new MarcoTiendas();
+            mar.setVisible(true);
         }
     }//GEN-LAST:event_botonTiendasActionPerformed
 

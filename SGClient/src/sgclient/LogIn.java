@@ -238,7 +238,7 @@ public class LogIn extends javax.swing.JFrame {
                 System.out.println(e);
                 e.printStackTrace();
             }
-            //hago get de tiendas  */
+            
             socket.close();
         }
         catch(Exception e) 

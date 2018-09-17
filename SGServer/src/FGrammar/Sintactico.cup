@@ -5,6 +5,7 @@ import java_cup.runtime.Symbol;
 import java.util.ArrayList;
 import Logica.*;
 import sgserver.*;
+import javax.swing.JOptionPane;
 
 parser code  
 {:
@@ -390,6 +391,53 @@ parser code
                 DatosPersistentes.interfaz.outputLine.append("\n >> Error al obtener lista de tiendas");
             }
         }
+
+        public void obtenerProductos(String tipo, int tienda) {
+            String tip = tipo.substring(1, tipo.length()-1);
+            
+            System.out.println("Llegue a get de Tiendas");
+
+            if (tip.equals("productos") || tipo.equals("producto")) {
+                try {
+                    respuesta = DatosPersistentes.productos.obtenerProductos(tienda);
+                    DatosPersistentes.interfaz.outputLine.append("\n >> Lista de productos obtenida: " + respuesta);
+                }
+                catch(Exception e) {
+                    respuesta = "$reply$ $error$ $descripcion$ \"" + e.getMessage() + "\" $descripcion-$ $error-$ $reply-$";
+                    DatosPersistentes.interfaz.outputLine.append("\n >> Error al obtener lista de productos");
+                }
+            }
+            else {
+                respuesta = "$reply$ $error$ $descripcion$ \"La peticion para obtener tiendas requiere menos argumentos\" $descripcion-$ $error-$ $reply-$";
+                DatosPersistentes.interfaz.outputLine.append("\n >> Error al obtener lista de productos");
+            }
+        }
+
+        public void extraerTablaCompleta(int tabla) {
+            if (tabla == 1) 
+                DatosPersistentes.interfaz.outputLine.append("\n >> " + DatosPersistentes.usuarios.extraerCompleta());
+            else if (tabla == 2)
+                DatosPersistentes.interfaz.outputLine.append("\n >> " + DatosPersistentes.tiendas.extraerCompleta());
+            else if (tabla == 3)
+                DatosPersistentes.interfaz.outputLine.append("\n >> " + DatosPersistentes.productos.extraerCompleta());
+            else
+                DatosPersistentes.interfaz.outputLine.append("\n error");
+        }
+
+        public void consulta(Condicion condicion, int tabla) throws Exception {
+            if ((condicion.tipo == 1 || condicion.tipo == 3 || condicion.tipo == 4 || condicion.tipo == 7 || condicion.tipo == 10
+                || condicion.tipo == 12 || condicion.tipo == 14) && condicion.valor != null)
+                condicion.valor = (String.valueOf(condicion.valor)).substring(1, (String.valueOf(condicion.valor)).length()-1);
+
+            if (tabla == 1) 
+                DatosPersistentes.interfaz.outputLine.append("\n >> " + DatosPersistentes.usuarios.consultar(condicion));
+            else if (tabla == 2)
+                DatosPersistentes.interfaz.outputLine.append("\n >> " + DatosPersistentes.tiendas.consultar(condicion));
+            else if (tabla == 3)
+                DatosPersistentes.interfaz.outputLine.append("\n >> " + DatosPersistentes.productos.consultar(condicion));
+            else
+                DatosPersistentes.interfaz.outputLine.append("\n >> error");
+        }
 :}
 
 action code 
@@ -715,12 +763,18 @@ GET::= dolar obtener tipo asignacion cadena:cad propietario asignacion numero:nu
 {: parser.obtenerTiendas(String.valueOf(cad), Integer.parseInt(String.valueOf(num))); :}
 |      dolar obtener propietario asignacion numero:num tipo asignacion cadena:cad menos dolar 
 {: parser.obtenerTiendas(String.valueOf(cad), Integer.parseInt(String.valueOf(num))); :}
-|      dolar obtener tipo asignacion cadena propietario asignacion numero sucursal asignacion numero menos dolar
-|      dolar obtener tipo asignacion cadena sucursal asignacion numero propietario asignacion numero menos dolar
-|      dolar obtener sucursal asignacion numero tipo asignacion cadena propietario asignacion numero menos dolar
-|      dolar obtener sucursal asignacion numero propietario asignacion numero tipo asignacion cadena menos dolar
-|      dolar obtener propietario asignacion numero sucursal asignacion numero tipo asignacion cadena menos dolar
-|      dolar obtener propietario asignacion numero tipo asignacion cadena sucursal asignacion numero menos dolar
+|      dolar obtener tipo asignacion cadena:tip propietario asignacion numero sucursal asignacion numero:suc menos dolar 
+{: parser.obtenerProductos(String.valueOf(tip), Integer.parseInt(String.valueOf(suc))); :}
+|      dolar obtener tipo asignacion cadena:tip sucursal asignacion numero:suc propietario asignacion numero menos dolar 
+{: parser.obtenerProductos(String.valueOf(tip), Integer.parseInt(String.valueOf(suc))); :}
+|      dolar obtener sucursal asignacion numero:suc tipo asignacion cadena:tip propietario asignacion numero menos dolar 
+{: parser.obtenerProductos(String.valueOf(tip), Integer.parseInt(String.valueOf(suc))); :}
+|      dolar obtener sucursal asignacion numero:suc propietario asignacion numero tipo asignacion cadena:tip menos dolar 
+{: parser.obtenerProductos(String.valueOf(tip), Integer.parseInt(String.valueOf(suc))); :}
+|      dolar obtener propietario asignacion numero sucursal asignacion numero:suc tipo asignacion cadena:tip menos dolar 
+{: parser.obtenerProductos(String.valueOf(tip), Integer.parseInt(String.valueOf(suc))); :}
+|      dolar obtener propietario asignacion numero tipo asignacion cadena:tip sucursal asignacion numero:suc menos dolar 
+{: parser.obtenerProductos(String.valueOf(tip), Integer.parseInt(String.valueOf(suc))); :}
 ;
 
 
@@ -738,23 +792,37 @@ LISTA_CONSULTAS::= LISTA_CONSULTAS CONSULTA
 | CONSULTA
 ;
 
-CONSULTA::= extraer de TABLAS puntoYComa
-| extraer de TABLAS donde EXPRESION_LOGICA puntoYComa
+CONSULTA::= extraer de TABLAS:opcion puntoYComa 
+{: 
+    try {
+        parser.extraerTablaCompleta((int)opcion);
+    } catch(Exception e) {
+        JOptionPane.showMessageDialog(null, e.getMessage(), "Servidor SG", JOptionPane.ERROR_MESSAGE);
+    }
+:}
+| extraer de TABLAS:opcion donde EXPRESION_LOGICA:log puntoYComa 
+{: 
+    try {
+        parser.consulta((Condicion)log, (int)opcion);
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, e.getMessage(), "Servidor SG", JOptionPane.ERROR_MESSAGE);
+    }
+:}
 ;
 
-TABLAS::= user
-| producto
-| tienda
+TABLAS::= user {: RESULT = 1; :}
+| producto {: RESULT = 3; :}
+| tienda {: RESULT = 2; :}
 ;
 
-EXPRESION_LOGICA::= EXPRESION_LOGICA:log1 conjuncion EXPRESION_LOGICA:log2 {: log1.hermano = log2; RESULT = new Condicion(1, (Condicion)log1); :}
-|                   EXPRESION_LOGICA:log1 disyuncion EXPRESION_LOGICA:log2 {: log1.hermano = log2; RESULT = new Condicion(2, (Condicion)log1); :}
+EXPRESION_LOGICA::= EXPRESION_LOGICA:log1 conjuncion EXPRESION_LOGICA:log2 {: ((Condicion)log1).hermano = (Condicion)log2; RESULT = new Condicion(1, (Condicion)log1); :}
+|                   EXPRESION_LOGICA:log1 disyuncion EXPRESION_LOGICA:log2 {: ((Condicion)log1).hermano = (Condicion)log2; RESULT = new Condicion(2, (Condicion)log1); :}
 |                   negacion parentesisA EXPRESION_LOGICA:log parentesisC {: RESULT = new Condicion(3, (Condicion)log); :}
 |                   parentesisA EXPRESION_LOGICA:log parentesisC {: RESULT = (Condicion)log; :}
 |                   LOGICA_SIMPLE:log {: RESULT = (Condicion)log; :}
 ;
 
-LOGICA_SIMPLE::= ATRIBUTO:atr igualIgual VALOR:val {: RESULT = new Condicion(atr, val); :};
+LOGICA_SIMPLE::= ATRIBUTO:atr igualIgual VALOR:val {: RESULT = new Condicion((int)atr, val); :};
 
 ATRIBUTO::= nombre {: RESULT = 1; :}
 | id {: RESULT = 2; :}

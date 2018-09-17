@@ -169,7 +169,22 @@ public class TablaTiendas {
         return respuesta;
     }
     
+    public String extraerCompleta() {
+        ArrayList<Tienda> todas = this.modoLista();
+        String respuesta = "";
+        for (Tienda st: todas) {
+            respuesta += ">> Codigo: " + st.getCodigo() + " - Propietario: " + st.getUsuario_propietario()
+                    + " - Nombre: " + st.getNombre() + " - Direccion: " + st.getDireccion() 
+                    + " - Telefono: " + st.getTelefono() + " - Imagen: " + st.getImagen() + "\n";
+        }
+        return respuesta;
+    }
+    
     public ArrayList<Tienda> consultar(Condicion condicion, ArrayList<Tienda> actuales) throws Exception {
+        if ((condicion.tipo == 1 || condicion.tipo == 3 || condicion.tipo == 4 || condicion.tipo == 7 || condicion.tipo == 10
+                || condicion.tipo == 12 || condicion.tipo == 14) && condicion.valor != null)
+                condicion.valor = (String.valueOf(condicion.valor)).substring(1, (String.valueOf(condicion.valor)).length()-1);
+        
         ArrayList<Tienda> resultado = new ArrayList<>();
         
         if (condicion.operacion == 1) {
@@ -262,7 +277,7 @@ public class TablaTiendas {
             else flag = false;
         }
         
-        ArrayList<Tienda> semi_respuesta = consultar(condicion.hermano, complemento);
+        ArrayList<Tienda> semi_respuesta = consultar(condicion.hijo.hermano, complemento);
         ArrayList<Tienda> respuesta = new ArrayList<>();
         
         for (Tienda us: base) {

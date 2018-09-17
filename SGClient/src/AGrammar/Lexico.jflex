@@ -54,6 +54,7 @@ cadena = "\"" ~"\""
 <YYINITIAL> "sucursal"                 {return new Symbol(SimbolosA.sucursal, yycolumn, yyline, "sucursal");}
 <YYINITIAL> "tamaño"                   {return new Symbol(SimbolosA.size, yycolumn, yyline, "tamanio");}
 <YYINITIAL> "cantidad"                 {return new Symbol(SimbolosA.cantidad, yycolumn, yyline, "cantidad");}
+<YYINITIAL> "precio"                   {return new Symbol(SimbolosA.precio, yycolumn, yyline, "precio"); }
 <YYINITIAL> {cadena}                   {return new Symbol(SimbolosA.cadena, yycolumn, yyline, yytext());}
 <YYINITIAL> {numero}                   {return new Symbol(SimbolosA.numero, yycolumn, yyline, yytext());}
 
