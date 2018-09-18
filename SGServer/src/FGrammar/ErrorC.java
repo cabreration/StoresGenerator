@@ -10,11 +10,11 @@ package FGrammar;
  * @author Javier A. Cabrera
  */
 public class ErrorC {
-    String tipo;
-    String descripcion;
-    String lexema;
-    int fila;
-    int columna;
+    public String tipo;
+    public String descripcion;
+    public String lexema;
+    public int fila;
+    public int columna;
     
     public ErrorC(String tipo, String lexema, int fila, int columna, String descripcion) 
     {

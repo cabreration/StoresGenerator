@@ -5,8 +5,19 @@
  */
 package sgclient;
 
+import AGrammar.Lexico;
+import AGrammar.Sintactico;
+import Logica.Peticiones;
 import Logica.Producto;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Random;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -19,10 +30,16 @@ public class MarcoProductos extends javax.swing.JFrame {
      */
     public ArrayList<Producto> productos;
     public ArrayList<Integer> codigos;
+    boolean registrando;
+    boolean modificando;
+    public int tienda;
     
     public MarcoProductos() {
         initComponents();
         productos = null;
+        registrando = false;
+        modificando = false;
+        this.tienda = 0;
     }
 
     /**
@@ -35,6 +52,7 @@ public class MarcoProductos extends javax.swing.JFrame {
     private void initComponents() {
 
         botonModificar1 = new javax.swing.JButton();
+        jLabel11 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
@@ -47,6 +65,23 @@ public class MarcoProductos extends javax.swing.JFrame {
         botonEliminar = new javax.swing.JButton();
         botonVolver = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        botonBuscar = new javax.swing.JButton();
+        campoCodigo = new javax.swing.JTextField();
+        campoNombre = new javax.swing.JTextField();
+        campoMarca = new javax.swing.JTextField();
+        campoColor = new javax.swing.JTextField();
+        campoCantidad = new javax.swing.JTextField();
+        campoPrecio = new javax.swing.JTextField();
+        campoSize = new javax.swing.JTextField();
+        campoImagen = new javax.swing.JTextField();
 
         botonModificar1.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
         botonModificar1.setText("Modificar");
@@ -55,6 +90,10 @@ public class MarcoProductos extends javax.swing.JFrame {
                 botonModificar1ActionPerformed(evt);
             }
         });
+
+        jLabel11.setFont(new java.awt.Font("Noto Serif", 1, 18)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel11.setText("Tamaño:");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("ABC Productos - Stores Generator");
@@ -89,7 +128,7 @@ public class MarcoProductos extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addGap(26, 26, 26)
                 .addComponent(listaProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(394, Short.MAX_VALUE))
         );
 
         jLabel1.setFont(new java.awt.Font("Noto Serif", 1, 24)); // NOI18N
@@ -98,18 +137,43 @@ public class MarcoProductos extends javax.swing.JFrame {
 
         botonVer.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
         botonVer.setText("Ver");
+        botonVer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonVerActionPerformed(evt);
+            }
+        });
 
         botonRegistrar.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
         botonRegistrar.setText("Registrar");
+        botonRegistrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonRegistrarActionPerformed(evt);
+            }
+        });
 
         botonModificar.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
         botonModificar.setText("Modificar");
+        botonModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonModificarActionPerformed(evt);
+            }
+        });
 
         botonEliminar.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
         botonEliminar.setText("Eliminar");
+        botonEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonEliminarActionPerformed(evt);
+            }
+        });
 
         botonVolver.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
         botonVolver.setText("Volver");
+        botonVolver.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonVolverActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -150,14 +214,123 @@ public class MarcoProductos extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Informacion");
 
+        jLabel4.setFont(new java.awt.Font("Noto Serif", 1, 18)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setText("Codigo:");
+
+        jLabel5.setFont(new java.awt.Font("Noto Serif", 1, 18)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setText("Nombre:");
+
+        jLabel6.setFont(new java.awt.Font("Noto Serif", 1, 18)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setText("Marca:");
+
+        jLabel7.setFont(new java.awt.Font("Noto Serif", 1, 18)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel7.setText("Color:");
+
+        jLabel8.setFont(new java.awt.Font("Noto Serif", 1, 18)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel8.setText("Cantidad:");
+
+        jLabel9.setFont(new java.awt.Font("Noto Serif", 1, 18)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel9.setText("Precio:");
+
+        jLabel10.setFont(new java.awt.Font("Noto Serif", 1, 18)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel10.setText("Tamaño:");
+
+        jLabel12.setFont(new java.awt.Font("Noto Serif", 1, 18)); // NOI18N
+        jLabel12.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel12.setText("Imagen:");
+
+        botonBuscar.setFont(new java.awt.Font("Noto Serif", 1, 14)); // NOI18N
+        botonBuscar.setText("Buscar");
+        botonBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonBuscarActionPerformed(evt);
+            }
+        });
+
+        campoCodigo.setEditable(false);
+        campoCodigo.setBackground(new java.awt.Color(52, 115, 143));
+        campoCodigo.setFont(new java.awt.Font("Noto Serif", 0, 14)); // NOI18N
+        campoCodigo.setForeground(new java.awt.Color(255, 255, 255));
+
+        campoNombre.setEditable(false);
+        campoNombre.setBackground(new java.awt.Color(52, 115, 143));
+        campoNombre.setFont(new java.awt.Font("Noto Serif", 0, 14)); // NOI18N
+        campoNombre.setForeground(new java.awt.Color(255, 255, 255));
+
+        campoMarca.setEditable(false);
+        campoMarca.setBackground(new java.awt.Color(52, 115, 143));
+        campoMarca.setFont(new java.awt.Font("Noto Serif", 0, 14)); // NOI18N
+        campoMarca.setForeground(new java.awt.Color(255, 255, 255));
+
+        campoColor.setEditable(false);
+        campoColor.setBackground(new java.awt.Color(52, 115, 143));
+        campoColor.setFont(new java.awt.Font("Noto Serif", 0, 14)); // NOI18N
+        campoColor.setForeground(new java.awt.Color(255, 255, 255));
+
+        campoCantidad.setEditable(false);
+        campoCantidad.setBackground(new java.awt.Color(52, 115, 143));
+        campoCantidad.setFont(new java.awt.Font("Noto Serif", 0, 14)); // NOI18N
+        campoCantidad.setForeground(new java.awt.Color(255, 255, 255));
+
+        campoPrecio.setEditable(false);
+        campoPrecio.setBackground(new java.awt.Color(52, 115, 143));
+        campoPrecio.setFont(new java.awt.Font("Noto Serif", 0, 14)); // NOI18N
+        campoPrecio.setForeground(new java.awt.Color(255, 255, 255));
+
+        campoSize.setEditable(false);
+        campoSize.setBackground(new java.awt.Color(52, 115, 143));
+        campoSize.setFont(new java.awt.Font("Noto Serif", 0, 14)); // NOI18N
+        campoSize.setForeground(new java.awt.Color(255, 255, 255));
+
+        campoImagen.setEditable(false);
+        campoImagen.setBackground(new java.awt.Color(52, 115, 143));
+        campoImagen.setFont(new java.awt.Font("Noto Serif", 0, 14)); // NOI18N
+        campoImagen.setForeground(new java.awt.Color(255, 255, 255));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(141, 141, 141)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 161, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(141, 141, 141)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(botonBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(47, 47, 47)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel7)
+                                    .addComponent(jLabel8)
+                                    .addComponent(jLabel9)
+                                    .addComponent(jLabel10)
+                                    .addComponent(jLabel12))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(campoCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(campoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(campoMarca, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(campoColor, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(campoCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(campoPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(campoSize, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(campoImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(70, 70, 70)))
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -165,7 +338,42 @@ public class MarcoProductos extends javax.swing.JFrame {
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(34, 34, 34)
-                .addComponent(jLabel3)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(30, 30, 30)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(campoCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(campoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(campoMarca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel7)
+                            .addComponent(campoColor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel8)
+                            .addComponent(campoCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel9))
+                    .addComponent(campoPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(campoSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel12)
+                    .addComponent(campoImagen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(botonBuscar)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -187,6 +395,340 @@ public class MarcoProductos extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_botonModificar1ActionPerformed
 
+    private void botonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonBuscarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_botonBuscarActionPerformed
+
+    private void botonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonVolverActionPerformed
+        // TODO add your handling code here:
+        this.setVisible(false);
+        this.dispose();
+        MarcoTiendas marc = new MarcoTiendas();
+        marc.setVisible(true);
+    }//GEN-LAST:event_botonVolverActionPerformed
+
+    private void botonVerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonVerActionPerformed
+        // TODO add your handling code here:
+        this.registrando = false;
+        this.modificando = false;
+        this.campoCantidad.setEditable(false);
+        this.campoColor.setEditable(false);
+        this.campoMarca.setEditable(false);
+        this.campoNombre.setEditable(false);
+        this.campoPrecio.setEditable(false);
+        this.campoSize.setEditable(false);
+        
+        Producto aux = buscarProducto(this.listaProductos.getSelectedIndex());
+        this.campoCodigo.setText(String.valueOf(aux.getCodigo()));
+        this.campoCantidad.setText(String.valueOf(aux.getCantidad()));
+        this.campoColor.setText(aux.getColor());
+        this.campoMarca.setText(aux.getMarca());
+        this.campoNombre.setText(aux.getNombre());
+        this.campoPrecio.setText(String.valueOf(aux.getPrecio()));
+        this.campoSize.setText(String.valueOf(aux.getSize()));
+    }//GEN-LAST:event_botonVerActionPerformed
+
+    private void botonRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonRegistrarActionPerformed
+        // TODO add your handling code here:
+        if (!this.registrando) {
+            this.campoCantidad.setEditable(true);
+            this.campoCantidad.setText("");
+            this.campoColor.setEditable(true);
+            this.campoColor.setText("");
+            this.campoMarca.setEditable(true);
+            this.campoMarca.setText("");
+            this.campoNombre.setText("");
+            this.campoNombre.setEditable(true);
+            this.campoPrecio.setEditable(true);
+            this.campoPrecio.setText("");
+            this.campoSize.setEditable(true);
+            this.campoSize.setText("");
+            
+            this.registrando = true;
+        }
+        else if (this.registrando){
+            if (this.campoCantidad.getText().equals("") || this.campoCantidad.getText() == null
+                    || this.campoColor.getText().equals("") || this.campoColor.getText() == null
+                    || this.campoMarca.getText().equals("") || this.campoMarca.getText() == null
+                    || this.campoNombre.getText().equals("") || this.campoNombre.getText() == null
+                    || this.campoPrecio.getText().equals("") || this.campoPrecio.getText() == null
+                    || this.campoSize.getText().equals("") || this.campoSize.getText() == null)
+                JOptionPane.showMessageDialog(null, "Todos los campos deben estar llenos", "Stores Generator", JOptionPane.ABORT);
+            
+            Random rand = new Random();
+            int codigo = rand.nextInt(2000000000);
+            String peticion = Peticiones.registrarProducto(String.valueOf(codigo), this.campoNombre.getText(),
+                    this.campoCantidad.getText(), this.campoMarca.getText(), this.campoColor.getText(),
+                    this.campoSize.getText(), "imagen por defecto", String.valueOf(this.tienda));
+            
+            //despues de lanzar la peticion debo poner el bool registro en falso y resetear todo
+            // tambien debo vaciar los campos y volverlos no editables
+            
+            try {
+            Socket socket = new Socket("localhost", 8889);
+                PrintWriter salida = new PrintWriter(
+                    socket.getOutputStream(),
+                    true
+                );
+                BufferedReader entrada = new BufferedReader(
+                    new InputStreamReader(
+                            socket.getInputStream()
+                    )
+                );
+                
+            salida.println(peticion);
+            salida.println("fin");
+            
+            String entradaCompleta  ="";
+            String aux1 = "";
+                
+            try {
+                while (!(aux1 = entrada.readLine()).equals("fin")) 
+                    entradaCompleta += aux1;
+  
+                System.out.println(entradaCompleta);
+                Reader lector = new StringReader(entradaCompleta);
+                Lexico scanner = new Lexico(lector);
+                Sintactico parser = new Sintactico(scanner);
+                parser.parse();
+                
+                if (parser.registroProducto) 
+                {
+                    JOptionPane.showMessageDialog(null, "Producto registrado exitosamente", "Stores Generator", JOptionPane.INFORMATION_MESSAGE);
+                    this.listaProductos.addItem(this.campoNombre.getText());
+                    this.codigos.add(codigo);
+                    this.campoCodigo.setText("");
+                    this.campoCantidad.setText("");
+                    this.campoCantidad.setEnabled(false);
+                    this.campoColor.setText("");
+                    this.campoColor.setEnabled(false);
+                    this.campoImagen.setText("");
+                    this.campoMarca.setText("");
+                    this.campoMarca.setEnabled(false);
+                    this.campoNombre.setText("");
+                    this.campoNombre.setEnabled(false);
+                    this.campoPrecio.setText("");
+                    this.campoPrecio.setEnabled(false);
+                    this.campoSize.setText("");
+                    this.campoSize.setEnabled(false);
+                }   
+                else {
+                    JOptionPane.showMessageDialog(null, "El producto no fue registrado, intente de nuevo",
+                            "Stores Generator", JOptionPane.ERROR_MESSAGE);
+                    this.campoCodigo.setText("");
+                    this.campoCantidad.setText("");
+                    this.campoCantidad.setEnabled(false);
+                    this.campoColor.setText("");
+                    this.campoColor.setEnabled(false);
+                    this.campoImagen.setText("");
+                    this.campoMarca.setText("");
+                    this.campoMarca.setEnabled(false);
+                    this.campoNombre.setText("");
+                    this.campoNombre.setEnabled(false);
+                    this.campoPrecio.setText("");
+                    this.campoPrecio.setEnabled(false);
+                    this.campoSize.setText("");
+                    this.campoSize.setEnabled(false);
+                }
+                    
+                
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        socket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        }
+    }//GEN-LAST:event_botonRegistrarActionPerformed
+
+    private void botonEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEliminarActionPerformed
+        // TODO add your handling code here:
+        int codigo = this.codigos.get(this.listaProductos.getSelectedIndex());
+        String peticion = Peticiones.eliminarProducto(String.valueOf(codigo), String.valueOf(this.tienda));
+        
+        try {
+            Socket socket = new Socket("localhost", 8889);
+                PrintWriter salida = new PrintWriter(
+                    socket.getOutputStream(),
+                    true
+                );
+                BufferedReader entrada = new BufferedReader(
+                    new InputStreamReader(
+                            socket.getInputStream()
+                    )
+                );
+                
+            salida.println(peticion);
+            salida.println("fin");
+            
+            String entradaCompleta  ="";
+            String aux1 = "";
+                
+            try {
+                while (!(aux1 = entrada.readLine()).equals("fin")) 
+                    entradaCompleta += aux1;
+  
+                System.out.println(entradaCompleta);
+                Reader lector = new StringReader(entradaCompleta);
+                Lexico scanner = new Lexico(lector);
+                Sintactico parser = new Sintactico(scanner);
+                parser.parse();
+                
+                if (parser.delProducto) 
+                {
+                    JOptionPane.showMessageDialog(null, "Producto eliminado exitosamente", "Stores Generator", JOptionPane.INFORMATION_MESSAGE);
+                    for (Producto prod : this.productos)
+                    {
+                        if (codigo == prod.getCodigo())
+                            this.productos.remove(prod);
+                    }
+                    this.llenarListaProductos();
+                }   
+                else 
+                    JOptionPane.showMessageDialog(null, "el producto no ha sido eliminado", "Stores Generator", JOptionPane.ERROR_MESSAGE);
+                
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        socket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        // despues de hacer la peticion debo sacarlo de la lista
+    }//GEN-LAST:event_botonEliminarActionPerformed
+
+    private void botonModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonModificarActionPerformed
+        // TODO add your handling code here:
+        if (!this.modificando) {
+            Producto p = buscarProducto(this.listaProductos.getSelectedIndex());
+            this.campoCodigo.setText(String.valueOf(p.getCodigo()));
+            this.campoCantidad.setText(String.valueOf(p.getCantidad()));
+            this.campoCantidad.setEditable(true);
+            this.campoColor.setText(p.getColor());
+            this.campoColor.setEditable(true);
+            this.campoMarca.setEditable(true);
+            this.campoMarca.setText(p.getMarca());
+            this.campoNombre.setText(p.getNombre());
+            this.campoNombre.setEditable(true);
+            this.campoPrecio.setEditable(true);
+            this.campoPrecio.setText(String.valueOf(p.getPrecio()));
+            this.campoSize.setText(String.valueOf(p.getSize()));
+            this.campoSize.setEditable(true);
+            
+            this.modificando = true;
+        }
+        else if (this.modificando){
+            if (this.campoCantidad.getText().equals("") || this.campoCantidad.getText() == null
+                    || this.campoColor.getText().equals("") || this.campoColor.getText() == null
+                    || this.campoMarca.getText().equals("") || this.campoMarca.getText() == null
+                    || this.campoNombre.getText().equals("") || this.campoNombre.getText() == null
+                    || this.campoPrecio.getText().equals("") || this.campoPrecio.getText() == null
+                    || this.campoSize.getText().equals("") || this.campoSize.getText() == null)
+                JOptionPane.showMessageDialog(null, "Todos los campos deben estar llenos", "Stores Generator", JOptionPane.ABORT);
+           
+            int code = this.codigos.get(this.listaProductos.getSelectedIndex());
+            String peticion = Peticiones.modificarProducto(String.valueOf(code), this.campoNombre.getText(),
+                    this.campoCantidad.getText(), this.campoMarca.getText(),
+                    this.campoColor.getText(), this.campoSize.getText(), String.valueOf(this.tienda));
+            
+            //luego de enviar la peticion cambiar el bool modificando a false
+            //tambien resetear los campos de texto
+            
+            try {
+            Socket socket = new Socket("localhost", 8889);
+                PrintWriter salida = new PrintWriter(
+                    socket.getOutputStream(),
+                    true
+                );
+                BufferedReader entrada = new BufferedReader(
+                    new InputStreamReader(
+                            socket.getInputStream()
+                    )
+                );
+                
+            salida.println(peticion);
+            salida.println("fin");
+            
+            String entradaCompleta  ="";
+            String aux1 = "";
+                
+            try {
+                while (!(aux1 = entrada.readLine()).equals("fin")) 
+                    entradaCompleta += aux1;
+  
+                System.out.println(entradaCompleta);
+                Reader lector = new StringReader(entradaCompleta);
+                Lexico scanner = new Lexico(lector);
+                Sintactico parser = new Sintactico(scanner);
+                parser.parse();
+                
+                if (parser.modProducto) 
+                {
+                    JOptionPane.showMessageDialog(null, "Producto modificado exitosamente", "Stores Generator", JOptionPane.INFORMATION_MESSAGE);
+                    Producto pi = buscarProducto(this.listaProductos.getSelectedIndex());
+                    pi.setCantidad(Integer.parseInt(this.campoCantidad.getText()));
+                    pi.setColor(this.campoColor.getText());
+                    pi.setMarca(this.campoMarca.getText());
+                    pi.setNombre(this.campoNombre.getText());
+                    pi.setPrecio(Double.parseDouble(this.campoPrecio.getText()));
+                    pi.setSize(Double.parseDouble(this.campoSize.getText()));
+                    this.campoCodigo.setText("");
+                    this.campoCantidad.setText("");
+                    this.campoCantidad.setEnabled(false);
+                    this.campoColor.setText("");
+                    this.campoColor.setEnabled(false);
+                    this.campoImagen.setText("");
+                    this.campoMarca.setText("");
+                    this.campoMarca.setEnabled(false);
+                    this.campoNombre.setText("");
+                    this.campoNombre.setEnabled(false);
+                    this.campoPrecio.setText("");
+                    this.campoPrecio.setEnabled(false);
+                    this.campoSize.setText("");
+                    this.campoSize.setEnabled(false);
+                }   
+                else {
+                    JOptionPane.showMessageDialog(null, "El producto no fue modificado, intente de nuevo",
+                            "Stores Generator", JOptionPane.ERROR_MESSAGE);
+                    this.campoCodigo.setText("");
+                    this.campoCantidad.setText("");
+                    this.campoCantidad.setEnabled(false);
+                    this.campoColor.setText("");
+                    this.campoColor.setEnabled(false);
+                    this.campoImagen.setText("");
+                    this.campoMarca.setText("");
+                    this.campoMarca.setEnabled(false);
+                    this.campoNombre.setText("");
+                    this.campoNombre.setEnabled(false);
+                    this.campoPrecio.setText("");
+                    this.campoPrecio.setEnabled(false);
+                    this.campoSize.setText("");
+                    this.campoSize.setEnabled(false);
+                }
+                    
+                
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        socket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        }
+    }//GEN-LAST:event_botonModificarActionPerformed
+
+    public Producto buscarProducto(int indice) {
+        int codigo = this.codigos.get(indice);
+        Producto p = null;
+        for (Producto prod : this.productos) {
+            if (codigo == prod.getCodigo())
+                p = prod;
+        }
+        return p;
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -223,6 +765,14 @@ public class MarcoProductos extends javax.swing.JFrame {
     }
     
     public void llenarListaProductos() {
+        if (this.listaProductos.getItemCount() > 0) {
+            this.listaProductos.removeAllItems();
+            if (this.codigos.size() > 0)
+                for (int i = 0; i < this.codigos.size(); i++) {
+                    this.codigos.remove(i);
+                }
+        }
+        
         this.codigos = new ArrayList<>();
         for(Producto prod : this.productos) {
             this.listaProductos.addItem(prod.getNombre());
@@ -231,15 +781,33 @@ public class MarcoProductos extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton botonBuscar;
     private javax.swing.JButton botonEliminar;
     private javax.swing.JButton botonModificar;
     private javax.swing.JButton botonModificar1;
     private javax.swing.JButton botonRegistrar;
     private javax.swing.JButton botonVer;
     private javax.swing.JButton botonVolver;
+    private javax.swing.JTextField campoCantidad;
+    private javax.swing.JTextField campoCodigo;
+    private javax.swing.JTextField campoColor;
+    private javax.swing.JTextField campoImagen;
+    private javax.swing.JTextField campoMarca;
+    private javax.swing.JTextField campoNombre;
+    private javax.swing.JTextField campoPrecio;
+    private javax.swing.JTextField campoSize;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

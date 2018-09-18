@@ -5,6 +5,7 @@
  */
 package Servidor;
 
+import FGrammar.ErrorC;
 import FGrammar.Lexico;
 import FGrammar.Sintactico;
 import java.io.BufferedReader;
@@ -13,6 +14,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.net.Socket;
+import sgserver.DatosPersistentes;
 
 /**
  *
@@ -58,6 +60,12 @@ public class ServidorMultiHilo extends Thread {
             try 
             {
                 parser.parse();
+                for (ErrorC er : scanner.errores) 
+                    DatosPersistentes.lexicos.add(er);
+                for (ErrorC er2: parser.errores)
+                    DatosPersistentes.sintacticos.add(er2);
+                for (ErrorC er3: parser.semanticos)
+                    DatosPersistentes.semanticos.add(er3);
                 salida.println(parser.respuesta);
                 salida.println("fin");
             }

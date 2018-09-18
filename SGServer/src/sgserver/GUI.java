@@ -5,6 +5,7 @@
  */
 package sgserver;
 
+import FGrammar.ErrorC;
 import FGrammar.Lexico;
 import FGrammar.Sintactico;
 import Servidor.ServidorN;
@@ -307,6 +308,16 @@ public class GUI extends javax.swing.JFrame implements Runnable{
     private void botonErroresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonErroresActionPerformed
         // TODO add your handling code here:
         //generar pdf con errores desde aqui
+        for (ErrorC er : DatosPersistentes.lexicos) 
+            System.out.println("tipo: " + er.tipo + " - lexema: " + er.lexema + " - fila: " + er.fila
+                    + " - columna: " + er.columna + " - descripcion: " + er.descripcion);
+        for (ErrorC er: DatosPersistentes.sintacticos)
+            System.out.println("tipo: " + er.tipo + " - lexema: " + er.lexema + " - fila: " + er.fila
+                    + " - columna: " + er.columna + " - descripcion: " + er.descripcion);
+        for (ErrorC er: DatosPersistentes.semanticos)
+            System.out.println("tipo: " + String.valueOf(er.tipo) + " - lexema: " + String.valueOf(er.lexema) + " - fila: "
+                    + String.valueOf(er.fila)
+                    + " - columna: " + String.valueOf(er.columna) + " - descripcion: " + String.valueOf(er.descripcion));
     }//GEN-LAST:event_botonErroresActionPerformed
 
     /**

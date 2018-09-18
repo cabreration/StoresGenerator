@@ -27,6 +27,9 @@ public class SGServer {
         DatosPersistentes.cargarUsuarios();
         DatosPersistentes.cargarTiendas();
         DatosPersistentes.cargarProductos();
+        DatosPersistentes.lexicos = new ArrayList<>();
+        DatosPersistentes.sintacticos = new ArrayList<>();
+        DatosPersistentes.semanticos = new ArrayList<>();
         
         DatosPersistentes.interfaz = new GUI();
         DatosPersistentes.interfaz.setVisible(true);

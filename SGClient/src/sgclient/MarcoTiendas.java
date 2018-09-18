@@ -666,6 +666,7 @@ public class MarcoTiendas extends javax.swing.JFrame {
                 this.dispose();
                 MarcoProductos prods = new MarcoProductos();
                 prods.productos = parser.productos;
+                prods.tienda = tiendaActual;
                 prods.llenarListaProductos();
                 prods.setVisible(true);
                 
@@ -714,7 +715,7 @@ public class MarcoTiendas extends javax.swing.JFrame {
         });
     }
     
-    private void llenarLista() {
+    public void llenarLista() {
         if (this.listaTiendas.getItemCount() > 0) {
             this.listaTiendas.removeAllItems();
             if (this.codigos.size() > 0)

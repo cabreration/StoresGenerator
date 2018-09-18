@@ -5,6 +5,7 @@
  */
 package sgserver;
 
+import FGrammar.ErrorC;
 import Logica.Producto;
 import Logica.TablaProductos;
 import Logica.TablaTiendas;
@@ -26,6 +27,9 @@ public class DatosPersistentes {
     public static TablaTiendas tiendas;
     public static TablaProductos productos;
     public static GUI interfaz;
+    public static ArrayList<ErrorC> lexicos;
+    public static ArrayList<ErrorC> semanticos;
+    public static ArrayList<ErrorC> sintacticos;
     
     public static void cargarUsuarios() {  
         DatosPersistentes.usuarios = new TablaUsuarios();

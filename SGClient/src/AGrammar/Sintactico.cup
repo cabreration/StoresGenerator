@@ -107,15 +107,15 @@ INICIO::= RESPUESTAS
 
 RESPUESTAS::= LOGIN //done
 |             SIGNUP //no lo voy a hacer
-|             SIGNUPT //no lo he probado
+|             SIGNUPT //done
 |             MODT //done
-|             DELT //no lo he probado
+|             DELT //done
 |             REG_PROD
 |             MOD_PROD
 |             DEL_PROD
 |             ERRORLINE // no lo he probado
 |             LISTA_TIENDAS //done
-|             LISTA_PRODUCTOS //no lo he probado
+|             LISTA_PRODUCTOS //done
 ;
 
 O_REPLY::= dolar respuesta dolar;
@@ -173,15 +173,15 @@ O_PRODUCTO::= dolar producto dolar;
 
 C_PRODUCTO::= dolar producto menos dolar;
 
-REG_PROD::= O_REPLY O_PRODUCTO O_PROD BOOL C_REGISTRO C_PRODUCTO C_REPLY;
+REG_PROD::= O_REPLY O_PRODUCTO O_PROD BOOL:bool C_REGISTRO C_PRODUCTO C_REPLY {: parser.registroProducto = (boolean)bool; :};
 
 O_MODPROD::= dolar modificar id asignacion numero sucursal asignacion numero dolar;
 
-MOD_PROD::= O_REPLY O_PRODUCTO O_MODPROD BOOL C_MOD C_PRODUCTO C_REPLY;
+MOD_PROD::= O_REPLY O_PRODUCTO O_MODPROD BOOL:bool C_MOD C_PRODUCTO C_REPLY {: parser.modProducto = (boolean)bool; :};
 
 O_DELPROD::= dolar eliminar id asignacion numero sucursal asignacion numero dolar;
 
-DEL_PROD::= O_REPLY O_PRODUCTO O_DELPROD BOOL C_DEL C_PRODUCTO C_REPLY;
+DEL_PROD::= O_REPLY O_PRODUCTO O_DELPROD BOOL:bool C_DEL C_PRODUCTO C_REPLY {: parser.delProducto = (boolean)bool; :};
 
 O_ERROR::= dolar errorT dolar;
 
@@ -267,10 +267,10 @@ PRODUCTO::= O_PRODUCTO O_CODIGO numero:code C_CODIGO O_NOMBRE cadena:name C_NOMB
 O_COLOR cadena:colr C_COLOR O_SIZE numero:size C_SIZE O_SUCURSAL numero:sucursal C_SUCURSAL O_PRECIO numero:pre C_PRECIO C_PRODUCTO 
 {:
     parser.productoAuxiliar.setCodigo(Integer.parseInt(String.valueOf(code)));
-    parser.productoAuxiliar.setNombre(String.valueOf(name));
+    parser.productoAuxiliar.setNombre(String.valueOf(name).substring(1, (String.valueOf(name)).length()- 1));
     parser.productoAuxiliar.setCantidad(Integer.parseInt(String.valueOf(cant)));
-    parser.productoAuxiliar.setMarca(String.valueOf(brand));
-    parser.productoAuxiliar.setColor(String.valueOf(colr));
+    parser.productoAuxiliar.setMarca((String.valueOf(brand)).substring(1, (String.valueOf(brand)).length() - 1));
+    parser.productoAuxiliar.setColor((String.valueOf(colr)).substring(1, (String.valueOf(colr)).length() - 1));
     parser.productoAuxiliar.setSize(Double.parseDouble(String.valueOf(size)));
     parser.productoAuxiliar.setSucursal_tienda(Integer.parseInt(String.valueOf(sucursal)));
     parser.productoAuxiliar.setPrecio(Double.parseDouble(String.valueOf(pre)));
